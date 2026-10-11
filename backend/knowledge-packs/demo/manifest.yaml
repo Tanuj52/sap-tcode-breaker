@@ -1,0 +1,13 @@
+# Demo pack used by the bundled samples (SFLIGHT demo model + S/4-style samples).
+name: demo
+description: SFLIGHT demo model and S/4HANA-style samples, replicated into TCODE_BREAKER.SAP_DEMO
+source_system: s4
+abap_version: v757
+target_database: TCODE_BREAKER
+target_schema: SAP_DEMO
+client: null          # demo data is single-client, no MANDT filter
+language: E
+type_mode: raw
+confidential: false   # public sample code: free external LLM APIs allowed
+# Physical tables that exist in the Snowflake replica. MKPF/MSEG/VBUK are absent (S/4 compatibility views).
+physical_tables: [SCARR, SPFLI, SFLIGHT, SBOOK, SCUSTOM, VBAK, VBAP, KNA1, MATDOC, MAKT, TCURX]

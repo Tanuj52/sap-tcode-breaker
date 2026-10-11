@@ -1,0 +1,78 @@
+# DDIC data type -> Snowflake type mapping.
+#
+# raw:     how a replication tool (SLT, ODP, Fivetran, etc.) usually lands the value in Snowflake.
+# typed:   cast expression to turn the raw value into a proper Snowflake type. {col} is the column.
+# initial: ABAP initial value (ABAP has no NULL; LEFT JOIN misses must be COALESCEd to this).
+# Projects choose `type_mode: raw | typed` in their manifest (default raw = keep SAP semantics).
+version: 1
+
+types:
+  CHAR: {raw: "VARCHAR({len})", typed: "{col}", initial: "''", family: char}
+  CLNT: {raw: "VARCHAR(3)", typed: "{col}", initial: "''", family: char}
+  LANG: {raw: "VARCHAR(1)", typed: "{col}", initial: "''", family: char}
+  CUKY: {raw: "VARCHAR(5)", typed: "{col}", initial: "''", family: char}
+  UNIT: {raw: "VARCHAR(3)", typed: "{col}", initial: "''", family: char}
+  STRG: {raw: "VARCHAR", typed: "{col}", initial: "''", family: char}
+  SSTR: {raw: "VARCHAR({len})", typed: "{col}", initial: "''", family: char}
+  RAW: {raw: "BINARY({len})", typed: "{col}", initial: "NULL", family: raw}
+  NUMC: {raw: "VARCHAR({len})", typed: "{col}", initial: "LPAD('', {len}, '0')", family: numc, note: "Digits stored as text with leading zeros"}
+  DATS: {raw: "VARCHAR(8)", typed: "TRY_TO_DATE(NULLIF({col}, '00000000'), 'YYYYMMDD')", initial: "'00000000'", family: date}
+  TIMS: {raw: "VARCHAR(6)", typed: "TRY_TO_TIME({col}, 'HH24MISS')", initial: "'000000'", family: time}
+  CURR: {raw: "NUMBER({len},{dec})", typed: "{col}", initial: "0", family: amount, note: "Stored with 2 decimals; currencies with other decimals (TCURX) need a shift for display"}
+  QUAN: {raw: "NUMBER({len},{dec})", typed: "{col}", initial: "0", family: quantity}
+  DEC: {raw: "NUMBER({len},{dec})", typed: "{col}", initial: "0", family: number}
+  INT1: {raw: "NUMBER(3,0)", typed: "{col}", initial: "0", family: number}
+  INT2: {raw: "NUMBER(5,0)", typed: "{col}", initial: "0", family: number}
+  INT4: {raw: "NUMBER(10,0)", typed: "{col}", initial: "0", family: number}
+  INT8: {raw: "NUMBER(19,0)", typed: "{col}", initial: "0", family: number}
+  FLTP: {raw: "FLOAT", typed: "{col}", initial: "0", family: number}
+  D16N: {raw: "NUMBER(34,16)", typed: "{col}", initial: "0", family: number}
+  TIMESTAMP: {raw: "NUMBER(15,0)", typed: "TRY_TO_TIMESTAMP(TO_VARCHAR({col}), 'YYYYMMDDHH24MISS')", initial: "0", family: number}
+
+# Built-in ABAP elementary types used in TYPES/DATA declarations.
+abap_types:
+  c: {ddic: CHAR}
+  n: {ddic: NUMC}
+  d: {ddic: DATS}
+  t: {ddic: TIMS}
+  i: {ddic: INT4}
+  int8: {ddic: INT8}
+  p: {ddic: DEC}
+  f: {ddic: FLTP}
+  string: {ddic: STRG}
+  xstring: {ddic: RAW}
+  x: {ddic: RAW}
+  decfloat16: {ddic: D16N}
+  decfloat34: {ddic: D16N}
+  abap_bool: {ddic: CHAR, len: 1}
+  char1: {ddic: CHAR, len: 1}
+  char2: {ddic: CHAR, len: 2}
+  char3: {ddic: CHAR, len: 3}
+  char4: {ddic: CHAR, len: 4}
+  char5: {ddic: CHAR, len: 5}
+  char6: {ddic: CHAR, len: 6}
+  char8: {ddic: CHAR, len: 8}
+  char10: {ddic: CHAR, len: 10}
+  char12: {ddic: CHAR, len: 12}
+  char15: {ddic: CHAR, len: 15}
+  char20: {ddic: CHAR, len: 20}
+  char30: {ddic: CHAR, len: 30}
+  char40: {ddic: CHAR, len: 40}
+  char50: {ddic: CHAR, len: 50}
+  char80: {ddic: CHAR, len: 80}
+  char100: {ddic: CHAR, len: 100}
+  char255: {ddic: CHAR, len: 255}
+  sy-datum: {ddic: DATS}
+  sy-uzeit: {ddic: TIMS}
+  timestamp: {ddic: TIMESTAMP}
+  timestampl: {ddic: DEC, len: 21, dec: 7}
+
+# System fields with a deterministic Snowflake equivalent.
+system_fields:
+  SY-DATUM: {sql: "TO_VARCHAR(CURRENT_DATE(), 'YYYYMMDD')", note: "Current date as DATS"}
+  SY-UZEIT: {sql: "TO_VARCHAR(CURRENT_TIME(), 'HH24MISS')", note: "Current time as TIMS"}
+  SY-UNAME: {sql: "CURRENT_USER()", note: "Snowflake user, not the SAP user"}
+  SY-LANGU: {sql: "{language}", note: "Logon language from project manifest"}
+  SY-MANDT: {sql: "{client}", note: "Client from project manifest"}
+  SY-REPID: {sql: "'{program}'", note: "Program name"}
+  SY-SPRAS: {sql: "{language}", note: "Language"}

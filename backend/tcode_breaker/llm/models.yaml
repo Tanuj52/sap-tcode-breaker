@@ -1,0 +1,86 @@
+# LLM provider presets. Every OpenAI-compatible endpoint works; add your own here or in
+# knowledge-packs/<pack>/models.yaml. Context windows are approximate defaults - adjust per model.
+# API keys: set them in the app (Settings -> Models & keys, stored locally with mode 0600) or in the
+# environment variable named by api_key_env. Any model name of a listed provider can be used.
+version: 1
+
+providers:
+  cortex:
+    kind: cortex                     # Snowflake Cortex (SNOWFLAKE.CORTEX.COMPLETE) via the active connection
+    private: true                    # data stays inside Snowflake -> allowed for confidential projects
+    models:
+      claude-sonnet-4-5: {context: 200000}
+      claude-4-sonnet: {context: 200000}
+      claude-3-7-sonnet: {context: 200000}
+      llama3.1-70b: {context: 128000}
+      llama3.3-70b: {context: 128000}
+      llama3.1-8b: {context: 128000}
+      mistral-7b: {context: 32000}
+  openai:
+    kind: openai
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    private: false
+    models:
+      gpt-4o: {context: 128000}
+      gpt-4o-mini: {context: 128000}
+  anthropic:
+    kind: openai                     # Anthropic's OpenAI-compatible endpoint
+    base_url: https://api.anthropic.com/v1
+    api_key_env: ANTHROPIC_API_KEY
+    private: false
+    models:
+      claude-sonnet-4-5: {context: 200000}
+  mistral:
+    kind: openai
+    base_url: https://api.mistral.ai/v1
+    api_key_env: MISTRAL_API_KEY
+    private: false
+    models:
+      mistral-large-latest: {context: 128000}
+      codestral-latest: {context: 32000}
+  deepseek:
+    kind: openai
+    base_url: https://api.deepseek.com/v1
+    api_key_env: DEEPSEEK_API_KEY
+    private: false
+    models:
+      deepseek-chat: {context: 64000}
+  groq:
+    kind: openai
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+    private: false
+    models:
+      llama-3.3-70b-versatile: {context: 128000}
+      llama-3.1-8b-instant: {context: 128000}
+  gemini:
+    kind: openai
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai
+    api_key_env: GEMINI_API_KEY
+    private: false
+    models:
+      gemini-2.0-flash: {context: 1000000}
+      gemini-1.5-flash: {context: 1000000}
+  nvidia:
+    kind: openai
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key_env: NVIDIA_API_KEY
+    private: false
+    models:
+      nvidia/llama-3.1-nemotron-70b-instruct: {context: 128000}
+      meta/llama-3.1-8b-instruct: {context: 128000}
+  openrouter:
+    kind: openai
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    private: false
+    models:
+      meta-llama/llama-3.3-70b-instruct:free: {context: 128000}
+  ollama:
+    kind: openai
+    base_url: http://localhost:11434/v1
+    private: true                    # runs locally
+    models:
+      qwen2.5-coder:7b: {context: 32000}
+      llama3.1:8b: {context: 8192}

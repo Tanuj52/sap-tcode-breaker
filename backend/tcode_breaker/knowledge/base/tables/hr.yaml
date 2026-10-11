@@ -1,0 +1,757 @@
+# Built-in SAP table knowledge - HCM personnel administration infotypes, time infotypes, org management and HR customizing.
+version: 1
+tables:
+
+  # ---------------------------------------------------------------- PA infotypes (key: PERNR SUBTY OBJPS SPRPS ENDDA BEGDA SEQNR)
+  PA0000:
+    description: HR master record - infotype 0000 (Actions)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      MASSN: CHAR(2) Action type
+      MASSG: CHAR(2) Reason for action
+      STAT1: CHAR(1) Customer-specific status
+      STAT2: CHAR(1) Employment status
+      STAT3: CHAR(1) Special payment status
+
+  PA0001:
+    description: HR master record - infotype 0001 (Organizational assignment)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      BUKRS: CHAR(4) Company code
+      WERKS: CHAR(4) Personnel area
+      PERSG: CHAR(1) Employee group
+      PERSK: CHAR(2) Employee subgroup
+      VDSK1: CHAR(14) Organizational key
+      GSBER: CHAR(4) Business area
+      BTRTL: CHAR(4) Personnel subarea
+      JUPER: CHAR(4) Legal person
+      ABKRS: CHAR(2) Payroll area
+      ANSVH: CHAR(2) Work contract
+      KOSTL: CHAR(10) Cost center
+      KOKRS: CHAR(4) Controlling area
+      ORGEH: NUMC(8) Organizational unit
+      PLANS: NUMC(8) Position
+      STELL: NUMC(8) Job
+      MSTBR: CHAR(8) Supervisor area
+      SACHA: CHAR(3) Payroll administrator
+      SACHP: CHAR(3) Administrator for HR master data
+      SACHZ: CHAR(3) Administrator for time recording
+      SBMOD: CHAR(4) Administrator group
+      OTYPE: CHAR(2) Object type
+      SNAME: CHAR(30) Employee name (sortable)
+      ENAME: CHAR(40) Formatted name of employee
+
+  PA0002:
+    description: HR master record - infotype 0002 (Personal data)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      INITS: CHAR(10) Initials
+      NACHN: CHAR(40) Last name
+      NAME2: CHAR(40) Name at birth
+      NACH2: CHAR(40) Second name
+      VORNA: CHAR(40) First name
+      CNAME: CHAR(80) Complete name
+      TITEL: CHAR(15) Title
+      TITL2: CHAR(15) Second title
+      NAMZU: CHAR(15) Other title
+      VORSW: CHAR(15) Name prefix
+      RUFNM: CHAR(40) Nickname
+      MIDNM: CHAR(40) Middle name
+      ANRED: CHAR(1) Form of address key
+      GESCH: CHAR(1) Gender key
+      GBDAT: DATS(8) Date of birth
+      GBLND: CHAR(3) Country of birth
+      GBORT: CHAR(40) Birthplace
+      NATIO: CHAR(3) Nationality
+      SPRSL: LANG(1) Communication language
+      KONFE: CHAR(2) Religious denomination key
+      FAMST: CHAR(1) Marital status key
+      FAMDT: DATS(8) Valid from date of current marital status
+      ANZKD: DEC(3,0) Number of children
+      PERID: CHAR(20) Personnel ID number
+
+  PA0003:
+    description: HR master record - infotype 0003 (Payroll status)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      ABRSP: CHAR(1) Personnel number locked for payroll
+      ABRDT: DATS(8) Accounted to
+      RRDAT: DATS(8) Earliest master data change since last payroll run
+      VIEKN: CHAR(2) Infotype view indicator
+
+  PA0006:
+    description: HR master record - infotype 0006 (Addresses)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      ANSSA: CHAR(4) Address record type
+      NAME2: CHAR(40) Contact name
+      STRAS: CHAR(60) Street and house number
+      HSNMR: CHAR(10) House number
+      POSTA: CHAR(10) Identification of an apartment in a building
+      LOCAT: CHAR(40) Second address line
+      ORT01: CHAR(40) City
+      ORT02: CHAR(40) District
+      PSTLZ: CHAR(10) Postal code
+      STATE: CHAR(3) Region (state, province, county)
+      LAND1: CHAR(3) Country key
+      COM01: CHAR(4) Communication type
+      NUM01: CHAR(20) Communication number
+
+  PA0007:
+    description: HR master record - infotype 0007 (Planned working time)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      SCHKZ: CHAR(8) Work schedule rule
+      ZTERF: NUMC(1) Employee time management status
+      EMPCT: DEC(5,2) Employment percentage
+      MOSTD: DEC(5,2) Monthly hours
+      WOSTD: DEC(5,2) Hours per week
+      ARBST: DEC(5,2) Daily working hours
+      WKWDY: DEC(4,2) Weekly workdays
+      JRSTD: DEC(7,2) Annual working hours
+      TEILK: CHAR(1) Part-time employee
+      WWEEK: CHAR(2) Working week
+
+  PA0008:
+    description: HR master record - infotype 0008 (Basic pay)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (reason for change)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      TRFAR: CHAR(2) Pay scale type
+      TRFGB: CHAR(2) Pay scale area
+      TRFGR: CHAR(8) Pay scale group
+      TRFST: CHAR(2) Pay scale level
+      STVOR: DATS(8) Date of next increase
+      WAERS: CUKY(5) Currency key
+      BSGRD: DEC(5,2) Capacity utilization level
+      DIVGV: DEC(5,2) Working hours per payroll period
+      ANSAL: CURR(15,2) ref=WAERS Annual salary
+      LGA01: CHAR(4) Wage type 1
+      BET01: CURR(13,2) ref=WAERS Wage type amount 1
+      ANZ01: DEC(7,2) Number 1
+      LGA02: CHAR(4) Wage type 2
+      BET02: CURR(13,2) ref=WAERS Wage type amount 2
+      ANZ02: DEC(7,2) Number 2
+      LGA03: CHAR(4) Wage type 3
+      BET03: CURR(13,2) ref=WAERS Wage type amount 3
+      ANZ03: DEC(7,2) Number 3
+
+  PA0009:
+    description: HR master record - infotype 0009 (Bank details)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      BNKSA: CHAR(4) Type of bank details record
+      ZLSCH: CHAR(1) Payment method
+      EMFTX: CHAR(40) Payee text
+      BKPLZ: CHAR(10) Postal code
+      BKORT: CHAR(25) City
+      BANKS: CHAR(3) Bank country key
+      BANKL: CHAR(15) Bank keys
+      BANKN: CHAR(18) Bank account number
+      BKONT: CHAR(2) Bank control key
+      IBAN: CHAR(34) IBAN
+      WAERS: CUKY(5) Payment currency
+      BETRG: CURR(13,2) ref=WAERS Standard value
+      ZWECK: CHAR(40) Purpose of bank transfers
+
+  PA0014:
+    description: HR master record - infotype 0014 (Recurring payments and deductions)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (wage type)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      LGART: CHAR(4) Wage type
+      OPKEN: CHAR(1) Operation indicator for wage types
+      BETRG: CURR(13,2) ref=WAERS Wage type amount for payments
+      WAERS: CUKY(5) Currency key
+      ANZHL: DEC(7,2) Number
+      ZEINH: CHAR(3) Time/measurement unit
+      INDBW: CHAR(1) Indicator for indirect valuation
+      ZDATE: DATS(8) First payment date
+      ZFPER: NUMC(2) First payment period
+
+  PA0015:
+    description: HR master record - infotype 0015 (Additional payments)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (wage type)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      LGART: CHAR(4) Wage type
+      OPKEN: CHAR(1) Operation indicator for wage types
+      BETRG: CURR(13,2) ref=WAERS Wage type amount for payments
+      WAERS: CUKY(5) Currency key
+      ANZHL: DEC(7,2) Number
+      ZEINH: CHAR(3) Time/measurement unit
+      INDBW: CHAR(1) Indicator for indirect valuation
+      ZUORD: CHAR(20) Assignment number
+      ESTDT: DATS(8) Date of origin
+      PABRJ: NUMC(4) Payroll year
+      PABRP: NUMC(2) Payroll period
+      UWDAT: DATS(8) Date of bank transfer
+
+  PA0021:
+    description: HR master record - infotype 0021 (Family member / dependents)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      FAMSA: CHAR(4) Type of family record
+      FANAM: CHAR(40) Last name
+      FAVOR: CHAR(40) First name
+      FGBDT: DATS(8) Date of birth
+      FASEX: CHAR(1) Gender key
+
+  PA0041:
+    description: HR master record - infotype 0041 (Date specifications)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      DAR01: CHAR(2) Date type 1
+      DAT01: DATS(8) Date for date type 1
+      DAR02: CHAR(2) Date type 2
+      DAT02: DATS(8) Date for date type 2
+      DAR03: CHAR(2) Date type 3
+      DAT03: DATS(8) Date for date type 3
+      DAR04: CHAR(2) Date type 4
+      DAT04: DATS(8) Date for date type 4
+      DAR05: CHAR(2) Date type 5
+      DAT05: DATS(8) Date for date type 5
+      DAR06: CHAR(2) Date type 6
+      DAT06: DATS(8) Date for date type 6
+      DAR07: CHAR(2) Date type 7
+      DAT07: DATS(8) Date for date type 7
+      DAR08: CHAR(2) Date type 8
+      DAT08: DATS(8) Date for date type 8
+      DAR09: CHAR(2) Date type 9
+      DAT09: DATS(8) Date for date type 9
+      DAR10: CHAR(2) Date type 10
+      DAT10: DATS(8) Date for date type 10
+      DAR11: CHAR(2) Date type 11
+      DAT11: DATS(8) Date for date type 11
+      DAR12: CHAR(2) Date type 12
+      DAT12: DATS(8) Date for date type 12
+
+  PA0105:
+    description: HR master record - infotype 0105 (Communication)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (communication type)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      USRTY: CHAR(4) Communication type
+      USRID: CHAR(30) Communication ID/number
+      USRID_LONG: CHAR(241) Long communication ID/number
+
+  # ---------------------------------------------------------------- Time management infotypes
+  PA2001:
+    description: HR time record - infotype 2001 (Absences)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (absence type)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      BEGUZ: TIMS(6) Start time
+      ENDUZ: TIMS(6) End time
+      VTKEN: CHAR(1) Previous day indicator
+      AWART: CHAR(4) Attendance or absence type
+      ABWTG: DEC(6,2) Attendance and absence days
+      STDAZ: DEC(7,2) Absence hours
+      ABRTG: DEC(6,2) Payroll days
+      ABRST: DEC(7,2) Payroll hours
+      KALTG: DEC(6,2) Calendar days
+      ALLDF: CHAR(1) Record is for full day
+      DOCNR: NUMC(20) Document number for time data
+
+  PA2002:
+    description: HR time record - infotype 2002 (Attendances)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (attendance type)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      BEGUZ: TIMS(6) Start time
+      ENDUZ: TIMS(6) End time
+      VTKEN: CHAR(1) Previous day indicator
+      AWART: CHAR(4) Attendance or absence type
+      ABWTG: DEC(6,2) Attendance and absence days
+      STDAZ: DEC(7,2) Attendance hours
+      ABRTG: DEC(6,2) Payroll days
+      ABRST: DEC(7,2) Payroll hours
+      KALTG: DEC(6,2) Calendar days
+      ALLDF: CHAR(1) Record is for full day
+      DOCNR: NUMC(20) Document number for time data
+
+  PA2006:
+    description: HR time record - infotype 2006 (Absence quotas)
+    module: HR
+    release: both
+    key: [MANDT, PERNR, SUBTY, OBJPS, SPRPS, ENDDA, BEGDA, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERNR: NUMC(8) Personnel number
+      SUBTY: CHAR(4) Subtype (absence quota type)
+      OBJPS: CHAR(2) Object identification
+      SPRPS: CHAR(1) Lock indicator for HR master data record
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      SEQNR: NUMC(3) Number of infotype record with same key
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      BEGUZ: TIMS(6) Start time
+      ENDUZ: TIMS(6) End time
+      VTKEN: CHAR(1) Previous day indicator
+      KTART: NUMC(2) Absence quota type
+      ANZHL: DEC(10,5) Number of employee time quota
+      KVERB: DEC(10,5) Deduction of employee time quota
+      QUONR: NUMC(20) Counter for time quotas
+      DESTA: DATS(8) Start date for quota deduction
+      DEEND: DATS(8) End date for quota deduction
+
+  # ---------------------------------------------------------------- Organizational management (PD)
+  HRP1000:
+    description: Infotype 1000 DB table (Objects)
+    module: HR
+    release: both
+    key: [MANDT, PLVAR, OTYPE, OBJID, ISTAT, BEGDA, ENDDA, LANGU, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PLVAR: CHAR(2) Plan version
+      OTYPE: CHAR(2) Object type
+      OBJID: NUMC(8) Object ID
+      ISTAT: CHAR(1) Planning status
+      BEGDA: DATS(8) Start date
+      ENDDA: DATS(8) End date
+      LANGU: LANG(1) Language key
+      SEQNR: NUMC(3) Number of infotype record with same key
+      OTJID: CHAR(10) Concatenation of object type and object ID
+      INFTY: CHAR(4) Infotype
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      HISTO: CHAR(1) Historical record flag
+      SHORT: CHAR(12) Object abbreviation
+      STEXT: CHAR(40) Object name
+
+  HRP1001:
+    description: Infotype 1001 DB table (Relationships)
+    module: HR
+    release: both
+    key: [MANDT, OTYPE, OBJID, PLVAR, RSIGN, RELAT, ISTAT, PRIOX, BEGDA, ENDDA, VARYF, SEQNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      OTYPE: CHAR(2) Object type
+      OBJID: NUMC(8) Object ID
+      PLVAR: CHAR(2) Plan version
+      RSIGN: CHAR(1) Relationship specification (A bottom-up, B top-down)
+      RELAT: CHAR(3) Relationship between objects
+      ISTAT: CHAR(1) Planning status
+      PRIOX: CHAR(2) Priority
+      BEGDA: DATS(8) Start date
+      ENDDA: DATS(8) End date
+      VARYF: CHAR(10) Variable key (related object type and ID)
+      SEQNR: NUMC(3) Number of infotype record with same key
+      INFTY: CHAR(4) Infotype
+      OTJID: CHAR(10) Concatenation of object type and object ID
+      SUBTY: CHAR(4) Subtype
+      AEDTM: DATS(8) Changed on
+      UNAME: CHAR(12) Changed by
+      SCLAS: CHAR(2) Type of related object
+      SOBID: CHAR(45) ID of related object
+      PROZT: DEC(5,2) Weighting percentage
+
+  # ---------------------------------------------------------------- HR customizing
+  T500P:
+    description: Personnel areas
+    module: HR
+    release: both
+    key: [MANDT, PERSA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERSA: CHAR(4) Personnel area
+      MOLGA: CHAR(2) Country grouping
+      BUKRS: CHAR(4) Company code
+      NAME1: CHAR(30) Personnel area text
+      LAND1: CHAR(3) Country key
+      REGIO: CHAR(3) Region
+      ADRNR: CHAR(10) Address number
+
+  T001P:
+    description: Personnel area / subarea
+    module: HR
+    release: both
+    key: [MANDT, WERKS, BTRTL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WERKS: CHAR(4) Personnel area
+      BTRTL: CHAR(4) Personnel subarea
+      BTEXT: CHAR(15) Personnel subarea text
+      MOLGA: CHAR(2) Country grouping
+      JUPER: CHAR(4) Legal person
+      MOABW: NUMC(2) Personnel subarea grouping for absence and attendance types
+      MOSID: NUMC(2) Personnel subarea grouping for work schedules
+      MOZKO: NUMC(2) Personnel subarea grouping for time quotas
+      MOURL: NUMC(2) Personnel subarea grouping for leave types
+
+  T501:
+    description: Employee groups
+    module: HR
+    release: both
+    key: [MANDT, PERSG]
+    fields_complete: false
+    text_table: T501T
+    fields:
+      MANDT: CLNT(3) Client
+      PERSG: CHAR(1) Employee group
+
+  T501T:
+    description: Employee group texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, PERSG]
+    fields_complete: false
+    text_of: T501
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      PERSG: CHAR(1) Employee group
+      PTEXT: CHAR(20) Employee group name
+
+  T503K:
+    description: Employee subgroups
+    module: HR
+    release: both
+    key: [MANDT, PERSK]
+    fields_complete: false
+    text_table: T503T
+    fields:
+      MANDT: CLNT(3) Client
+      PERSK: CHAR(2) Employee subgroup
+
+  T503:
+    description: Employee group / subgroup combinations
+    module: HR
+    release: both
+    key: [MANDT, PERSG, PERSK]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERSG: CHAR(1) Employee group
+      PERSK: CHAR(2) Employee subgroup
+      ABART: CHAR(1) Employee subgroup grouping for personnel calculation rules
+      TRFKZ: CHAR(1) Employee subgroup grouping for collective agreement provisions
+
+  T503T:
+    description: Employee subgroup texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, PERSK]
+    fields_complete: false
+    text_of: T503K
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      PERSK: CHAR(2) Employee subgroup
+      PTEXT: CHAR(20) Employee subgroup name
+
+  T512T:
+    description: Wage type texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, MOLGA, LGART]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      MOLGA: CHAR(2) Country grouping
+      LGART: CHAR(4) Wage type
+      LGTXT: CHAR(25) Wage type long text
+      KZTXT: CHAR(15) Wage type short text
+
+  T513S:
+    description: Job titles
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, STELL, ENDDA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      STELL: NUMC(8) Job
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      STLTX: CHAR(25) Job title
+
+  T527X:
+    description: Organizational unit texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, ORGEH, ENDDA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      ORGEH: NUMC(8) Organizational unit
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      ORGTX: CHAR(25) Organizational unit short text
+
+  T528T:
+    description: Position texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, OTYPE, PLANS, ENDDA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      OTYPE: CHAR(2) Object type
+      PLANS: NUMC(8) Position
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+      PLSTX: CHAR(25) Position short text
+
+  T529T:
+    description: Personnel action type texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, MASSN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      MASSN: CHAR(2) Action type
+      MNTXT: CHAR(30) Action type name
+
+  T530T:
+    description: Reason for action texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, MASSN, MASSG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      MASSN: CHAR(2) Action type
+      MASSG: CHAR(2) Reason for action
+      MGTXT: CHAR(30) Reason for action name
+
+  T554S:
+    description: Absence and attendance types
+    module: HR
+    release: both
+    key: [MANDT, MOABW, SUBTY, ENDDA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MOABW: NUMC(2) Personnel subarea grouping for absence and attendance types
+      SUBTY: CHAR(4) Attendance or absence type
+      ENDDA: DATS(8) End date
+      BEGDA: DATS(8) Start date
+
+  T554T:
+    description: Absence and attendance type texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, MOABW, AWART]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      MOABW: NUMC(2) Personnel subarea grouping for absence and attendance types
+      AWART: CHAR(4) Attendance or absence type
+      ATEXT: CHAR(25) Attendance or absence type text
+
+  T591S:
+    description: Subtype texts
+    module: HR
+    release: both
+    key: [MANDT, SPRSL, INFTY, SUBTY]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRSL: LANG(1) Language key
+      INFTY: CHAR(4) Infotype
+      SUBTY: CHAR(4) Subtype
+      STEXT: CHAR(40) Subtype text

@@ -1,0 +1,1414 @@
+# Built-in SAP table knowledge - MM (material master extensions, stocks, purchasing, invoice verification, services, WM, QM, BOM, config).
+version: 1
+
+tables:
+
+  # ---------------------------------------------------------------- Material master extensions
+  MVKE:
+    description: Sales data for material
+    module: MM
+    release: both
+    key: [MANDT, MATNR, VKORG, VTWEG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      LVORM: CHAR(1) Deletion flag (sales level)
+      VMSTA: CHAR(2) Distribution-chain-specific material status
+      VMSTD: DATS(8) Valid from (distribution-chain status)
+      VERSG: CHAR(1) Material statistics group
+      BONUS: CHAR(2) Volume rebate group
+      PROVG: CHAR(2) Commission group
+      SKTOF: CHAR(1) Cash discount indicator
+      AUMNG: QUAN(13,3) Minimum order quantity
+      LFMNG: QUAN(13,3) Minimum delivery quantity
+      EFMNG: QUAN(13,3) Minimum make-to-order quantity
+      SCMNG: QUAN(13,3) Delivery unit
+      VRKME: UNIT(3) Sales unit
+      MTPOS: CHAR(4) Item category group
+      DWERK: CHAR(4) Delivering plant
+      PRODH: CHAR(18) Product hierarchy
+      KONDM: CHAR(2) Material pricing group
+      KTGRM: CHAR(2) Account assignment group
+      MVGR1: CHAR(3) Material group 1
+      MVGR2: CHAR(3) Material group 2
+      MVGR3: CHAR(3) Material group 3
+      MVGR4: CHAR(3) Material group 4
+      MVGR5: CHAR(3) Material group 5
+      PMATN: CHAR(40) Pricing reference material
+
+  MARM:
+    description: Units of measure for material
+    module: MM
+    release: both
+    key: [MANDT, MATNR, MEINH]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      MEINH: UNIT(3) Alternative unit of measure
+      UMREZ: DEC(5,0) Numerator for conversion to base unit
+      UMREN: DEC(5,0) Denominator for conversion to base unit
+      EAN11: CHAR(18) EAN/UPC
+      NUMTP: CHAR(2) EAN category
+      LAENG: QUAN(13,3) ref=MEABM Length
+      BREIT: QUAN(13,3) ref=MEABM Width
+      HOEHE: QUAN(13,3) ref=MEABM Height
+      MEABM: UNIT(3) Unit of dimension
+      VOLUM: QUAN(13,3) ref=VOLEH Volume
+      VOLEH: UNIT(3) Volume unit
+      BRGEW: QUAN(13,3) ref=GEWEI Gross weight
+      GEWEI: UNIT(3) Weight unit
+
+  MEAN:
+    description: International article numbers (EANs) for material
+    module: MM
+    release: both
+    key: [MANDT, MATNR, MEINH, LFNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      MEINH: UNIT(3) Unit of measure
+      LFNUM: NUMC(5) Consecutive number
+      EAN11: CHAR(18) EAN/UPC
+      EANTP: CHAR(2) EAN category
+      HPEAN: CHAR(1) Main EAN
+
+  MLGN:
+    description: Material data for each warehouse number
+    module: MM
+    release: both
+    key: [MANDT, MATNR, LGNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      LGNUM: CHAR(3) Warehouse number
+      LVORM: CHAR(1) Deletion flag
+      LGBKZ: CHAR(3) Storage section indicator
+      LTKZE: CHAR(3) Storage type indicator for stock placement
+      LTKZA: CHAR(3) Storage type indicator for stock removal
+      LHMG1: QUAN(13,3) Loading equipment quantity
+      LHME1: UNIT(3) Unit of measure for loading equipment quantity
+      LETY1: CHAR(3) Storage unit type
+      LVSME: UNIT(3) Warehouse management unit of measure
+      BSSKZ: CHAR(1) Special movement indicator
+      PLKPT: CHAR(3) Picking storage type
+
+  MLGT:
+    description: Material data for each storage type
+    module: MM
+    release: both
+    key: [MANDT, MATNR, LGNUM, LGTYP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      LGNUM: CHAR(3) Warehouse number
+      LGTYP: CHAR(3) Storage type
+      LVORM: CHAR(1) Deletion flag
+      LGPLA: CHAR(10) Storage bin
+      LPMAX: QUAN(13,3) Maximum bin quantity
+      LPMIN: QUAN(13,3) Minimum bin quantity
+      MAMNG: QUAN(13,3) Control quantity
+      NSMNG: QUAN(13,3) Replenishment quantity
+      RDMNG: QUAN(13,3) Rounding quantity
+      KOBER: CHAR(3) Picking area
+
+  MLAN:
+    description: Tax classification for material
+    module: MM
+    release: both
+    key: [MANDT, MATNR, ALAND]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      ALAND: CHAR(3) Departure country
+      TAXM1: CHAR(1) Tax classification 1
+      TAXM2: CHAR(1) Tax classification 2
+      TAXM3: CHAR(1) Tax classification 3
+      TAXM4: CHAR(1) Tax classification 4
+      TAXIM: CHAR(1) Tax indicator for material (purchasing)
+
+  # ---------------------------------------------------------------- Batches
+  MCH1:
+    description: Batches (cross-plant)
+    module: MM
+    release: both
+    key: [MANDT, MATNR, CHARG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      CHARG: CHAR(10) Batch
+      LVORM: CHAR(1) Deletion flag
+      ERSDA: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AENAM: CHAR(12) Changed by
+      LAEDA: DATS(8) Last change
+      VERAB: DATS(8) Availability date
+      VFDAT: DATS(8) Shelf life expiration date
+      HSDAT: DATS(8) Date of manufacture
+      QNDAT: DATS(8) Next inspection date
+      LWEDT: DATS(8) Date of last goods receipt
+      ZUSCH: CHAR(1) Batch status key
+      ZUSTD: CHAR(1) Batch in restricted-use stock
+      LIFNR: CHAR(10) Vendor
+      LICHA: CHAR(15) Vendor batch
+      HERKL: CHAR(3) Country of origin
+      CUOBJ_BM: NUMC(18) Internal object number (batch classification)
+
+  MCHA:
+    description: Batches (plant level)
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, CHARG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      CHARG: CHAR(10) Batch
+      LVORM: CHAR(1) Deletion flag
+      ERSDA: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AENAM: CHAR(12) Changed by
+      LAEDA: DATS(8) Last change
+      BWTAR: CHAR(10) Valuation type
+      VERAB: DATS(8) Availability date
+      VFDAT: DATS(8) Shelf life expiration date
+      HSDAT: DATS(8) Date of manufacture
+      QNDAT: DATS(8) Next inspection date
+      LWEDT: DATS(8) Date of last goods receipt
+      ZUSTD: CHAR(1) Batch in restricted-use stock
+      LIFNR: CHAR(10) Vendor
+      LICHA: CHAR(15) Vendor batch
+      HERKL: CHAR(3) Country of origin
+      CUOBJ_BM: NUMC(18) Internal object number (batch classification)
+
+  # ---------------------------------------------------------------- Stocks (S/4HANA reads quantities via compatibility CDS views)
+  MCHB:
+    description: Batch stocks
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT, CHARG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      LVORM: CHAR(1) Deletion flag
+      ERSDA: DATS(8) Created on
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      CLABS: QUAN(13,3) Valuated unrestricted-use stock
+      CUMLM: QUAN(13,3) Stock in transfer
+      CINSM: QUAN(13,3) Stock in quality inspection
+      CEINM: QUAN(13,3) Restricted-use stock
+      CSPEM: QUAN(13,3) Blocked stock
+      CRETM: QUAN(13,3) Blocked stock returns
+      CVMLA: QUAN(13,3) Valuated unrestricted-use stock in previous period
+
+  MSKA:
+    description: Sales order stock
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT, CHARG, SOBKZ, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      SOBKZ: CHAR(1) Special stock indicator
+      VBELN: CHAR(10) Sales order
+      POSNR: NUMC(6) Sales order item
+      ERSDA: DATS(8) Created on
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      KALAB: QUAN(13,3) Valuated unrestricted-use stock
+      KAINS: QUAN(13,3) Stock in quality inspection
+      KASPE: QUAN(13,3) Blocked stock
+      KAEIN: QUAN(13,3) Restricted-use stock
+
+  MSKU:
+    description: Special stocks with customer
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, CHARG, SOBKZ, KUNNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      CHARG: CHAR(10) Batch
+      SOBKZ: CHAR(1) Special stock indicator
+      KUNNR: CHAR(10) Customer
+      ERSDA: DATS(8) Created on
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      KULAB: QUAN(13,3) Valuated unrestricted-use stock
+      KUINS: QUAN(13,3) Stock in quality inspection
+      KUEIN: QUAN(13,3) Restricted-use stock
+
+  MSLB:
+    description: Special stocks with vendor
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, CHARG, SOBKZ, LIFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      CHARG: CHAR(10) Batch
+      SOBKZ: CHAR(1) Special stock indicator
+      LIFNR: CHAR(10) Vendor
+      ERSDA: DATS(8) Created on
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      LBLAB: QUAN(13,3) Valuated unrestricted-use stock
+      LBINS: QUAN(13,3) Stock in quality inspection
+      LBEIN: QUAN(13,3) Restricted-use stock
+
+  MKOL:
+    description: Special stocks from vendor (consignment)
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT, CHARG, SOBKZ, LIFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      SOBKZ: CHAR(1) Special stock indicator
+      LIFNR: CHAR(10) Vendor
+      LVORM: CHAR(1) Deletion flag
+      ERSDA: DATS(8) Created on
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      SLABS: QUAN(13,3) Unrestricted-use consignment stock
+      SINSM: QUAN(13,3) Consignment stock in quality inspection
+      SEINM: QUAN(13,3) Restricted-use consignment stock
+      SSPEM: QUAN(13,3) Blocked consignment stock
+
+  MSPR:
+    description: Project stock
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT, CHARG, SOBKZ, PSPNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      SOBKZ: CHAR(1) Special stock indicator
+      PSPNR: NUMC(8) WBS element
+      ERSDA: DATS(8) Created on
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      PRLAB: QUAN(13,3) Valuated unrestricted-use stock
+      PRINS: QUAN(13,3) Stock in quality inspection
+      PRSPE: QUAN(13,3) Blocked stock
+      PREIN: QUAN(13,3) Restricted-use stock
+
+  MARDH:
+    description: Storage location data for material - history
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT, LFGJA, LFMON]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      LABST: QUAN(13,3) Valuated unrestricted-use stock
+      UMLME: QUAN(13,3) Stock in transfer
+      INSME: QUAN(13,3) Stock in quality inspection
+      EINME: QUAN(13,3) Restricted-use stock
+      SPEME: QUAN(13,3) Blocked stock
+      RETME: QUAN(13,3) Blocked stock returns
+
+  MCHBH:
+    description: Batch stocks - history
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT, CHARG, LFGJA, LFMON]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      CLABS: QUAN(13,3) Valuated unrestricted-use stock
+      CUMLM: QUAN(13,3) Stock in transfer
+      CINSM: QUAN(13,3) Stock in quality inspection
+      CEINM: QUAN(13,3) Restricted-use stock
+      CSPEM: QUAN(13,3) Blocked stock
+      CRETM: QUAN(13,3) Blocked stock returns
+
+  MARCH:
+    description: Plant data for material - history
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LFGJA, LFMON]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      UMLMC: QUAN(13,3) Stock in transfer (plant to plant)
+      TRAME: QUAN(13,3) Stock in transit
+
+  MBEWH:
+    description: Material valuation - history
+    module: MM
+    release: both
+    key: [MANDT, MATNR, BWKEY, BWTAR, LFGJA, LFMON]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      BWKEY: CHAR(4) Valuation area
+      BWTAR: CHAR(10) Valuation type
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      LBKUM: QUAN(13,3) Total valuated stock
+      SALK3: CURR(13,2) Value of total valuated stock
+      VPRSV: CHAR(1) Price control indicator
+      VERPR: CURR(11,2) Moving average price
+      STPRS: CURR(11,2) Standard price
+      PEINH: DEC(5,0) Price unit
+      BKLAS: CHAR(4) Valuation class
+      SALKV: CURR(13,2) Value based on moving average price
+
+  MARV:
+    description: Material control record (current MM period per company code)
+    module: MM
+    release: both
+    key: [MANDT, BUKRS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      LFGJA: NUMC(4) Fiscal year of current period
+      LFMON: NUMC(2) Current period
+      VMGJA: NUMC(4) Fiscal year of previous period
+      VMMON: NUMC(2) Previous period
+      VJGJA: NUMC(4) Fiscal year of last period of previous year
+      VJMON: NUMC(2) Last period of previous year
+      XRUEM: CHAR(1) Allow posting to previous period
+      XRUEV: CHAR(1) Disallow backposting
+
+  # ---------------------------------------------------------------- Purchasing
+  EINA:
+    description: Purchasing info record - general data
+    module: MM
+    release: both
+    key: [MANDT, INFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      INFNR: CHAR(10) Purchasing info record
+      MATNR: CHAR(40) Material number
+      MATKL: CHAR(9) Material group
+      LIFNR: CHAR(10) Vendor
+      LOEKZ: CHAR(1) Deletion flag
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      TXZ01: CHAR(40) Short text
+      MEINS: UNIT(3) Order unit
+      UMREZ: DEC(5,0) Numerator for conversion of order unit
+      UMREN: DEC(5,0) Denominator for conversion of order unit
+      LMEIN: UNIT(3) Base unit of measure
+      IDNLF: CHAR(35) Vendor material number
+      VERKF: CHAR(30) Salesperson
+      TELF1: CHAR(16) Telephone
+      RELIF: CHAR(1) Regular vendor
+
+  EINE:
+    description: Purchasing info record - purchasing organization data
+    module: MM
+    release: both
+    key: [MANDT, INFNR, EKORG, ESOKZ, WERKS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      INFNR: CHAR(10) Purchasing info record
+      EKORG: CHAR(4) Purchasing organization
+      ESOKZ: CHAR(1) Purchasing info record category
+      WERKS: CHAR(4) Plant
+      LOEKZ: CHAR(1) Deletion flag
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      EKGRP: CHAR(3) Purchasing group
+      WAERS: CUKY(5) Currency
+      NETPR: CURR(11,2) ref=WAERS Net price
+      EFFPR: CURR(11,2) ref=WAERS Effective price
+      PEINH: DEC(5,0) Price unit
+      BPRME: UNIT(3) Order price unit
+      PRDAT: DATS(8) Price valid until
+      MINBM: QUAN(13,3) Minimum order quantity
+      NORBM: QUAN(13,3) Standard order quantity
+      APLFZ: DEC(3,0) Planned delivery time (days)
+      UEBTO: DEC(3,1) Overdelivery tolerance
+      UNTTO: DEC(3,1) Underdelivery tolerance
+      MWSKZ: CHAR(2) Tax code
+      INCO1: CHAR(3) Incoterms
+      INCO2: CHAR(28) Incoterms (part 2)
+      BSTAE: CHAR(4) Confirmation control key
+      MEPRF: CHAR(1) Pricing date control
+      EBELN: CHAR(10) Last purchasing document
+      EBELP: NUMC(5) Last purchasing document item
+      DATLB: DATS(8) Date of last purchase order
+
+  EORD:
+    description: Purchasing source list
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, ZEORD]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      ZEORD: NUMC(5) Number of source list record
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      VDATU: DATS(8) Valid from
+      BDATU: DATS(8) Valid to
+      LIFNR: CHAR(10) Vendor
+      FLIFN: CHAR(1) Fixed vendor
+      EBELN: CHAR(10) Agreement
+      EBELP: NUMC(5) Agreement item
+      EKORG: CHAR(4) Purchasing organization
+      RESWK: CHAR(4) Supplying plant
+      NOTKZ: CHAR(1) Blocked source of supply
+      AUTET: CHAR(1) Source list usage in MRP
+
+  EKKN:
+    description: Account assignment in purchasing document
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EBELP, ZEKKN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      ZEKKN: NUMC(2) Sequential number of account assignment
+      LOEKZ: CHAR(1) Deletion indicator
+      AEDAT: DATS(8) Created on
+      MENGE: QUAN(13,3) Quantity
+      VPROZ: DEC(3,1) Distribution percentage
+      NETWR: CURR(13,2) Net order value
+      SAKTO: CHAR(10) G/L account
+      GSBER: CHAR(4) Business area
+      KOSTL: CHAR(10) Cost center
+      VBELN: CHAR(10) Sales order
+      VBELP: NUMC(6) Sales order item
+      ANLN1: CHAR(12) Asset
+      ANLN2: CHAR(4) Asset subnumber
+      AUFNR: CHAR(12) Order
+      PS_PSP_PNR: NUMC(8) WBS element
+      NPLNR: CHAR(12) Network
+      AUFPL: NUMC(10) Routing number of operations in the order
+      APLZL: NUMC(8) Internal counter
+      KOKRS: CHAR(4) Controlling area
+      PRCTR: CHAR(10) Profit center
+      KSTRG: CHAR(12) Cost object
+      WEMPF: CHAR(12) Goods recipient
+      ABLAD: CHAR(25) Unloading point
+
+  EKES:
+    description: Vendor confirmations
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EBELP, ETENS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      ETENS: NUMC(4) Sequential number of vendor confirmation
+      EBTYP: CHAR(2) Confirmation category
+      EINDT: DATS(8) Delivery date
+      LPEIN: CHAR(1) Date category
+      UZEIT: TIMS(6) Delivery time
+      ERDAT: DATS(8) Created on
+      EZEIT: TIMS(6) Time created
+      MENGE: QUAN(13,3) Quantity
+      DABMG: QUAN(13,3) Quantity reduced (MRP)
+      ESTKZ: CHAR(1) Creation indicator
+      LOEKZ: CHAR(1) Deletion indicator
+      KZDIS: CHAR(1) Confirmation is MRP-relevant
+      VBELN: CHAR(10) Delivery
+      VBELP: NUMC(6) Delivery item
+      CHARG: CHAR(10) Batch
+
+  EKPA:
+    description: Partner roles in purchasing
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EKORG, LTSNR, WERKS, PARVW, PARZA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EKORG: CHAR(4) Purchasing organization
+      LTSNR: CHAR(6) Vendor subrange
+      WERKS: CHAR(4) Plant
+      PARVW: CHAR(2) Partner function
+      PARZA: NUMC(3) Partner counter
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      LIFN2: CHAR(10) Reference to other vendor
+      DEFPA: CHAR(1) Default partner
+
+  EKPV:
+    description: Shipping data for stock transfer of purchasing document item
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EBELP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      VSTEL: CHAR(4) Shipping point
+      LADGR: CHAR(4) Loading group
+      ROUTE: CHAR(6) Route
+      VSBED: CHAR(2) Shipping conditions
+      TRAGR: CHAR(4) Transportation group
+      LPRIO: NUMC(2) Delivery priority
+      KUNNR: CHAR(10) Customer (ship-to)
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+
+  EBKN:
+    description: Purchase requisition account assignment
+    module: MM
+    release: both
+    key: [MANDT, BANFN, BNFPO, ZEBKN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BANFN: CHAR(10) Purchase requisition
+      BNFPO: NUMC(5) Requisition item
+      ZEBKN: NUMC(2) Sequential number of account assignment
+      LOEKZ: CHAR(1) Deletion indicator
+      ERDAT: DATS(8) Changed on
+      ERNAM: CHAR(12) Created by
+      MENGE: QUAN(13,3) Quantity
+      VPROZ: DEC(3,1) Distribution percentage
+      SAKTO: CHAR(10) G/L account
+      GSBER: CHAR(4) Business area
+      KOSTL: CHAR(10) Cost center
+      VBELN: CHAR(10) Sales order
+      VBELP: NUMC(6) Sales order item
+      ANLN1: CHAR(12) Asset
+      ANLN2: CHAR(4) Asset subnumber
+      AUFNR: CHAR(12) Order
+      PS_PSP_PNR: NUMC(8) WBS element
+      NPLNR: CHAR(12) Network
+      KOKRS: CHAR(4) Controlling area
+      PRCTR: CHAR(10) Profit center
+      WEMPF: CHAR(12) Goods recipient
+      ABLAD: CHAR(25) Unloading point
+
+  # ---------------------------------------------------------------- Logistics invoice verification
+  RBKP:
+    description: Document header - incoming invoice
+    module: MM
+    release: both
+    key: [MANDT, BELNR, GJAHR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BELNR: CHAR(10) Invoice document number
+      GJAHR: NUMC(4) Fiscal year
+      BLART: CHAR(2) Document type
+      BLDAT: DATS(8) Invoice date
+      BUDAT: DATS(8) Posting date
+      USNAM: CHAR(12) User name
+      CPUDT: DATS(8) Entry date
+      CPUTM: TIMS(6) Entry time
+      VGART: CHAR(2) Transaction type
+      XBLNR: CHAR(16) Reference document
+      BUKRS: CHAR(4) Company code
+      LIFNR: CHAR(10) Invoicing party
+      WAERS: CUKY(5) Currency
+      KURSF: DEC(9,5) Exchange rate
+      RMWWR: CURR(13,2) ref=WAERS Gross invoice amount
+      WMWST1: CURR(13,2) ref=WAERS Tax amount
+      MWSKZ1: CHAR(2) Tax code
+      ZTERM: CHAR(4) Payment terms
+      ZFBDT: DATS(8) Baseline date for due date calculation
+      ZLSPR: CHAR(1) Payment block
+      XRECH: CHAR(1) Invoice (vs. credit memo) indicator
+      RBSTAT: CHAR(1) Invoice document status
+      IVTYP: CHAR(1) Origin of invoice document
+      STBLG: CHAR(10) Reversal document
+      STJAH: NUMC(4) Fiscal year of reversal document
+      BKTXT: CHAR(25) Document header text
+      SGTXT: CHAR(50) Item text
+
+  RSEG:
+    description: Document item - incoming invoice
+    module: MM
+    release: both
+    key: [MANDT, BELNR, GJAHR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BELNR: CHAR(10) Invoice document number
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(6) Invoice document item
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Purchasing document item
+      ZEKKN: NUMC(2) Sequential number of account assignment
+      MATNR: CHAR(40) Material number
+      BWKEY: CHAR(4) Valuation area
+      BWTAR: CHAR(10) Valuation type
+      BUKRS: CHAR(4) Company code
+      WERKS: CHAR(4) Plant
+      WRBTR: CURR(13,2) Amount in document currency
+      SHKZG: CHAR(1) Debit/credit indicator
+      MWSKZ: CHAR(2) Tax code
+      MENGE: QUAN(13,3) ref=BSTME Quantity
+      BSTME: UNIT(3) Order unit
+      BKLAS: CHAR(4) Valuation class
+      KSCHL: CHAR(4) Condition type
+      TBTKZ: CHAR(1) Subsequent debit/credit indicator
+      LFBNR: CHAR(10) Reference document
+      LFGJA: NUMC(4) Fiscal year of reference document
+      LFPOS: NUMC(4) Item of reference document
+      SGTXT: CHAR(50) Item text
+
+  RBCO:
+    description: Document item - incoming invoice account assignment
+    module: MM
+    release: both
+    key: [MANDT, BELNR, GJAHR, BUZEI, COBL_NR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BELNR: CHAR(10) Invoice document number
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(6) Invoice document item
+      COBL_NR: NUMC(4) Four-character sequential number for coding block
+      BUKRS: CHAR(4) Company code
+      WRBTR: CURR(13,2) Amount in document currency
+      SHKZG: CHAR(1) Debit/credit indicator
+      MWSKZ: CHAR(2) Tax code
+      SAKTO: CHAR(10) G/L account
+      GSBER: CHAR(4) Business area
+      KOSTL: CHAR(10) Cost center
+      AUFNR: CHAR(12) Order
+      PS_PSP_PNR: NUMC(8) WBS element
+      KOKRS: CHAR(4) Controlling area
+      PRCTR: CHAR(10) Profit center
+
+  # ---------------------------------------------------------------- External services
+  ESSR:
+    description: Service entry sheet header data
+    module: MM
+    release: both
+    key: [MANDT, LBLNI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LBLNI: CHAR(10) Entry sheet number
+      LBLNE: CHAR(16) External entry sheet number
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+      TXZ01: CHAR(40) Short text
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      PACKNO: NUMC(10) Package number
+      LZVON: DATS(8) Period start
+      LZBIS: DATS(8) Period end
+      WAERS: CUKY(5) Currency
+      KZABN: CHAR(1) Acceptance indicator
+      LOEKZ: CHAR(1) Deletion indicator
+      BLDAT: DATS(8) Document date
+      BUDAT: DATS(8) Posting date
+      SBNAMAG: CHAR(12) Person responsible (internal)
+      SBNAMAN: CHAR(12) Person responsible (external)
+      DLORT: CHAR(25) Location of service performance
+
+  ESLH:
+    description: Service package header data
+    module: MM
+    release: both
+    key: [MANDT, PACKNO]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PACKNO: NUMC(10) Package number
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+
+  ESLL:
+    description: Lines of service package
+    module: MM
+    release: both
+    key: [MANDT, PACKNO, INTROW]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PACKNO: NUMC(10) Package number
+      INTROW: NUMC(10) Internal line number
+      EXTROW: NUMC(10) Line number
+      DEL: CHAR(1) Deletion indicator
+      SRVPOS: CHAR(18) Service (activity number)
+      KTEXT1: CHAR(40) Short text
+      MENGE: QUAN(13,3) ref=MEINS Quantity
+      MEINS: UNIT(3) Base unit of measure
+      PEINH: DEC(5,0) Price unit
+      MATKL: CHAR(9) Material group
+      SUB_PACKNO: NUMC(10) Subpackage number
+
+  # ---------------------------------------------------------------- MM configuration
+  T023:
+    description: Material groups
+    module: MM
+    release: both
+    key: [MANDT, MATKL]
+    text_table: T023T
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATKL: CHAR(9) Material group
+      SPART: CHAR(2) Division
+      BKLAS: CHAR(4) Valuation class
+      BEGRU: CHAR(4) Authorization group
+
+  T023T:
+    description: Material group descriptions
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, MATKL]
+    text_of: T023
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      MATKL: CHAR(9) Material group
+      WGBEZ: CHAR(20) Material group description
+      WGBEZ60: CHAR(60) Material group long description
+
+  T024:
+    description: Purchasing groups
+    module: MM
+    release: both
+    key: [MANDT, EKGRP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EKGRP: CHAR(3) Purchasing group
+      EKNAM: CHAR(18) Purchasing group description
+      EKTEL: CHAR(12) Purchasing group telephone
+      LDEST: CHAR(4) Output device
+      TELFX: CHAR(31) Fax number
+      TEL_NUMBER: CHAR(30) Telephone number
+      TEL_EXTENS: CHAR(10) Telephone extension
+      SMTP_ADDR: CHAR(241) E-mail address
+
+  T024E:
+    description: Purchasing organizations
+    module: MM
+    release: both
+    key: [MANDT, EKORG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EKORG: CHAR(4) Purchasing organization
+      EKOTX: CHAR(20) Purchasing organization description
+      BUKRS: CHAR(4) Company code
+
+  T024W:
+    description: Valid purchasing organizations for plant
+    module: MM
+    release: both
+    key: [MANDT, WERKS, EKORG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WERKS: CHAR(4) Plant
+      EKORG: CHAR(4) Purchasing organization
+
+  T024D:
+    description: MRP controllers
+    module: MM
+    release: both
+    key: [MANDT, WERKS, DISPO]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WERKS: CHAR(4) Plant
+      DISPO: CHAR(3) MRP controller
+      DSNAM: CHAR(18) MRP controller name
+
+  T134:
+    description: Material types
+    module: MM
+    release: both
+    key: [MANDT, MTART]
+    text_table: T134T
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MTART: CHAR(4) Material type
+      MTREF: CHAR(4) Reference material type
+      KKREF: CHAR(4) Account category reference
+      VPRSV: CHAR(1) Price control indicator
+      KZVPR: CHAR(1) Price control mandatory
+      PSTAT: CHAR(15) Maintenance status
+      NUMKI: CHAR(2) Number range (internal)
+      NUMKE: CHAR(2) Number range (external)
+
+  T134T:
+    description: Material type descriptions
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, MTART]
+    text_of: T134
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      MTART: CHAR(4) Material type
+      MTBEZ: CHAR(25) Material type description
+
+  T156:
+    description: Movement types
+    module: MM
+    release: both
+    key: [MANDT, BWART]
+    text_table: T156T
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BWART: CHAR(3) Movement type
+      SHKZG: CHAR(1) Debit/credit indicator
+      XSTBW: CHAR(1) Reversal movement type indicator
+
+  T156T:
+    description: Movement type texts
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, BWART, SOBKZ, KZBEW, KZZUG, KZVBR]
+    text_of: T156
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      BWART: CHAR(3) Movement type
+      SOBKZ: CHAR(1) Special stock indicator
+      KZBEW: CHAR(1) Movement indicator
+      KZZUG: CHAR(1) Receipt indicator
+      KZVBR: CHAR(1) Consumption posting
+      BTEXT: CHAR(20) Movement type text
+
+  T157E:
+    description: Reason for movement texts
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, BWART, GRUND]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      BWART: CHAR(3) Movement type
+      GRUND: NUMC(4) Reason for movement
+      GRTXT: CHAR(40) Reason for movement text
+
+  T001K:
+    description: Valuation areas
+    module: MM
+    release: both
+    key: [MANDT, BWKEY]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BWKEY: CHAR(4) Valuation area
+      BUKRS: CHAR(4) Company code
+      BWMOD: CHAR(4) Valuation grouping code
+      XBKNG: CHAR(1) Negative stocks allowed
+      MLBWA: CHAR(1) Material ledger activated
+
+  T161:
+    description: Purchasing document types
+    module: MM
+    release: both
+    key: [MANDT, BSTYP, BSART]
+    text_table: T161T
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BSTYP: CHAR(1) Purchasing document category
+      BSART: CHAR(4) Purchasing document type
+      NUMKI: CHAR(2) Number range (internal)
+      NUMKE: CHAR(2) Number range (external)
+      PINCR: NUMC(5) Item number interval
+
+  T161T:
+    description: Purchasing document type texts
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, BSTYP, BSART]
+    text_of: T161
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      BSTYP: CHAR(1) Purchasing document category
+      BSART: CHAR(4) Purchasing document type
+      BATXT: CHAR(20) Document type description
+
+  # ---------------------------------------------------------------- Warehouse management (classic WM, LE-WM)
+  T300:
+    description: Warehouse numbers
+    module: MM
+    release: both
+    key: [MANDT, LGNUM]
+    text_table: T300T
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+
+  T300T:
+    description: Warehouse number descriptions
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, LGNUM]
+    text_of: T300
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      LGNUM: CHAR(3) Warehouse number
+      LNUMT: CHAR(25) Warehouse number description
+
+  T301:
+    description: Storage types
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, LGTYP]
+    text_table: T301T
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      LGTYP: CHAR(3) Storage type
+
+  T301T:
+    description: Storage type descriptions
+    module: MM
+    release: both
+    key: [MANDT, SPRAS, LGNUM, LGTYP]
+    text_of: T301
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      LGNUM: CHAR(3) Warehouse number
+      LGTYP: CHAR(3) Storage type
+      LTYPT: CHAR(25) Storage type description
+
+  LAGP:
+    description: Storage bins
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, LGTYP, LGPLA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      LGTYP: CHAR(3) Storage type
+      LGPLA: CHAR(10) Storage bin
+      LGBER: CHAR(3) Storage section
+      LPTYP: CHAR(2) Storage bin type
+      KZLER: CHAR(1) Bin is empty
+      KZVOL: CHAR(1) Bin is full
+      SKZUE: CHAR(1) Blocked for putaway
+      SKZUA: CHAR(1) Blocked for stock removal
+      SPGRU: CHAR(1) Blocking reason
+      IDATU: DATS(8) Date of last inventory
+
+  LQUA:
+    description: Quants
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, LQNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      LQNUM: NUMC(10) Quant
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      BESTQ: CHAR(1) Stock category
+      SOBKZ: CHAR(1) Special stock indicator
+      SONUM: CHAR(16) Special stock number
+      LGTYP: CHAR(3) Storage type
+      LGPLA: CHAR(10) Storage bin
+      PLPOS: CHAR(2) Position in storage bin
+      MEINS: UNIT(3) Base unit of measure
+      GESME: QUAN(13,3) ref=MEINS Total quantity
+      VERME: QUAN(13,3) ref=MEINS Available stock
+      EINME: QUAN(13,3) ref=MEINS Stock for putaway
+      AUSME: QUAN(13,3) ref=MEINS Pick quantity
+      LETYP: CHAR(3) Storage unit type
+      LENUM: CHAR(20) Storage unit number
+      WDATU: DATS(8) Date of goods receipt
+      WENUM: CHAR(10) Goods receipt number
+      VFDAT: DATS(8) Shelf life expiration date
+
+  LTAK:
+    description: Transfer order header
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, TANUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      TANUM: NUMC(10) Transfer order number
+      BWLVS: NUMC(3) Movement type (warehouse management)
+      TBNUM: NUMC(10) Transfer requirement number
+      BETYP: CHAR(1) Requirement type
+      BENUM: CHAR(10) Requirement number
+      BDATU: DATS(8) Created on
+      BZEIT: TIMS(6) Creation time
+      BNAME: CHAR(12) User
+      KQUIT: CHAR(1) Transfer order confirmed
+      TRART: CHAR(1) Shipment type
+      VBELN: CHAR(10) Delivery
+      MBLNR: CHAR(10) Material document
+      MJAHR: NUMC(4) Material document year
+      REFNR: CHAR(10) Group
+
+  LTAP:
+    description: Transfer order item
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, TANUM, TAPOS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      TANUM: NUMC(10) Transfer order number
+      TAPOS: NUMC(4) Transfer order item
+      MATNR: CHAR(40) Material number
+      MAKTX: CHAR(40) Material description
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      BESTQ: CHAR(1) Stock category
+      SOBKZ: CHAR(1) Special stock indicator
+      MEINS: UNIT(3) Base unit of measure
+      ALTME: UNIT(3) Alternative unit of measure
+      VLTYP: CHAR(3) Source storage type
+      VLPLA: CHAR(10) Source storage bin
+      VLQNR: NUMC(10) Source quant
+      NLTYP: CHAR(3) Destination storage type
+      NLPLA: CHAR(10) Destination storage bin
+      NLQNR: NUMC(10) Destination quant
+      VSOLM: QUAN(13,3) ref=MEINS Source target quantity
+      VISTM: QUAN(13,3) ref=MEINS Source actual quantity
+      NSOLM: QUAN(13,3) ref=MEINS Destination target quantity
+      NISTM: QUAN(13,3) ref=MEINS Destination actual quantity
+      VSOLA: QUAN(13,3) ref=ALTME Source target quantity in alternative unit
+      PQUIT: CHAR(1) Item confirmed
+      QDATU: DATS(8) Confirmation date
+      QZEIT: TIMS(6) Confirmation time
+      QNAME: CHAR(12) Confirmed by
+      VBELN: CHAR(10) Delivery
+      POSNR: NUMC(6) Delivery item
+
+  LTBK:
+    description: Transfer requirement header
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, TBNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      TBNUM: NUMC(10) Transfer requirement number
+      BWLVS: NUMC(3) Movement type (warehouse management)
+      BETYP: CHAR(1) Requirement type
+      BENUM: CHAR(10) Requirement number
+      STATU: CHAR(1) Processing status
+      TBPRI: CHAR(1) Transfer priority
+      BDATU: DATS(8) Created on
+      MBLNR: CHAR(10) Material document
+      MJAHR: NUMC(4) Material document year
+
+  LTBP:
+    description: Transfer requirement item
+    module: MM
+    release: both
+    key: [MANDT, LGNUM, TBNUM, TBPOS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LGNUM: CHAR(3) Warehouse number
+      TBNUM: NUMC(10) Transfer requirement number
+      TBPOS: NUMC(4) Transfer requirement item
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      BESTQ: CHAR(1) Stock category
+      SOBKZ: CHAR(1) Special stock indicator
+      MEINS: UNIT(3) Base unit of measure
+      MENGE: QUAN(13,3) ref=MEINS Required quantity
+      TAMEN: QUAN(13,3) ref=MEINS Quantity in transfer orders
+      ELIKZ: CHAR(1) Final delivery indicator
+
+  # ---------------------------------------------------------------- Quality management (QM tables use MANDANT as client field)
+  QALS:
+    description: Inspection lot record
+    module: QM
+    release: both
+    key: [MANDANT, PRUEFLOS]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      PRUEFLOS: NUMC(12) Inspection lot
+      WERK: CHAR(4) Plant
+      ART: CHAR(8) Inspection type
+      HERKUNFT: CHAR(2) Inspection lot origin
+      OBJNR: CHAR(22) Object number
+      ENSTEHDAT: DATS(8) Lot created on
+      ENTSTEZEIT: TIMS(6) Lot creation time
+      ERSTELLER: CHAR(12) Created by
+      KTEXTLOS: CHAR(40) Short text
+      MATNR: CHAR(40) Material number
+      CHARG: CHAR(10) Batch
+      LAGORTCHRG: CHAR(4) Storage location
+      LIFNR: CHAR(10) Vendor
+      HERSTELLER: CHAR(10) Manufacturer
+      KUNNR: CHAR(10) Customer
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Purchasing document item
+      MBLNR: CHAR(10) Material document
+      MJAHR: NUMC(4) Material document year
+      ZEILE: NUMC(4) Material document item
+      AUFNR: CHAR(12) Order
+      KDAUF: CHAR(10) Sales order
+      KDPOS: NUMC(6) Sales order item
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Task list group
+      PLNAL: CHAR(2) Group counter
+      PASTRTERM: DATS(8) Inspection start date
+      PAENDTERM: DATS(8) Inspection end date
+      LOSMENGE: QUAN(13,3) ref=MENGENEINH Inspection lot quantity
+      LMENGE01: QUAN(13,3) ref=MENGENEINH Quantity posted to unrestricted-use stock
+      MENGENEINH: UNIT(3) Base unit of measure
+
+  QAVE:
+    description: Inspection processing - usage decision
+    module: QM
+    release: both
+    key: [MANDANT, PRUEFLOS, KZART, ZAEHLER]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      PRUEFLOS: NUMC(12) Inspection lot
+      KZART: CHAR(1) Inspection lot or partial lot
+      ZAEHLER: NUMC(6) Counter
+      VKATART: CHAR(1) Catalog (usage decision)
+      VWERKS: CHAR(4) Plant of selected set
+      VAUSWAHLMG: CHAR(8) Selected set of usage decision
+      VCODEGRP: CHAR(8) Code group of usage decision
+      VCODE: CHAR(4) Usage decision code
+      VBEWERTUNG: CHAR(1) Code valuation
+      VNAME: CHAR(12) Usage decision made by
+      VDATUM: DATS(8) Usage decision date
+
+  QAMV:
+    description: Characteristic specifications for inspection processing
+    module: QM
+    release: both
+    key: [MANDANT, PRUEFLOS, VORGLFNR, MERKNR]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      PRUEFLOS: NUMC(12) Inspection lot
+      VORGLFNR: NUMC(8) Current node number of operation
+      MERKNR: NUMC(4) Inspection characteristic number
+      VERWMERKM: CHAR(8) Master inspection characteristic
+      MKVERSION: CHAR(6) Version of master inspection characteristic
+      KURZTEXT: CHAR(40) Short text for inspection characteristic
+      MASSEINHSW: UNIT(3) Unit of measurement
+      SOLLWERT: FLTP(16,16) Target value
+      TOLERANZOB: FLTP(16,16) Upper specification limit
+      TOLERANZUN: FLTP(16,16) Lower specification limit
+
+  QAMR:
+    description: Characteristic results during inspection processing
+    module: QM
+    release: both
+    key: [MANDANT, PRUEFLOS, VORGLFNR, MERKNR]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      PRUEFLOS: NUMC(12) Inspection lot
+      VORGLFNR: NUMC(8) Current node number of operation
+      MERKNR: NUMC(4) Inspection characteristic number
+      MBEWERTG: CHAR(1) Valuation (accept/reject)
+      MITTELWERT: FLTP(16,16) Mean value
+      MAXWERT: FLTP(16,16) Maximum value
+      MINWERT: FLTP(16,16) Minimum value
+      PRUEFER: CHAR(12) Inspector
+      PRUEFDATUV: DATS(8) Inspection start date
+      PRUEFDATUB: DATS(8) Inspection end date
+      KATALGART1: CHAR(1) Catalog
+      GRUPPE1: CHAR(8) Code group
+      CODE1: CHAR(4) Code
+
+  QASE:
+    description: Results table for sample unit (single values)
+    module: QM
+    release: both
+    key: [MANDANT, PRUEFLOS, VORGLFNR, MERKNR, DETAILERG]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      PRUEFLOS: NUMC(12) Inspection lot
+      VORGLFNR: NUMC(8) Current node number of operation
+      MERKNR: NUMC(4) Inspection characteristic number
+      DETAILERG: NUMC(6) Number of individual result
+      MESSWERT: FLTP(16,16) Measured value
+      MBEWERTG: CHAR(1) Valuation (accept/reject)
+      PRUEFER: CHAR(12) Inspector
+      PRUEFDATUV: DATS(8) Inspection start date
+      KATALGART1: CHAR(1) Catalog
+      GRUPPE1: CHAR(8) Code group
+      CODE1: CHAR(4) Code
+
+  # ---------------------------------------------------------------- Bills of material
+  MAST:
+    description: Material to BOM link
+    module: PP
+    release: both
+    key: [MANDT, MATNR, WERKS, STLAN, STLNR, STLAL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      STLAN: CHAR(1) BOM usage
+      STLNR: CHAR(8) Bill of material
+      STLAL: CHAR(2) Alternative BOM
+      LOSVN: QUAN(13,3) Lot size from
+      LOSBS: QUAN(13,3) Lot size to
+      ANDAT: DATS(8) Created on
+      ANNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+      CSLTY: CHAR(1) Configured material (material variant)
+
+  STKO:
+    description: BOM header
+    module: PP
+    release: both
+    key: [MANDT, STLTY, STLNR, STLAL, STKOZ]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      STLTY: CHAR(1) BOM category
+      STLNR: CHAR(8) Bill of material
+      STLAL: CHAR(2) Alternative BOM
+      STKOZ: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from
+      AENNR: CHAR(12) Change number
+      LKENZ: CHAR(1) Deletion indicator
+      ANDAT: DATS(8) Created on
+      ANNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+      BMENG: QUAN(13,3) ref=BMEIN Base quantity
+      BMEIN: UNIT(3) Base unit of measure for BOM
+      STLST: NUMC(2) BOM status
+      STKTX: CHAR(40) Alternative BOM text
+
+  STPO:
+    description: BOM item
+    module: PP
+    release: both
+    key: [MANDT, STLTY, STLNR, STLKN, STPOZ]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      STLTY: CHAR(1) BOM category
+      STLNR: CHAR(8) Bill of material
+      STLKN: NUMC(8) BOM item node number
+      STPOZ: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from
+      AENNR: CHAR(12) Change number
+      LKENZ: CHAR(1) Deletion indicator
+      ANDAT: DATS(8) Created on
+      ANNAM: CHAR(12) Created by
+      IDNRK: CHAR(40) BOM component
+      POSTP: CHAR(1) Item category
+      POSNR: CHAR(4) BOM item number
+      SORTF: CHAR(10) Sort string
+      MEINS: UNIT(3) Component unit of measure
+      MENGE: QUAN(13,3) ref=MEINS Component quantity
+      FMENG: CHAR(1) Fixed quantity
+      AUSCH: DEC(5,2) Component scrap in percent
+      SANKA: CHAR(1) Relevant to costing
+      SANFE: CHAR(1) Relevant to production
+      ITSOB: CHAR(2) Special procurement type for BOM item
+      ALPGR: CHAR(2) Alternative item group
+      EWAHR: DEC(3,0) Usage probability
+      POTX1: CHAR(40) BOM item text (line 1)
+
+  STAS:
+    description: BOM item selection
+    module: PP
+    release: both
+    key: [MANDT, STLTY, STLNR, STLAL, STLKN, STASZ]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      STLTY: CHAR(1) BOM category
+      STLNR: CHAR(8) Bill of material
+      STLAL: CHAR(2) Alternative BOM
+      STLKN: NUMC(8) BOM item node number
+      STASZ: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from
+      AENNR: CHAR(12) Change number
+      LKENZ: CHAR(1) Deletion indicator
+      ANDAT: DATS(8) Created on
+      ANNAM: CHAR(12) Created by

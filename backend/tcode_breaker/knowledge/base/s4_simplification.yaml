@@ -1,0 +1,85 @@
+# ECC -> S/4HANA data model simplifications.
+#
+# Applied when the project manifest says source_system: s4 AND the old table is not in the
+# list of physical tables replicated to Snowflake. Each mapping rewrites reads of the old
+# table(s) to the new physical table, with column and filter mapping.
+#
+# confidence: high   -> standard, well-documented simplification
+# confidence: verify -> mapping is typical but should be checked against the client system
+version: 1
+
+mappings:
+
+  - id: MM_MATDOC
+    title: Material documents moved to MATDOC
+    old_tables: [MKPF, MSEG]
+    new_table: MATDOC
+    join_collapse: true          # MKPF x MSEG on MBLNR/MJAHR collapses into one MATDOC read
+    filter: "RECORD_TYPE = 'MDOC'"
+    columns: same_name           # MKPF and MSEG columns exist in MATDOC with the same names
+    confidence: verify
+    note: >
+      In S/4HANA MKPF and MSEG are compatibility views (NSDM_* CDS views) over MATDOC.
+      Header fields such as BUDAT, BLDAT, USNAM are denormalized onto every MATDOC row.
+      Verify the RECORD_TYPE filter used by the client's compatibility views.
+
+  - id: SD_STATUS_HEADER
+    title: Sales header status (VBUK) moved into document headers
+    old_tables: [VBUK]
+    new_table: VBAK
+    join_collapse: true          # VBAK x VBUK on VBELN collapses into VBAK
+    join_key: [VBELN]
+    columns: same_name
+    confidence: high
+    note: >
+      Status fields (GBSTK, ABSTK, LFSTK, FKSTK, ...) are on VBAK for sales documents,
+      LIKP for deliveries and VBRK for billing documents. If VBUK is read without VBAK,
+      the target header table depends on the document category (VBTYP).
+
+  - id: SD_STATUS_ITEM
+    title: Sales item status (VBUP) moved into document items
+    old_tables: [VBUP]
+    new_table: VBAP
+    join_collapse: true
+    join_key: [VBELN, POSNR]
+    columns: same_name
+    confidence: high
+    note: Item status fields (GBSTA, LFSTA, ...) are on VBAP / LIPS / VBRP.
+
+  - id: SD_PRICING
+    title: Pricing conditions moved from KONV to PRCD_ELEMENTS
+    old_tables: [KONV]
+    new_table: PRCD_ELEMENTS
+    columns: {MANDT: CLIENT}
+    confidence: high
+    note: KBETR/KWERT have larger precision in PRCD_ELEMENTS.
+
+  - id: FI_UNIVERSAL_JOURNAL
+    title: FI line items and totals are in ACDOCA
+    old_tables: [BSIS, BSAS, BSID, BSAD, BSIK, BSAK, GLT0, FAGLFLEXA, FAGLFLEXT, COEP]
+    new_table: ACDOCA
+    columns: {MANDT: RCLNT, BUKRS: RBUKRS, HKONT: RACCT, KOSTL: RCNTR, DMBTR: HSL, WRBTR: TSL, SHKZG: DRCRK}
+    confidence: verify
+    note: >
+      Index tables (BSIS/BSAS/BSID/BSAD/BSIK/BSAK) and totals tables are compatibility views
+      in S/4HANA. Open/cleared item logic (AUGBL/AUGDT) and ledger selection (RLDNR = '0L')
+      must be reviewed; amounts in ACDOCA are signed (no SHKZG-based sign flip needed).
+
+  - id: BP_CUSTOMER_VENDOR
+    title: Customer / vendor master is driven by Business Partner
+    old_tables: [KNA1, LFA1]
+    new_table: null              # KNA1/LFA1 still exist physically; informational only
+    confidence: high
+    note: >
+      KNA1/LFA1 remain physical tables in S/4HANA (synchronized via CVI), so reads stay valid.
+      Maintenance happens via Business Partner (BUT000). Flag only.
+
+field_length_changes:
+  - field: MATNR
+    ecc_length: 18
+    s4_length: 40
+    note: Material number extended to 40 characters; ALPHA conversion and LPAD logic must use the right length.
+  - field: VBTYP
+    ecc_length: 1
+    s4_length: 4
+    note: SD document category extended to 4 characters.

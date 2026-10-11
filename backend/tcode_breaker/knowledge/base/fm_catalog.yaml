@@ -1,0 +1,197 @@
+# Standard function module / method catalog.
+#
+# kind:
+#   expression  -> pure function of its inputs; `sql` is a Snowflake expression template.
+#                  Placeholders are the FM parameter names in braces, e.g. {INPUT}.
+#                  `output` names the exporting parameter that receives the value.
+#   lookup      -> reads master data; `sql` describes the equivalent join (handled by the translator).
+#   ui          -> presentation / interaction only; ignored for data output.
+#   output_sink -> displays an internal table; marks the program output (ALV).
+#   side_effect -> writes, sends, locks, commits; no data contribution, flagged.
+#   opaque      -> logic not reproducible in SQL; flagged for manual review.
+version: 1
+
+function_modules:
+
+  # ----------------------------------------------------------- conversion exits
+  CONVERSION_EXIT_ALPHA_INPUT:
+    kind: expression
+    output: OUTPUT
+    sql: "CASE WHEN TRY_TO_NUMBER({INPUT}) IS NOT NULL THEN LPAD(LTRIM({INPUT}, '0'), {len}, '0') ELSE {INPUT} END"
+    note: Pads numeric values with leading zeros to the field length ({len} = target field length).
+  CONVERSION_EXIT_ALPHA_OUTPUT:
+    kind: expression
+    output: OUTPUT
+    sql: "CASE WHEN TRY_TO_NUMBER({INPUT}) IS NOT NULL THEN LTRIM({INPUT}, '0') ELSE {INPUT} END"
+    note: Removes leading zeros from purely numeric values.
+  CONVERSION_EXIT_MATN1_INPUT:
+    kind: expression
+    output: OUTPUT
+    sql: "CASE WHEN TRY_TO_NUMBER({INPUT}) IS NOT NULL THEN LPAD(LTRIM({INPUT}, '0'), {len}, '0') ELSE {INPUT} END"
+    note: Material number input conversion (default MATN1 behaves like ALPHA).
+  CONVERSION_EXIT_MATN1_OUTPUT:
+    kind: expression
+    output: OUTPUT
+    sql: "CASE WHEN TRY_TO_NUMBER({INPUT}) IS NOT NULL THEN LTRIM({INPUT}, '0') ELSE {INPUT} END"
+  CONVERSION_EXIT_CUNIT_OUTPUT:
+    kind: lookup
+    output: OUTPUT
+    sql: "T006A.MSEH3 joined on MSEHI = {INPUT} AND SPRAS = {LANGUAGE}"
+    tables: [T006A]
+  CONVERSION_EXIT_CUNIT_INPUT:
+    kind: lookup
+    output: OUTPUT
+    sql: "T006A.MSEHI joined on MSEH3 = {INPUT} AND SPRAS = {LANGUAGE}"
+    tables: [T006A]
+
+  # ----------------------------------------------------------- dates
+  DATE_COMPUTE_DAY:
+    kind: expression
+    output: DAY
+    sql: "DAYOFWEEKISO(TRY_TO_DATE({DATE}, 'YYYYMMDD'))"
+    note: 1 = Monday ... 7 = Sunday.
+  RP_CALC_DATE_IN_INTERVAL:
+    kind: expression
+    output: CALC_DATE
+    sql: "TO_VARCHAR(CASE WHEN {SIGNUM} = '-' THEN DATEADD(day, -{DAYS}, DATEADD(month, -{MONTHS}, DATEADD(year, -{YEARS}, TRY_TO_DATE({DATE}, 'YYYYMMDD')))) ELSE DATEADD(day, {DAYS}, DATEADD(month, {MONTHS}, DATEADD(year, {YEARS}, TRY_TO_DATE({DATE}, 'YYYYMMDD')))) END, 'YYYYMMDD')"
+  LAST_DAY_OF_MONTHS:
+    kind: expression
+    output: LAST_DAY_OF_MONTH
+    sql: "TO_VARCHAR(LAST_DAY(TRY_TO_DATE({DAY_IN}, 'YYYYMMDD')), 'YYYYMMDD')"
+  HR_JP_MONTH_BEGIN_END_DATE:
+    kind: expression
+    output: EV_MONTH_END_DATE
+    sql: "TO_VARCHAR(LAST_DAY(TRY_TO_DATE({IV_DATE}, 'YYYYMMDD')), 'YYYYMMDD')"
+    note: Also exports EV_MONTH_BEGIN_DATE = DATE_TRUNC('month', ...).
+  DAYS_BETWEEN_TWO_DATES:
+    kind: expression
+    output: BETWEEN_DAYS
+    sql: "DATEDIFF(day, TRY_TO_DATE({I_DATUM_VON}, 'YYYYMMDD'), TRY_TO_DATE({I_DATUM_BIS}, 'YYYYMMDD'))"
+  FIMA_DAYS_AND_MONTHS_AND_YEARS:
+    kind: expression
+    output: E_DAYS
+    sql: "DATEDIFF(day, TRY_TO_DATE({I_DATE_FROM}, 'YYYYMMDD'), TRY_TO_DATE({I_DATE_TO}, 'YYYYMMDD'))"
+  CONVERT_DATE_TO_EXTERNAL:
+    kind: expression
+    output: DATE_EXTERNAL
+    sql: "TO_VARCHAR(TRY_TO_DATE({DATE_INTERNAL}, 'YYYYMMDD'), 'DD.MM.YYYY')"
+    note: External format depends on user settings; DD.MM.YYYY assumed.
+  CONVERT_DATE_TO_INTERNAL:
+    kind: expression
+    output: DATE_INTERNAL
+    sql: "TO_VARCHAR(TRY_TO_DATE({DATE_EXTERNAL}, 'DD.MM.YYYY'), 'YYYYMMDD')"
+
+  # ----------------------------------------------------------- currency / quantity
+  CONVERT_TO_LOCAL_CURRENCY:
+    kind: lookup
+    output: LOCAL_AMOUNT
+    sql: "Join TCURR on KURST = {TYPE_OF_RATE} (default 'M'), FCURR = {FOREIGN_CURRENCY}, TCURR = {LOCAL_CURRENCY}, latest GDATU valid for {DATE}; amount * UKURS * TFACT / FFACT"
+    tables: [TCURR]
+    note: Inverted GDATU (99999999 - YYYYMMDD) must be handled; review rounding.
+  CONVERT_TO_FOREIGN_CURRENCY:
+    kind: lookup
+    output: FOREIGN_AMOUNT
+    sql: "Join TCURR on KURST = {TYPE_OF_RATE}, FCURR = {LOCAL_CURRENCY}, TCURR = {FOREIGN_CURRENCY}, latest GDATU valid for {DATE}"
+    tables: [TCURR]
+  CURRENCY_AMOUNT_SAP_TO_DISPLAY:
+    kind: lookup
+    output: AMOUNT_DISPLAY
+    sql: "{AMOUNT_INTERNAL} * POWER(10, 2 - COALESCE(TCURX.CURRDEC, 2)) joined on TCURX.CURRKEY = {CURRENCY}"
+    tables: [TCURX]
+  UNIT_CONVERSION_SIMPLE:
+    kind: opaque
+    note: Requires T006 conversion factors (ZAEHL/NENNR/EXP10/ADDKO); provide T006 to enable.
+  MD_CONVERT_MATERIAL_UNIT:
+    kind: opaque
+    note: Requires MARM alternative units of measure.
+
+  # ----------------------------------------------------------- texts / master data reads
+  READ_TEXT:
+    kind: opaque
+    note: Long texts live in STXH/STXL (compressed LRAW); usually not replicated. Flag for manual handling.
+  BAPI_MATERIAL_GET_DETAIL:
+    kind: lookup
+    sql: "Reads MARA/MARC/MAKT for the material"
+    tables: [MARA, MARC, MAKT]
+  BAPI_CUSTOMER_GETDETAIL2:
+    kind: lookup
+    sql: "Reads KNA1/KNB1"
+    tables: [KNA1, KNB1]
+  BAPI_VENDOR_GETDETAIL:
+    kind: lookup
+    sql: "Reads LFA1/LFB1"
+    tables: [LFA1, LFB1]
+  STATUS_TEXT_EDIT:
+    kind: opaque
+    note: System/user status texts via JEST/TJ02T/TJ30T; provide those tables to enable.
+  STATUS_READ:
+    kind: opaque
+    note: Object status from JEST/JSTO.
+  CS_BOM_EXPL_MAT_V2:
+    kind: opaque
+    note: Multi-level BOM explosion; needs recursive CTE over STKO/STPO/MAST. Manual design required.
+
+  # ----------------------------------------------------------- output / UI
+  REUSE_ALV_GRID_DISPLAY:
+    kind: output_sink
+    table_param: T_OUTTAB
+    fieldcat_param: IT_FIELDCAT
+  REUSE_ALV_GRID_DISPLAY_LVC:
+    kind: output_sink
+    table_param: T_OUTTAB
+    fieldcat_param: IT_FIELDCAT_LVC
+  REUSE_ALV_LIST_DISPLAY:
+    kind: output_sink
+    table_param: T_OUTTAB
+    fieldcat_param: IT_FIELDCAT
+  REUSE_ALV_HIERSEQ_LIST_DISPLAY:
+    kind: output_sink
+    table_param: T_OUTTAB_HEADER
+    note: Hierarchical list; item table T_OUTTAB_ITEM is a second output.
+  REUSE_ALV_FIELDCATALOG_MERGE:
+    kind: ui
+    note: Builds a field catalog from a structure; output columns = structure fields.
+  REUSE_ALV_COMMENTARY_WRITE:
+    kind: ui
+  REUSE_ALV_EVENTS_GET:
+    kind: ui
+  SAPGUI_PROGRESS_INDICATOR:
+    kind: ui
+  POPUP_TO_CONFIRM:
+    kind: ui
+  POPUP_TO_INFORM:
+    kind: ui
+  F4IF_INT_TABLE_VALUE_REQUEST:
+    kind: ui
+  GUI_DOWNLOAD:
+    kind: side_effect
+    note: Writes a local file; the downloaded table is a secondary output.
+  GUI_UPLOAD:
+    kind: opaque
+    note: Reads a user-supplied file; the data must be staged in Snowflake.
+  SO_NEW_DOCUMENT_SEND_API1:
+    kind: side_effect
+  ENQUEUE_READ:
+    kind: side_effect
+  BAPI_TRANSACTION_COMMIT:
+    kind: side_effect
+  BAPI_TRANSACTION_ROLLBACK:
+    kind: side_effect
+  NUMBER_GET_NEXT:
+    kind: side_effect
+
+# Classes / methods recognized by name.
+methods:
+  CL_SALV_TABLE=>FACTORY:
+    kind: output_sink
+    table_param: T_TABLE
+  CL_GUI_ALV_GRID->SET_TABLE_FOR_FIRST_DISPLAY:
+    kind: output_sink
+    table_param: IT_OUTTAB
+    fieldcat_param: IT_FIELDCATALOG
+  CL_SALV_TABLE->DISPLAY:
+    kind: ui
+  CL_BCS=>CREATE_PERSISTENT:
+    kind: side_effect
+  CL_ABAP_CONTAINER_UTILITIES=>FILL_CONTAINER_C:
+    kind: opaque

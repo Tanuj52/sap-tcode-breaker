@@ -1,0 +1,1049 @@
+# Built-in SAP table knowledge - production planning (PP), plant maintenance / notifications (PM), project system (PS), status management.
+version: 1
+tables:
+
+  # ---------------------------------------------------------------- PP planned orders / order operations
+  PLAF:
+    description: Planned orders
+    module: PP
+    release: both
+    key: [MANDT, PLNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PLNUM: CHAR(10) Planned order
+      PAART: CHAR(4) Planned order type
+      PASCH: CHAR(4) Order profile
+      MATNR: CHAR(40) Material
+      PLWRK: CHAR(4) Planning plant
+      PWWRK: CHAR(4) Production plant
+      BERID: CHAR(10) MRP area
+      DISPO: CHAR(3) MRP controller
+      BESKZ: CHAR(1) Procurement type
+      SOBES: CHAR(1) Special procurement type
+      GSMNG: QUAN(13,3) ref=MEINS Total planned order quantity
+      MEINS: UNIT(3) Base unit
+      PSTTR: DATS(8) Order start date
+      PEDTR: DATS(8) Order finish date
+      PERTR: DATS(8) Opening date
+      AUFFX: CHAR(1) Firming indicator
+      VERID: CHAR(4) Production version
+      STLAN: CHAR(1) BOM usage
+      STALT: CHAR(2) Alternative BOM
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNAL: CHAR(2) Group counter
+      LGORT: CHAR(4) Storage location
+      KDAUF: CHAR(10) Sales order
+      KDPOS: NUMC(6) Sales order item
+      RSNUM: NUMC(10) Reservation
+      FLIEF: CHAR(10) Fixed vendor
+      EKORG: CHAR(4) Purchasing organization
+
+  AFVC:
+    description: Operation within an order
+    module: PP
+    release: both
+    key: [MANDT, AUFPL, APLZL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFPL: NUMC(10) Routing number of operations in the order
+      APLZL: NUMC(8) General counter for order
+      PLNFL: CHAR(6) Sequence
+      VORNR: CHAR(4) Operation number
+      STEUS: CHAR(4) Control key
+      ARBID: NUMC(8) Work center object ID
+      WERKS: CHAR(4) Plant
+      KTSCH: CHAR(7) Standard text key
+      LTXA1: CHAR(40) Operation short text
+      OBJNR: CHAR(22) Object number
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNKN: NUMC(8) Task list node number
+      SUMNR: NUMC(8) Superior operation node
+      RUECK: NUMC(10) Confirmation number
+      RMZHL: NUMC(8) Confirmation counter
+      PROJN: NUMC(8) WBS element
+      LIFNR: CHAR(10) Vendor
+      EKORG: CHAR(4) Purchasing organization
+      EKGRP: CHAR(3) Purchasing group
+      MATKL: CHAR(9) Material group
+      BANFN: CHAR(10) Purchase requisition
+      BNFPO: NUMC(5) Requisition item
+
+  AFVV:
+    description: Quantities, dates and values of order operations
+    module: PP
+    release: both
+    key: [MANDT, AUFPL, APLZL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFPL: NUMC(10) Routing number of operations in the order
+      APLZL: NUMC(8) General counter for order
+      MEINH: UNIT(3) Operation unit of measure
+      MGVRG: QUAN(13,3) ref=MEINH Operation quantity
+      BMSCH: QUAN(13,3) ref=MEINH Base quantity
+      LMNGA: QUAN(13,3) ref=MEINH Yield confirmed
+      XMNGA: QUAN(13,3) ref=MEINH Scrap confirmed
+      RMNGA: QUAN(13,3) ref=MEINH Rework quantity confirmed
+      VGW01: QUAN(9,3) ref=VGE01 Standard value 1
+      VGE01: UNIT(3) Unit for standard value 1
+      VGW02: QUAN(9,3) ref=VGE02 Standard value 2
+      VGE02: UNIT(3) Unit for standard value 2
+      VGW03: QUAN(9,3) ref=VGE03 Standard value 3
+      VGE03: UNIT(3) Unit for standard value 3
+      ARBEI: QUAN(7,1) ref=ARBEH Work involved in the activity
+      ARBEH: UNIT(3) Unit for work
+      DAUNO: QUAN(5,1) ref=DAUNE Normal duration of the activity
+      DAUNE: UNIT(3) Normal duration unit
+      FSAVD: DATS(8) Earliest scheduled start date
+      FSAVZ: TIMS(6) Earliest scheduled start time
+      FSEDD: DATS(8) Earliest scheduled finish date
+      FSEDZ: TIMS(6) Earliest scheduled finish time
+      SSAVD: DATS(8) Latest scheduled start date
+      SSEDD: DATS(8) Latest scheduled finish date
+      ISDD: DATS(8) Actual start date
+      ISDZ: TIMS(6) Actual start time
+      IEDD: DATS(8) Actual finish date
+      IEDZ: TIMS(6) Actual finish time
+
+  AFRU:
+    description: Order confirmations
+    module: PP
+    release: both
+    key: [MANDT, RUECK, RMZHL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      RUECK: NUMC(10) Confirmation number
+      RMZHL: NUMC(8) Confirmation counter
+      ERSDA: DATS(8) Entered on
+      ERZET: TIMS(6) Entry time
+      ERNAM: CHAR(12) Entered by
+      LAEDA: DATS(8) Last changed on
+      BUDAT: DATS(8) Posting date
+      AUFNR: CHAR(12) Order
+      AUFPL: NUMC(10) Routing number of operations in the order
+      APLZL: NUMC(8) General counter for order
+      VORNR: CHAR(4) Operation number
+      WERKS: CHAR(4) Plant
+      ARBID: NUMC(8) Work center object ID
+      PERNR: NUMC(8) Personnel number
+      MEINH: UNIT(3) Unit of measure
+      LMNGA: QUAN(13,3) ref=MEINH Yield to be confirmed
+      XMNGA: QUAN(13,3) ref=MEINH Scrap to be confirmed
+      RMNGA: QUAN(13,3) ref=MEINH Rework quantity
+      ISM01: QUAN(13,3) ref=ILE01 Confirmed activity 1
+      ILE01: UNIT(3) Unit for activity 1
+      ISM02: QUAN(13,3) ref=ILE02 Confirmed activity 2
+      ILE02: UNIT(3) Unit for activity 2
+      ISM03: QUAN(13,3) ref=ILE03 Confirmed activity 3
+      ILE03: UNIT(3) Unit for activity 3
+      ISMNW: QUAN(13,3) ref=ISMNE Actual work
+      ISMNE: UNIT(3) Unit for work
+      ISDD: DATS(8) Actual start date
+      ISDZ: TIMS(6) Actual start time
+      IEDD: DATS(8) Actual finish date
+      IEDZ: TIMS(6) Actual finish time
+      AUERU: CHAR(1) Final confirmation
+      STOKZ: CHAR(1) Confirmation reversed
+      STZHL: NUMC(8) Counter of cancelled confirmation
+      GRUND: CHAR(4) Reason for variance
+      LTXA1: CHAR(40) Confirmation text
+
+  AFFL:
+    description: Work order sequence
+    module: PP
+    release: both
+    key: [MANDT, AUFPL, APLZL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFPL: NUMC(10) Routing number of operations in the order
+      APLZL: NUMC(8) General counter for order
+      PLNFL: CHAR(6) Sequence
+      FLGAT: CHAR(1) Sequence category
+      BEZFL: CHAR(6) Reference sequence
+
+  # ---------------------------------------------------------------- PP work centers / capacities
+  CRHD:
+    description: Work center header
+    module: PP
+    release: both
+    key: [MANDT, OBJTY, OBJID]
+    fields_complete: false
+    text_table: CRTX
+    fields:
+      MANDT: CLNT(3) Client
+      OBJTY: CHAR(2) Object type of resource
+      OBJID: NUMC(8) Object ID of the resource
+      BEGDA: DATS(8) Start date
+      ENDDA: DATS(8) End date
+      ARBPL: CHAR(8) Work center
+      WERKS: CHAR(4) Plant
+      VERWE: CHAR(4) Work center category
+      VERAN: CHAR(3) Person responsible for the work center
+      PLANV: CHAR(3) Task list usage
+      STAND: CHAR(10) Location
+      KAPID: NUMC(8) Capacity ID
+      VGWTS: CHAR(4) Standard value key
+      LVORM: CHAR(1) Deletion flag
+
+  CRTX:
+    description: Work center texts
+    module: PP
+    release: both
+    key: [MANDT, OBJTY, OBJID, SPRAS]
+    fields_complete: false
+    text_of: CRHD
+    fields:
+      MANDT: CLNT(3) Client
+      OBJTY: CHAR(2) Object type of resource
+      OBJID: NUMC(8) Object ID of the resource
+      SPRAS: LANG(1) Language key
+      KTEXT: CHAR(40) Work center description
+      KTEXT_UP: CHAR(40) Description in upper case
+
+  CRCO:
+    description: Assignment of work center to cost center
+    module: PP
+    release: both
+    key: [MANDT, OBJTY, OBJID, LASET, ENDDA, LANUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      OBJTY: CHAR(2) Object type of resource
+      OBJID: NUMC(8) Object ID of the resource
+      LASET: NUMC(6) Activity type set
+      ENDDA: DATS(8) End date
+      LANUM: NUMC(4) Activity number
+      BEGDA: DATS(8) Start date
+      KOKRS: CHAR(4) Controlling area
+      KOSTL: CHAR(10) Cost center
+      LSTAR: CHAR(6) Activity type
+      LSTAR_REF: CHAR(1) Activity type reference indicator
+      FORML: CHAR(6) Formula key for costing
+
+  KAKO:
+    description: Capacity header
+    module: PP
+    release: both
+    key: [MANDT, KAPID]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPID: NUMC(8) Capacity ID
+      KAPAR: CHAR(3) Capacity category
+      WERKS: CHAR(4) Plant
+      NAME: CHAR(8) Capacity name
+      MEINS: UNIT(3) Base unit of measure of capacity
+      BEGZT: INT4(10) Start time (seconds)
+      ENDZT: INT4(10) Finish time (seconds)
+      PAUSE: INT4(10) Break time (seconds)
+
+  # ---------------------------------------------------------------- PP routings / production versions
+  PLKO:
+    description: Task list header
+    module: PP
+    release: both
+    key: [MANDT, PLNTY, PLNNR, PLNAL, ZAEHL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNAL: CHAR(2) Group counter
+      ZAEHL: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from date
+      AENNR: CHAR(12) Change number
+      LOEKZ: CHAR(1) Deletion indicator
+      ANDAT: DATS(8) Created on
+      ANNAM: CHAR(12) Created by
+      WERKS: CHAR(4) Plant
+      VERWE: CHAR(3) Task list usage
+      STATU: CHAR(3) Status
+      VAGRP: CHAR(3) Planner group
+      KTEXT: CHAR(40) Task list description
+      PLNME: UNIT(3) Task list unit of measure
+      LOSVN: QUAN(13,3) ref=PLNME From lot size
+      LOSBS: QUAN(13,3) ref=PLNME To lot size
+      DELKZ: CHAR(1) Delete indicator for task list
+
+  PLPO:
+    description: Task list operation / activity
+    module: PP
+    release: both
+    key: [MANDT, PLNTY, PLNNR, PLNKN, ZAEHL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNKN: NUMC(8) Task list node number
+      ZAEHL: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from date
+      AENNR: CHAR(12) Change number
+      LOEKZ: CHAR(1) Deletion indicator
+      VORNR: CHAR(4) Operation number
+      STEUS: CHAR(4) Control key
+      ARBID: NUMC(8) Work center object ID
+      OBJTY: CHAR(2) Object type of resource
+      WERKS: CHAR(4) Plant
+      KTSCH: CHAR(7) Standard text key
+      LTXA1: CHAR(40) Operation short text
+      MEINH: UNIT(3) Operation unit of measure
+      BMSCH: QUAN(13,3) ref=MEINH Base quantity
+      UMREZ: DEC(5,0) Numerator for converting to base unit
+      UMREN: DEC(5,0) Denominator for converting to base unit
+      VGW01: QUAN(9,3) ref=VGE01 Standard value 1
+      VGE01: UNIT(3) Unit for standard value 1
+      VGW02: QUAN(9,3) ref=VGE02 Standard value 2
+      VGE02: UNIT(3) Unit for standard value 2
+      VGW03: QUAN(9,3) ref=VGE03 Standard value 3
+      VGE03: UNIT(3) Unit for standard value 3
+      LAR01: CHAR(6) Activity type 1
+      LAR02: CHAR(6) Activity type 2
+      LAR03: CHAR(6) Activity type 3
+
+  PLAS:
+    description: Task list selection of operations
+    module: PP
+    release: both
+    key: [MANDT, PLNTY, PLNNR, PLNAL, PLNFL, PLNKN, ZAEHL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNAL: CHAR(2) Group counter
+      PLNFL: CHAR(6) Sequence
+      PLNKN: NUMC(8) Task list node number
+      ZAEHL: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from date
+      AENNR: CHAR(12) Change number
+      LOEKZ: CHAR(1) Deletion indicator
+
+  MAPL:
+    description: Assignment of task lists to materials
+    module: PP
+    release: both
+    key: [MANDT, MATNR, WERKS, PLNTY, PLNNR, PLNAL, ZKRIZ, ZAEHL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNAL: CHAR(2) Group counter
+      ZKRIZ: NUMC(10) Counter for additional criteria
+      ZAEHL: NUMC(8) Internal counter
+      DATUV: DATS(8) Valid from date
+      AENNR: CHAR(12) Change number
+      LOEKZ: CHAR(1) Deletion indicator
+      ANDAT: DATS(8) Created on
+      ANNAM: CHAR(12) Created by
+
+  MKAL:
+    description: Production versions of material
+    module: PP
+    release: both
+    key: [MANDT, MATNR, WERKS, VERID]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      VERID: CHAR(4) Production version
+      TEXT1: CHAR(40) Short text on the production version
+      ADATU: DATS(8) Valid from
+      BDATU: DATS(8) Valid to
+      STLAL: CHAR(2) Alternative BOM
+      STLAN: CHAR(1) BOM usage
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      ALNAL: CHAR(2) Group counter
+      BSTMI: QUAN(13,3) Lot size from
+      BSTMA: QUAN(13,3) Lot size to
+      MDV01: CHAR(8) Production line
+      ELPRO: CHAR(4) Issue storage location
+      ALORT: CHAR(4) Receiving storage location
+      SERKZ: CHAR(1) Repetitive manufacturing allowed
+      MKSP: CHAR(1) Production version locked
+
+  # ---------------------------------------------------------------- Status management
+  JEST:
+    description: Individual object status
+    module: BC
+    release: both
+    key: [MANDT, OBJNR, STAT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      OBJNR: CHAR(22) Object number
+      STAT: CHAR(5) Object status
+      INACT: CHAR(1) Status inactive
+      CHGNR: CHAR(3) Change number
+
+  JSTO:
+    description: Status object information
+    module: BC
+    release: both
+    key: [MANDT, OBJNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      OBJNR: CHAR(22) Object number
+      OBTYP: CHAR(3) Object category
+      STSMA: CHAR(8) Status profile
+      CHGKZ: CHAR(1) Change indicator
+      CHGNR: CHAR(3) Change number
+
+  JCDS:
+    description: Change documents for system/user statuses
+    module: BC
+    release: both
+    key: [MANDT, OBJNR, STAT, CHGNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      OBJNR: CHAR(22) Object number
+      STAT: CHAR(5) Object status
+      CHGNR: CHAR(3) Change number
+      USNAM: CHAR(12) Changed by
+      UDATE: DATS(8) Change date
+      UTIME: TIMS(6) Change time
+      INACT: CHAR(1) Status inactive
+      CHIND: CHAR(1) Change indicator
+
+  TJ02:
+    description: System status
+    module: BC
+    release: both
+    key: [ISTAT]
+    fields_complete: false
+    text_table: TJ02T
+    fields:
+      ISTAT: CHAR(5) System status
+
+  TJ02T:
+    description: System status texts
+    module: BC
+    release: both
+    key: [ISTAT, SPRAS]
+    fields_complete: false
+    text_of: TJ02
+    fields:
+      ISTAT: CHAR(5) System status
+      SPRAS: LANG(1) Language key
+      TXT04: CHAR(4) Status short text
+      TXT30: CHAR(30) Status description
+
+  TJ30:
+    description: User status
+    module: BC
+    release: both
+    key: [MANDT, STSMA, ESTAT]
+    fields_complete: false
+    text_table: TJ30T
+    fields:
+      MANDT: CLNT(3) Client
+      STSMA: CHAR(8) Status profile
+      ESTAT: CHAR(5) User status
+      STONR: NUMC(2) Status order number
+      INIST: CHAR(1) Initial status
+      LINEP: NUMC(2) Display position
+      STATP: NUMC(1) Display priority
+
+  TJ30T:
+    description: User status texts
+    module: BC
+    release: both
+    key: [MANDT, STSMA, ESTAT, SPRAS]
+    fields_complete: false
+    text_of: TJ30
+    fields:
+      MANDT: CLNT(3) Client
+      STSMA: CHAR(8) Status profile
+      ESTAT: CHAR(5) User status
+      SPRAS: LANG(1) Language key
+      TXT04: CHAR(4) User status short text
+      TXT30: CHAR(30) User status description
+
+  T003O:
+    description: Order types
+    module: PP
+    release: both
+    key: [MANDT, AUART]
+    fields_complete: false
+    text_table: T003P
+    fields:
+      MANDT: CLNT(3) Client
+      AUART: CHAR(4) Order type
+      AUTYP: NUMC(2) Order category
+      NUMKR: CHAR(2) Number range interval
+
+  T003P:
+    description: Order type texts
+    module: PP
+    release: both
+    key: [MANDT, SPRAS, AUART]
+    fields_complete: false
+    text_of: T003O
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      AUART: CHAR(4) Order type
+      TXT: CHAR(40) Order type description
+
+  # ---------------------------------------------------------------- PM technical objects
+  EQUI:
+    description: Equipment master data
+    module: PM
+    release: both
+    key: [MANDT, EQUNR]
+    fields_complete: false
+    text_table: EQKT
+    fields:
+      MANDT: CLNT(3) Client
+      EQUNR: CHAR(18) Equipment
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+      EQTYP: CHAR(1) Equipment category
+      EQART: CHAR(10) Type of technical object
+      OBJNR: CHAR(22) Object number
+      GROES: CHAR(18) Size/dimension
+      INBDT: DATS(8) Start-up date
+      BRGEW: QUAN(13,3) ref=GEWEI Weight of object
+      GEWEI: UNIT(3) Weight unit
+      ANSDT: DATS(8) Acquisition date
+      ANSWT: CURR(13,2) ref=WAERS Acquisition value
+      WAERS: CUKY(5) Currency
+      HERST: CHAR(30) Manufacturer
+      HERLD: CHAR(3) Country of manufacture
+      TYPBZ: CHAR(20) Model number
+      BAUJJ: CHAR(4) Construction year
+      BAUMM: CHAR(2) Construction month
+      SERGE: CHAR(30) Manufacturer serial number
+      MATNR: CHAR(40) Material
+      SERNR: CHAR(18) Serial number
+      KUND1: CHAR(10) Customer
+      ELIEF: CHAR(10) Vendor
+
+  EQKT:
+    description: Equipment short texts
+    module: PM
+    release: both
+    key: [MANDT, EQUNR, SPRAS]
+    fields_complete: false
+    text_of: EQUI
+    fields:
+      MANDT: CLNT(3) Client
+      EQUNR: CHAR(18) Equipment
+      SPRAS: LANG(1) Language key
+      EQKTX: CHAR(40) Equipment description
+      EQKTU: CHAR(40) Equipment description in upper case
+      KZLTX: CHAR(1) Long text exists
+
+  EQUZ:
+    description: Equipment time segment
+    module: PM
+    release: both
+    key: [MANDT, EQUNR, DATBI, EQLFN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EQUNR: CHAR(18) Equipment
+      DATBI: DATS(8) Valid to date
+      EQLFN: NUMC(3) Consecutive numbering of time segments
+      DATAB: DATS(8) Valid from date
+      IWERK: CHAR(4) Maintenance planning plant
+      INGRP: CHAR(3) Planner group
+      GEWRK: NUMC(8) Main work center object ID
+      HEQUI: CHAR(18) Superordinate equipment
+      HEQNR: CHAR(4) Position in superordinate equipment
+      TIDNR: CHAR(25) Technical identification number
+      ILOAN: CHAR(12) Location and account assignment
+      SUBMT: CHAR(40) Construction type
+      RBNR: CHAR(9) Catalog profile
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+
+  IFLOT:
+    description: Functional location
+    module: PM
+    release: both
+    key: [MANDT, TPLNR]
+    fields_complete: false
+    text_table: IFLOTX
+    fields:
+      MANDT: CLNT(3) Client
+      TPLNR: CHAR(30) Functional location
+      STRNO: CHAR(40) Functional location label
+      FLTYP: CHAR(1) Functional location category
+      TPLKZ: CHAR(5) Structure indicator
+      TPLMA: CHAR(30) Superior functional location
+      IWERK: CHAR(4) Maintenance planning plant
+      INGRP: CHAR(3) Planner group
+      EQART: CHAR(10) Type of technical object
+      ILOAN: CHAR(12) Location and account assignment
+      OBJNR: CHAR(22) Object number
+      RBNR: CHAR(9) Catalog profile
+      IEQUI: CHAR(1) Installation of equipment allowed
+      HERST: CHAR(30) Manufacturer
+      BAUJJ: CHAR(4) Construction year
+      INBDT: DATS(8) Start-up date
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+
+  IFLOTX:
+    description: Functional location short texts
+    module: PM
+    release: both
+    key: [MANDT, TPLNR, SPRAS]
+    fields_complete: false
+    text_of: IFLOT
+    fields:
+      MANDT: CLNT(3) Client
+      TPLNR: CHAR(30) Functional location
+      SPRAS: LANG(1) Language key
+      PLTXT: CHAR(40) Functional location description
+      PLTXU: CHAR(40) Description in upper case
+      KZLTX: CHAR(1) Long text exists
+
+  ILOA:
+    description: PM object location and account assignment
+    module: PM
+    release: both
+    key: [MANDT, ILOAN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      ILOAN: CHAR(12) Location and account assignment
+      TPLNR: CHAR(30) Functional location
+      SWERK: CHAR(4) Maintenance plant
+      STORT: CHAR(10) Location of maintenance object
+      MSGRP: CHAR(8) Room
+      BEBER: CHAR(3) Plant section
+      PPSID: NUMC(8) Production work center object ID
+      ABCKZ: CHAR(1) ABC indicator
+      EQFNR: CHAR(30) Sort field
+      BUKRS: CHAR(4) Company code
+      GSBER: CHAR(4) Business area
+      KOKRS: CHAR(4) Controlling area
+      KOSTL: CHAR(10) Cost center
+      ANLNR: CHAR(12) Main asset number
+      ANLUN: CHAR(4) Asset subnumber
+      PROID: NUMC(8) WBS element
+      DAUFN: CHAR(12) Standing order
+      AUFNR: CHAR(12) Settlement order
+      ADRNR: CHAR(10) Address number
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+
+  AFIH:
+    description: Maintenance order header
+    module: PM
+    release: both
+    key: [MANDT, AUFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFNR: CHAR(12) Order
+      ARTPR: CHAR(2) Priority type
+      PRIOK: CHAR(1) Priority
+      EQUNR: CHAR(18) Equipment
+      BAUTL: CHAR(40) Assembly
+      ILOAN: CHAR(12) Location and account assignment
+      QMNUM: CHAR(12) Notification
+      IWERK: CHAR(4) Maintenance planning plant
+      INGPR: CHAR(3) Planner group
+      GEWRK: NUMC(8) Main work center object ID
+      ILART: CHAR(3) Maintenance activity type
+      WARPL: CHAR(12) Maintenance plan
+      WAPOS: CHAR(16) Maintenance item
+      ANLZU: CHAR(1) System condition
+      SERIALNR: CHAR(18) Serial number
+      SERMAT: CHAR(40) Material of serial number
+      REVNR: CHAR(8) Revision
+      ADDAT: DATS(8) Reference date
+
+  # ---------------------------------------------------------------- PM/QM notifications
+  QMEL:
+    description: Quality / maintenance notification header
+    module: PM
+    release: both
+    key: [MANDT, QMNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      QMNUM: CHAR(12) Notification
+      QMART: CHAR(2) Notification type
+      QMTXT: CHAR(40) Short text
+      ARTPR: CHAR(2) Priority type
+      PRIOK: CHAR(1) Priority
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      AENAM: CHAR(12) Changed by
+      AEDAT: DATS(8) Changed on
+      QMDAT: DATS(8) Notification date
+      MZEIT: TIMS(6) Notification time
+      QMNAM: CHAR(12) Reported by
+      STRMN: DATS(8) Required start date
+      STRUR: TIMS(6) Required start time
+      LTRMN: DATS(8) Required end date
+      LTRUR: TIMS(6) Required end time
+      QMDAB: DATS(8) Completion date
+      QMZAB: TIMS(6) Completion time
+      QMKAT: CHAR(1) Coding catalog type
+      QMGRP: CHAR(8) Coding code group
+      QMCOD: CHAR(4) Coding
+      AUFNR: CHAR(12) Order
+      OBJNR: CHAR(22) Object number
+      WARPL: CHAR(12) Maintenance plan
+      MATNR: CHAR(40) Material
+      MAWERK: CHAR(4) Plant for material
+      CHARG: CHAR(10) Batch
+      KUNUM: CHAR(10) Customer
+      LIFNUM: CHAR(10) Vendor
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Purchasing document item
+      MBLNR: CHAR(10) Material document
+      MJAHR: NUMC(4) Material document year
+      PRUEFLOS: NUMC(12) Inspection lot
+      FERTAUFNR: CHAR(12) Production order
+      KDAUF: CHAR(10) Sales order
+      KDPOS: NUMC(6) Sales order item
+      RKMNG: QUAN(13,3) ref=MGEIN Complaint quantity
+      MGEIN: UNIT(3) Unit of measure for complaint quantity
+
+  QMFE:
+    description: Notification items (defects)
+    module: PM
+    release: both
+    key: [MANDT, QMNUM, FENUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      QMNUM: CHAR(12) Notification
+      FENUM: NUMC(4) Item number
+      FEKAT: CHAR(1) Catalog type - problems
+      FEGRP: CHAR(8) Code group - problem
+      FECOD: CHAR(4) Problem or damage code
+      FEVER: CHAR(6) Version number of code
+      FETXT: CHAR(40) Item text
+      OTKAT: CHAR(1) Catalog type - object parts
+      OTGRP: CHAR(8) Code group - object part
+      OTEIL: CHAR(4) Object part code
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      AENAM: CHAR(12) Changed by
+      AEDAT: DATS(8) Changed on
+      KZLOESCH: CHAR(1) Deletion indicator
+
+  QMUR:
+    description: Notification causes
+    module: PM
+    release: both
+    key: [MANDT, QMNUM, FENUM, URNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      QMNUM: CHAR(12) Notification
+      FENUM: NUMC(4) Item number
+      URNUM: NUMC(4) Cause sequence number
+      URKAT: CHAR(1) Catalog type - causes
+      URGRP: CHAR(8) Code group - causes
+      URCOD: CHAR(4) Cause code
+      URVER: CHAR(6) Version number of code
+      URTXT: CHAR(40) Cause text
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      KZLOESCH: CHAR(1) Deletion indicator
+
+  QMMA:
+    description: Notification activities
+    module: PM
+    release: both
+    key: [MANDT, QMNUM, MANUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      QMNUM: CHAR(12) Notification
+      MANUM: NUMC(4) Activity sequence number
+      FENUM: NUMC(4) Item number
+      MNKAT: CHAR(1) Catalog type - activities
+      MNGRP: CHAR(8) Code group - activities
+      MNCOD: CHAR(4) Activity code
+      MATXT: CHAR(40) Activity text
+      PSTER: DATS(8) Planned start date
+      PETER: DATS(8) Planned finish date
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      KZLOESCH: CHAR(1) Deletion indicator
+
+  QMSM:
+    description: Notification tasks
+    module: PM
+    release: both
+    key: [MANDT, QMNUM, MANUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      QMNUM: CHAR(12) Notification
+      MANUM: NUMC(4) Task sequence number
+      FENUM: NUMC(4) Item number
+      MNKAT: CHAR(1) Catalog type - tasks
+      MNGRP: CHAR(8) Code group - tasks
+      MNCOD: CHAR(4) Task code
+      MATXT: CHAR(40) Task text
+      PSTER: DATS(8) Planned start date
+      PSTUR: TIMS(6) Planned start time
+      PETER: DATS(8) Planned finish date
+      PETUR: TIMS(6) Planned finish time
+      PARVW: CHAR(2) Partner function
+      PARNR: CHAR(12) Person responsible (partner)
+      ERLNAM: CHAR(12) Completed by
+      ERLDAT: DATS(8) Completed on
+      OBJNR: CHAR(22) Object number
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      KZLOESCH: CHAR(1) Deletion indicator
+
+  # ---------------------------------------------------------------- PM maintenance plans / measuring points
+  MPLA:
+    description: Maintenance plan
+    module: PM
+    release: both
+    key: [MANDT, WARPL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WARPL: CHAR(12) Maintenance plan
+      WPTXT: CHAR(40) Maintenance plan text
+      MPTYP: CHAR(2) Maintenance plan category
+      STRAT: CHAR(6) Maintenance strategy
+      OBJNR: CHAR(22) Object number
+
+  MPOS:
+    description: Maintenance item
+    module: PM
+    release: both
+    key: [MANDT, WAPOS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WAPOS: CHAR(16) Maintenance item
+      WARPL: CHAR(12) Maintenance plan
+      PSTXT: CHAR(40) Maintenance item text
+      IWERK: CHAR(4) Maintenance planning plant
+      AUART: CHAR(4) Order type
+      QMART: CHAR(2) Notification type
+      ILART: CHAR(3) Maintenance activity type
+      PRIOK: CHAR(1) Priority
+      ILOAN: CHAR(12) Location and account assignment
+      EQUNR: CHAR(18) Equipment
+      GEWRK: NUMC(8) Main work center object ID
+      PLNTY: CHAR(1) Task list type
+      PLNNR: CHAR(8) Key for task list group
+      PLNAL: CHAR(2) Group counter
+      OBJNR: CHAR(22) Object number
+
+  IMPTT:
+    description: Measuring point
+    module: PM
+    release: both
+    key: [MANDT, POINT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      POINT: CHAR(12) Measuring point
+      MPOBJ: CHAR(22) Object number of measuring point object
+      PSORT: CHAR(20) Position number
+      PTTXT: CHAR(40) Measuring point description
+      MPTYP: CHAR(1) Measuring point category
+      INDCT: CHAR(1) Measuring point is counter
+      ATINN: NUMC(10) Characteristic
+      MRNGU: UNIT(3) Measurement range unit
+      CODGR: CHAR(8) Code group
+      INACT: CHAR(1) Measuring point inactive
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      AEDAT: DATS(8) Changed on
+      AENAM: CHAR(12) Changed by
+
+  IMRG:
+    description: Measurement documents
+    module: PM
+    release: both
+    key: [MANDT, MDOCM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MDOCM: CHAR(20) Measurement document
+      POINT: CHAR(12) Measuring point
+      IDATE: DATS(8) Measurement date
+      ITIME: TIMS(6) Measurement time
+      READG: FLTP(16) Measured value (internal format)
+      RECDV: FLTP(16) Measured value as entered
+      RECDU: UNIT(3) Unit of entry
+      CNTRR: FLTP(16) Counter reading (internal format)
+      CDIFF: FLTP(16) Counter reading difference
+      CODGR: CHAR(8) Code group
+      VLCOD: CHAR(4) Valuation code
+      MDTXT: CHAR(40) Measurement document text
+      WOOBJ: CHAR(22) Object number of the order
+      CANCL: CHAR(1) Measurement document cancelled
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      ERUHR: TIMS(6) Created at
+
+  # ---------------------------------------------------------------- PM customizing
+  T024I:
+    description: Maintenance planner groups
+    module: PM
+    release: both
+    key: [MANDT, IWERK, INGRP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      IWERK: CHAR(4) Maintenance planning plant
+      INGRP: CHAR(3) Planner group
+      INNAM: CHAR(18) Name of maintenance planner group
+
+  T356:
+    description: Priorities
+    module: PM
+    release: both
+    key: [MANDT, ARTPR, PRIOK]
+    fields_complete: false
+    text_table: T356_T
+    fields:
+      MANDT: CLNT(3) Client
+      ARTPR: CHAR(2) Priority type
+      PRIOK: CHAR(1) Priority
+
+  T356_T:
+    description: Priority texts
+    module: PM
+    release: both
+    key: [MANDT, SPRAS, ARTPR, PRIOK]
+    fields_complete: false
+    text_of: T356
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      ARTPR: CHAR(2) Priority type
+      PRIOK: CHAR(1) Priority
+      PRIOKX: CHAR(20) Priority text
+
+  # ---------------------------------------------------------------- PS project system
+  PROJ:
+    description: Project definition
+    module: PS
+    release: both
+    key: [MANDT, PSPNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PSPNR: NUMC(8) Project definition (internal)
+      PSPID: CHAR(24) Project definition
+      POST1: CHAR(40) Project description
+      OBJNR: CHAR(22) Object number
+      PROFL: CHAR(7) Project profile
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      AENAM: CHAR(12) Changed by
+      AEDAT: DATS(8) Changed on
+      VERNR: NUMC(8) Person responsible number
+      VERNA: CHAR(25) Person responsible name
+      ASTNR: NUMC(8) Applicant number
+      ASTNA: CHAR(25) Applicant
+      VBUKR: CHAR(4) Company code for the project
+      VGSBR: CHAR(4) Business area for the project
+      VKOKR: CHAR(4) Controlling area for the project
+      PRCTR: CHAR(10) Profit center
+      PWHIE: CUKY(5) Project currency
+      WERKS: CHAR(4) Plant
+      KALID: CHAR(2) Factory calendar
+      PLFAZ: DATS(8) Project planned start date
+      PLSEZ: DATS(8) Project planned finish date
+
+  PRPS:
+    description: WBS element master data
+    module: PS
+    release: both
+    key: [MANDT, PSPNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PSPNR: NUMC(8) WBS element (internal)
+      POSID: CHAR(24) WBS element
+      POST1: CHAR(40) WBS element description
+      OBJNR: CHAR(22) Object number
+      PSPHI: NUMC(8) Project definition (internal)
+      POSKI: CHAR(16) Short identification of WBS element
+      STUFE: INT1(3) Level in project hierarchy
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      AENAM: CHAR(12) Changed by
+      AEDAT: DATS(8) Changed on
+      VERNR: NUMC(8) Person responsible number
+      VERNA: CHAR(25) Person responsible name
+      ASTNR: NUMC(8) Applicant number
+      ASTNA: CHAR(25) Applicant
+      PBUKR: CHAR(4) Company code for WBS element
+      PGSBR: CHAR(4) Business area for WBS element
+      PKOKR: CHAR(4) Controlling area for WBS element
+      PRCTR: CHAR(10) Profit center
+      PRART: CHAR(2) Project type
+      PLAKZ: CHAR(1) Planning element
+      BELKZ: CHAR(1) Account assignment element
+      FAKKZ: CHAR(1) Billing element
+      FKSTL: CHAR(10) Responsible cost center
+      AKSTL: CHAR(10) Requesting cost center
+      WERKS: CHAR(4) Plant
+      PWPOS: CUKY(5) WBS element currency
+      SCOPE: CHAR(2) Object class
+      LOEVM: CHAR(1) Deletion indicator
+
+  PRTE:
+    description: Scheduling data for WBS elements
+    module: PS
+    release: both
+    key: [MANDT, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      POSNR: NUMC(8) WBS element (internal)
+      PSPHI: NUMC(8) Project definition (internal)
+      PSTRT: DATS(8) Basic start date
+      PENDE: DATS(8) Basic finish date
+      ESTRT: DATS(8) Forecast start date
+      EENDE: DATS(8) Forecast finish date
+      ISTRT: DATS(8) Actual start date
+      IENDE: DATS(8) Actual finish date
+
+  PRHI:
+    description: WBS hierarchy (edges)
+    module: PS
+    release: both
+    key: [MANDT, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      POSNR: NUMC(8) WBS element (internal)
+      PSPHI: NUMC(8) Project definition (internal)
+      UP: NUMC(8) Superior WBS element
+      DOWN: NUMC(8) First subordinate WBS element
+      LEFT: NUMC(8) Previous WBS element at same level
+      RIGHT: NUMC(8) Next WBS element at same level

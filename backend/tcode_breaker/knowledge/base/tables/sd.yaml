@@ -1,0 +1,1156 @@
+# Built-in SAP table knowledge - SD (sales orders, deliveries, billing, pricing, partners, shipping, config).
+version: 1
+
+tables:
+
+  # ---------------------------------------------------------------- Sales documents (additional)
+  VBKD:
+    description: Sales document business data
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales document
+      POSNR: NUMC(6) Item
+      KONDA: CHAR(2) Price group
+      KDGRP: CHAR(2) Customer group
+      BZIRK: CHAR(6) Sales district
+      PLTYP: CHAR(2) Price list type
+      INCO1: CHAR(3) Incoterms (part 1)
+      INCO2: CHAR(28) Incoterms (part 2)
+      ZTERM: CHAR(4) Terms of payment key
+      KTGRD: CHAR(2) Account assignment group
+      KURSK: DEC(9,5) Exchange rate for pricing
+      PRSDT: DATS(8) Pricing date
+      FKDAT: DATS(8) Billing date
+      FKARA: CHAR(4) Proposed billing type
+      BSTKD: CHAR(35) Customer purchase order number
+      BSTDK: DATS(8) Customer purchase order date
+      BSARK: CHAR(4) Customer purchase order type
+      IHREZ: CHAR(12) Your reference
+      ZLSCH: CHAR(1) Payment method
+      VALDT: DATS(8) Fixed value date
+      PERFK: CHAR(2) Invoice dates (calendar)
+
+  VBLB:
+    description: Sales document release order data
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR, ABRLI, ABART]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales document
+      POSNR: NUMC(6) Item
+      ABRLI: NUMC(4) Internal delivery schedule number
+      ABART: CHAR(1) Release type
+      LABNK: CHAR(17) Customer forecast/JIT delivery schedule number
+      ABRDT: DATS(8) Delivery schedule date
+      ABEFZ: QUAN(15,3) Cumulative quantity received
+
+  VBSK:
+    description: Collective processing for a sales document header
+    module: SD
+    release: both
+    key: [MANDT, SAMMG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SAMMG: CHAR(10) Group
+      SMART: CHAR(1) Type of collective processing
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      UZEIT: TIMS(6) Time
+
+  VBSS:
+    description: Collective processing - sales documents in group
+    module: SD
+    release: both
+    key: [MANDT, SAMMG, VBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SAMMG: CHAR(10) Group
+      VBELN: CHAR(10) Sales and distribution document
+
+  VBKA:
+    description: Sales activities
+    module: SD
+    release: both
+    key: [MANDT, VBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales activity number
+      KTAAR: CHAR(4) Sales activity type
+      KTABG: DATS(8) Activity from date
+      KTAEN: DATS(8) Activity to date
+      KTAST: CHAR(1) Activity status
+      KTAGR: CHAR(3) Reason for sales activity
+      KTAER: CHAR(3) Result of sales activity
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+      VKBUR: CHAR(4) Sales office
+      VKGRP: CHAR(3) Sales group
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      ERZET: TIMS(6) Entry time
+
+  # ---------------------------------------------------------------- Sales indexes
+  VAPMA:
+    description: Sales index - order items by material
+    module: SD
+    release: both
+    key: [MANDT, MATNR, VKORG, TRVOG, AUDAT, VTWEG, SPART, AUART, KUNNR, VKBUR, VKGRP, BSTNK, ERNAM, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      VKORG: CHAR(4) Sales organization
+      TRVOG: CHAR(1) Transaction group
+      AUDAT: DATS(8) Document date
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+      AUART: CHAR(4) Sales document type
+      KUNNR: CHAR(10) Sold-to party
+      VKBUR: CHAR(4) Sales office
+      VKGRP: CHAR(3) Sales group
+      BSTNK: CHAR(20) Customer purchase order number
+      ERNAM: CHAR(12) Created by
+      VBELN: CHAR(10) Sales document
+      POSNR: NUMC(6) Item
+      WERKS: CHAR(4) Plant
+
+  # ---------------------------------------------------------------- Handling units
+  VEKP:
+    description: Handling unit header
+    module: SD
+    release: both
+    key: [MANDT, VENUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VENUM: CHAR(10) Internal handling unit number
+      EXIDV: CHAR(20) External handling unit identification
+      VHILM: CHAR(40) Packaging materials
+      VHART: CHAR(4) Packaging material type
+      MAGRV: CHAR(4) Material group - packaging materials
+      BRGEW: QUAN(15,3) ref=GEWEI Total weight of handling unit
+      NTGEW: QUAN(15,3) ref=GEWEI Loading weight
+      GEWEI: UNIT(3) Weight unit
+      BTVOL: QUAN(15,3) ref=VOLEH Total volume
+      NTVOL: QUAN(15,3) ref=VOLEH Loading volume
+      VOLEH: UNIT(3) Volume unit
+      VPOBJ: CHAR(2) Packing object
+      VPOBJKEY: CHAR(20) Key for object to which HU is assigned
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      VSTEL: CHAR(4) Shipping point
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+
+  VEPO:
+    description: Handling unit item (contents)
+    module: SD
+    release: both
+    key: [MANDT, VENUM, VEPOS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VENUM: CHAR(10) Internal handling unit number
+      VEPOS: NUMC(6) Handling unit item
+      VELIN: CHAR(1) Type of handling unit item content
+      VBELN: CHAR(10) Delivery
+      POSNR: NUMC(6) Delivery item
+      VEMNG: QUAN(13,3) ref=VEMEH Packed quantity
+      VEMEH: UNIT(3) Base unit of measure of packed quantity
+      MATNR: CHAR(40) Material number
+      CHARG: CHAR(10) Batch
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      SOBKZ: CHAR(1) Special stock indicator
+      BESTQ: CHAR(1) Stock category
+      UNVEL: CHAR(10) Lower-level handling unit
+
+  # ---------------------------------------------------------------- Shipments
+  VTTK:
+    description: Shipment header
+    module: SD
+    release: both
+    key: [MANDT, TKNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      TKNUM: CHAR(10) Shipment number
+      SHTYP: CHAR(4) Shipment type
+      TPLST: CHAR(4) Transportation planning point
+      TDLNR: CHAR(10) Forwarding agent
+      ROUTE: CHAR(6) Route
+      VSART: CHAR(2) Shipping type
+      STTRG: CHAR(1) Overall transportation status
+      SIGNI: CHAR(20) Container ID
+      EXTI1: CHAR(20) External identification 1
+      EXTI2: CHAR(20) External identification 2
+      TPBEZ: CHAR(20) Description of shipment
+      DPREG: DATS(8) Planned date of check-in
+      DAREG: DATS(8) Actual date of check-in
+      DPABF: DATS(8) Planned date of shipment start
+      DATBG: DATS(8) Actual date of shipment start
+      DPTEN: DATS(8) Planned date of shipment end
+      DATEN: DATS(8) Actual date of shipment end
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      ERZET: TIMS(6) Entry time
+
+  VTTP:
+    description: Shipment item (deliveries in shipment)
+    module: SD
+    release: both
+    key: [MANDT, TKNUM, TPNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      TKNUM: CHAR(10) Shipment number
+      TPNUM: NUMC(4) Shipment item
+      VBELN: CHAR(10) Delivery
+      TPRFO: NUMC(4) Itinerary sequence
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      ERZET: TIMS(6) Entry time
+
+  VTTS:
+    description: Stage of shipment
+    module: SD
+    release: both
+    key: [MANDT, TKNUM, TSNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      TKNUM: CHAR(10) Shipment number
+      TSNUM: NUMC(4) Stage of shipment number
+      TSRFO: NUMC(4) Stage sequence
+      TSTYP: CHAR(1) Stage category
+      VSART: CHAR(2) Shipping type
+      TDLNR: CHAR(10) Forwarding agent
+      ROUTE: CHAR(6) Route
+      VSTEL: CHAR(4) Departure shipping point
+      VSTEZ: CHAR(4) Destination shipping point
+      KUNNA: CHAR(10) Departure customer
+      KUNNZ: CHAR(10) Destination customer
+      LIFNA: CHAR(10) Departure vendor
+      LIFNZ: CHAR(10) Destination vendor
+      WERKA: CHAR(4) Departure plant
+      WERKZ: CHAR(4) Destination plant
+
+  VTSP:
+    description: Stage of shipment - item allocation
+    module: SD
+    release: both
+    key: [MANDT, TKNUM, TSNUM, TPNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      TKNUM: CHAR(10) Shipment number
+      TSNUM: NUMC(4) Stage of shipment number
+      TPNUM: NUMC(4) Shipment item
+
+  # ---------------------------------------------------------------- Customer master (SD)
+  KNVP:
+    description: Customer master partner functions
+    module: SD
+    release: both
+    key: [MANDT, KUNNR, VKORG, VTWEG, SPART, PARVW, PARZA]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer number
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+      PARVW: CHAR(2) Partner function
+      PARZA: NUMC(3) Partner counter
+      KUNN2: CHAR(10) Customer number of business partner
+      LIFNR: CHAR(10) Vendor
+      PERNR: NUMC(8) Personnel number
+      PARNR: NUMC(10) Contact person number
+      KNREF: CHAR(30) Customer description of partner
+      DEFPA: CHAR(1) Default partner
+
+  KNVK:
+    description: Customer master contact persons
+    module: SD
+    release: both
+    key: [MANDT, PARNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PARNR: NUMC(10) Contact person number
+      KUNNR: CHAR(10) Customer number
+      LIFNR: CHAR(10) Vendor
+      NAMEV: CHAR(35) First name
+      NAME1: CHAR(35) Name
+      ANRED: CHAR(30) Form of address
+      ABTPA: CHAR(12) Department of contact person at partner
+      ABTNR: CHAR(4) Contact person department
+      PAFKT: CHAR(2) Contact person function
+      TELF1: CHAR(16) Telephone 1
+      SORTL: CHAR(10) Sort field
+      GBDAT: DATS(8) Date of birth
+      PRSNR: CHAR(10) Person number
+      LOEVM: CHAR(1) Deletion flag
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+
+  KNVI:
+    description: Customer master tax indicator
+    module: SD
+    release: both
+    key: [MANDT, KUNNR, ALAND, TATYP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer number
+      ALAND: CHAR(3) Departure country
+      TATYP: CHAR(4) Tax category
+      TAXKD: CHAR(1) Tax classification for customer
+
+  KNMT:
+    description: Customer-material info record
+    module: SD
+    release: both
+    key: [MANDT, VKORG, VTWEG, KUNNR, MATNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      KUNNR: CHAR(10) Customer number
+      MATNR: CHAR(40) Material number
+      KDMAT: CHAR(35) Customer material number
+      POSTX: CHAR(40) Customer description of material
+      WERKS: CHAR(4) Delivering plant
+      LPRIO: NUMC(2) Delivery priority
+      KZTLF: CHAR(1) Partial delivery at item level
+      ANTLF: DEC(1,0) Maximum number of partial deliveries
+      UNTTO: DEC(3,1) Underdelivery tolerance
+      UEBTO: DEC(3,1) Overdelivery tolerance
+      UEBTK: CHAR(1) Unlimited overdelivery allowed
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+
+  KNKK:
+    description: Customer master credit management - control area data
+    module: SD
+    release: ecc
+    key: [MANDT, KUNNR, KKBER]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer number
+      KKBER: CHAR(4) Credit control area
+      KNKLI: CHAR(10) Customer credit limit reference account
+      KLIMK: CURR(15,2) Credit limit
+      SAUFT: CURR(15,2) Sales value
+      SKFOR: CURR(15,2) Total receivables
+      SSOBL: CURR(15,2) Special liabilities
+      CTLPC: CHAR(3) Credit management risk category
+      CRBLB: CHAR(1) Blocked by credit management
+      SBGRP: CHAR(3) Credit representative group
+      GRUPP: CHAR(4) Customer credit group
+      DTREV: DATS(8) Last internal review
+      NXTRV: DATS(8) Next internal review
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+
+  KNKA:
+    description: Customer master credit management - central data
+    module: SD
+    release: ecc
+    key: [MANDT, KUNNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer credit limit reference account
+      KLIMG: CURR(15,2) ref=WAERS Total credit limit
+      KLIME: CURR(15,2) ref=WAERS Individual credit limit
+      WAERS: CUKY(5) Currency
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+
+  # ---------------------------------------------------------------- Condition records
+  KONH:
+    description: Conditions (header)
+    module: SD
+    release: both
+    key: [MANDT, KNUMH]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KNUMH: CHAR(10) Condition record number
+      KVEWE: CHAR(1) Usage of the condition table
+      KOTABNR: CHAR(3) Condition table
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      VAKEY: CHAR(100) Variable key
+      DATAB: DATS(8) Valid from
+      DATBI: DATS(8) Valid to
+      KOSRT: CHAR(10) Search term for conditions
+      KNUMA_BO: CHAR(10) Rebate agreement
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+
+  KONP:
+    description: Conditions (item)
+    module: SD
+    release: both
+    key: [MANDT, KNUMH, KOPOS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KNUMH: CHAR(10) Condition record number
+      KOPOS: NUMC(2) Sequential number of the condition
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      STFKZ: CHAR(1) Scale type
+      KZBZG: CHAR(1) Scale basis indicator
+      KONMS: UNIT(3) Condition scale unit of measure
+      KONWS: CUKY(5) Scale currency
+      KRECH: CHAR(1) Calculation type for condition
+      KBETR: CURR(11,2) ref=KONWA Condition amount or percentage
+      KONWA: CUKY(5) Rate unit (currency or percentage)
+      KPEIN: DEC(5,0) Condition pricing unit
+      KMEIN: UNIT(3) Condition unit
+      KUMZA: DEC(5,0) Numerator for converting condition units
+      KUMNE: DEC(5,0) Denominator for converting condition units
+      MWSK1: CHAR(2) Tax on sales/purchases code
+      ZTERM: CHAR(4) Terms of payment key
+      KZNEP: CHAR(1) Condition exclusion indicator
+      LOEVM_KO: CHAR(1) Deletion indicator for condition item
+
+  KONM:
+    description: Conditions (1-dimensional quantity scale)
+    module: SD
+    release: both
+    key: [MANDT, KNUMH, KOPOS, KLFN1]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KNUMH: CHAR(10) Condition record number
+      KOPOS: NUMC(2) Sequential number of the condition
+      KLFN1: NUMC(4) Current number of the line scale
+      KSTBM: QUAN(15,3) Condition scale quantity
+      KBETR: CURR(11,2) Rate (condition amount or percentage)
+
+  KONW:
+    description: Conditions (1-dimensional value scale)
+    module: SD
+    release: both
+    key: [MANDT, KNUMH, KOPOS, KLFN1]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KNUMH: CHAR(10) Condition record number
+      KOPOS: NUMC(2) Sequential number of the condition
+      KLFN1: NUMC(4) Current number of the line scale
+      KSTBW: CURR(15,2) Scale value
+      KBETR: CURR(11,2) Rate (condition amount or percentage)
+
+  # ---------------------------------------------------------------- Condition tables
+  A004:
+    description: Condition table - Sales org/Distribution channel/Material
+    module: SD
+    release: both
+    key: [MANDT, KAPPL, KSCHL, VKORG, VTWEG, MATNR, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      MATNR: CHAR(40) Material number
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      KNUMH: CHAR(10) Condition record number
+
+  A005:
+    description: Condition table - Sales org/Distribution channel/Customer/Material
+    module: SD
+    release: both
+    key: [MANDT, KAPPL, KSCHL, VKORG, VTWEG, KUNNR, MATNR, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      KUNNR: CHAR(10) Customer number
+      MATNR: CHAR(40) Material number
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      KNUMH: CHAR(10) Condition record number
+
+  A304:
+    description: Condition table - Sales org/Distribution channel/Material (with release status)
+    module: SD
+    release: both
+    key: [MANDT, KAPPL, KSCHL, VKORG, VTWEG, MATNR, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      MATNR: CHAR(40) Material number
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      KFRST: CHAR(1) Release status
+      KNUMH: CHAR(10) Condition record number
+
+  A305:
+    description: Condition table - Sales org/Distribution channel/Customer/Material (with release status)
+    module: SD
+    release: both
+    key: [MANDT, KAPPL, KSCHL, VKORG, VTWEG, KUNNR, MATNR, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      KUNNR: CHAR(10) Customer number
+      MATNR: CHAR(40) Material number
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      KFRST: CHAR(1) Release status
+      KNUMH: CHAR(10) Condition record number
+
+  A017:
+    description: Condition table - Purchasing info record (plant-specific)
+    module: MM
+    release: both
+    key: [MANDT, KAPPL, KSCHL, LIFNR, MATNR, EKORG, WERKS, ESOKZ, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      LIFNR: CHAR(10) Vendor
+      MATNR: CHAR(40) Material number
+      EKORG: CHAR(4) Purchasing organization
+      WERKS: CHAR(4) Plant
+      ESOKZ: CHAR(1) Purchasing info record category
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      KNUMH: CHAR(10) Condition record number
+
+  A018:
+    description: Condition table - Purchasing info record
+    module: MM
+    release: both
+    key: [MANDT, KAPPL, KSCHL, LIFNR, MATNR, EKORG, ESOKZ, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      LIFNR: CHAR(10) Vendor
+      MATNR: CHAR(40) Material number
+      EKORG: CHAR(4) Purchasing organization
+      ESOKZ: CHAR(1) Purchasing info record category
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      KNUMH: CHAR(10) Condition record number
+
+  # ---------------------------------------------------------------- Output
+  NAST:
+    description: Message status (output records)
+    module: SD
+    release: both
+    key: [MANDT, KAPPL, OBJKY, KSCHL, SPRAS, PARNR, PARVW, ERDAT, ERUHR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KAPPL: CHAR(2) Application for message conditions
+      OBJKY: CHAR(30) Object key
+      KSCHL: CHAR(4) Message type
+      SPRAS: LANG(1) Message language
+      PARNR: CHAR(10) Message partner
+      PARVW: CHAR(2) Partner function
+      ERDAT: DATS(8) Date on which status record was created
+      ERUHR: TIMS(6) Time at which status record was created
+      NACHA: CHAR(1) Message transmission medium
+      VSZTP: CHAR(1) Dispatch time
+      VSTAT: CHAR(1) Processing status of message
+      ANZAL: NUMC(2) Number of messages (original + copies)
+      DATVR: DATS(8) Date of processing
+      UHRVR: TIMS(6) Time of processing
+      USNAM: CHAR(12) User name
+      LDEST: CHAR(4) Spool output device
+      DIMME: CHAR(1) Print immediately
+      MANUE: CHAR(1) Message created manually
+
+  # ---------------------------------------------------------------- Organizational structure
+  TVKO:
+    description: Sales organizations
+    module: SD
+    release: both
+    key: [MANDT, VKORG]
+    fields_complete: false
+    text_table: TVKOT
+    fields:
+      MANDT: CLNT(3) Client
+      VKORG: CHAR(4) Sales organization
+      WAERS: CUKY(5) Statistics currency
+      BUKRS: CHAR(4) Company code of the sales organization
+      ADRNR: CHAR(10) Address
+      KUNNR: CHAR(10) Customer number for intercompany billing
+
+  TVKOT:
+    description: Sales organization texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, VKORG]
+    fields_complete: false
+    text_of: TVKO
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      VKORG: CHAR(4) Sales organization
+      VTEXT: CHAR(20) Name
+
+  TVTW:
+    description: Distribution channels
+    module: SD
+    release: both
+    key: [MANDT, VTWEG]
+    fields_complete: false
+    text_table: TVTWT
+    fields:
+      MANDT: CLNT(3) Client
+      VTWEG: CHAR(2) Distribution channel
+
+  TVTWT:
+    description: Distribution channel texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, VTWEG]
+    fields_complete: false
+    text_of: TVTW
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      VTWEG: CHAR(2) Distribution channel
+      VTEXT: CHAR(20) Name
+
+  TSPA:
+    description: Divisions
+    module: SD
+    release: both
+    key: [MANDT, SPART]
+    fields_complete: false
+    text_table: TSPAT
+    fields:
+      MANDT: CLNT(3) Client
+      SPART: CHAR(2) Division
+
+  TSPAT:
+    description: Division texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, SPART]
+    fields_complete: false
+    text_of: TSPA
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      SPART: CHAR(2) Division
+      VTEXT: CHAR(20) Description
+
+  TVTA:
+    description: Sales areas (organizational unit)
+    module: SD
+    release: both
+    key: [MANDT, VKORG, VTWEG, SPART]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+      VTWKO: CHAR(2) Reference distribution channel for conditions
+      SPAKO: CHAR(2) Reference division for conditions
+      VTWKU: CHAR(2) Reference distribution channel for customer/material masters
+      SPAKU: CHAR(2) Reference division for customer master
+
+  # ---------------------------------------------------------------- Document types and item categories
+  TVAK:
+    description: Sales document types
+    module: SD
+    release: both
+    key: [MANDT, AUART]
+    fields_complete: false
+    text_table: TVAKT
+    fields:
+      MANDT: CLNT(3) Client
+      AUART: CHAR(4) Sales document type
+      NUMKI: CHAR(2) Number range for internal assignment
+      NUMKE: CHAR(2) Number range for external assignment
+      KALVG: CHAR(1) Document pricing procedure
+      PARGR: CHAR(4) Partner determination procedure
+      LFARV: CHAR(4) Default delivery type
+      FKARV: CHAR(4) Delivery-related billing type
+      FKARA: CHAR(4) Order-related billing type
+      LIFSP: CHAR(2) Default delivery block
+      FAKSP: CHAR(2) Default billing block
+      BEZOB: CHAR(1) Reference mandatory
+
+  TVAKT:
+    description: Sales document type texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, AUART]
+    fields_complete: false
+    text_of: TVAK
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      AUART: CHAR(4) Sales document type
+      BEZEI: CHAR(20) Description
+
+  TVAP:
+    description: Sales document item categories
+    module: SD
+    release: both
+    key: [MANDT, PSTYV]
+    fields_complete: false
+    text_table: TVAPT
+    fields:
+      MANDT: CLNT(3) Client
+      PSTYV: CHAR(4) Sales document item category
+      FKREL: CHAR(1) Relevant for billing
+      PRSFD: CHAR(1) Carry out pricing
+      ETERL: CHAR(1) Schedule lines allowed
+      LFREL: CHAR(1) Relevant for delivery
+      SHKZG: CHAR(1) Returns
+      ERLRE: CHAR(1) Completion rule for quotation/contract
+      PARGR: CHAR(4) Partner determination procedure
+
+  TVAPT:
+    description: Sales document item category texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, PSTYV]
+    fields_complete: false
+    text_of: TVAP
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      PSTYV: CHAR(4) Sales document item category
+      VTEXT: CHAR(20) Description
+
+  TVFK:
+    description: Billing document types
+    module: SD
+    release: both
+    key: [MANDT, FKART]
+    fields_complete: false
+    text_table: TVFKT
+    fields:
+      MANDT: CLNT(3) Client
+      FKART: CHAR(4) Billing type
+      FKTYP: CHAR(1) Billing category
+      NUMKI: CHAR(2) Number range for internal assignment
+      FKARTS: CHAR(4) Cancellation billing type
+      RFBFK: CHAR(1) Posting block
+
+  TVFKT:
+    description: Billing document type texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, FKART]
+    fields_complete: false
+    text_of: TVFK
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      FKART: CHAR(4) Billing type
+      VTEXT: CHAR(40) Description
+
+  TVLK:
+    description: Delivery types
+    module: SD
+    release: both
+    key: [MANDT, LFART]
+    fields_complete: false
+    text_table: TVLKT
+    fields:
+      MANDT: CLNT(3) Client
+      LFART: CHAR(4) Delivery type
+      NUMKI: CHAR(2) Number range for internal assignment
+      NUMKE: CHAR(2) Number range for external assignment
+      PARGR: CHAR(4) Partner determination procedure
+      AUFER: CHAR(1) Preceding document required
+      DAART: CHAR(4) Default order type for deliveries without reference
+
+  TVLKT:
+    description: Delivery type texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, LFART]
+    fields_complete: false
+    text_of: TVLK
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      LFART: CHAR(4) Delivery type
+      VTEXT: CHAR(20) Description
+
+  # ---------------------------------------------------------------- Shipping configuration
+  TVSB:
+    description: Shipping conditions
+    module: SD
+    release: both
+    key: [MANDT, VSBED]
+    fields_complete: false
+    text_table: TVSBT
+    fields:
+      MANDT: CLNT(3) Client
+      VSBED: CHAR(2) Shipping conditions
+
+  TVSBT:
+    description: Shipping condition texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, VSBED]
+    fields_complete: false
+    text_of: TVSB
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      VSBED: CHAR(2) Shipping conditions
+      VTEXT: CHAR(20) Description
+
+  TVST:
+    description: Shipping points
+    module: SD
+    release: both
+    key: [MANDT, VSTEL]
+    fields_complete: false
+    text_table: TVSTT
+    fields:
+      MANDT: CLNT(3) Client
+      VSTEL: CHAR(4) Shipping point/receiving point
+      FABKL: CHAR(2) Factory calendar key
+      ALAND: CHAR(3) Departure country
+      AZONE: CHAR(10) Departure zone
+      ADRNR: CHAR(10) Address
+
+  TVSTT:
+    description: Shipping point texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, VSTEL]
+    fields_complete: false
+    text_of: TVST
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      VSTEL: CHAR(4) Shipping point/receiving point
+      VTEXT: CHAR(30) Description
+
+  TVRO:
+    description: Routes
+    module: SD
+    release: both
+    key: [MANDT, ROUTE]
+    fields_complete: false
+    text_table: TVROT
+    fields:
+      MANDT: CLNT(3) Client
+      ROUTE: CHAR(6) Route
+      VSART: CHAR(2) Shipping type
+      TDLNR: CHAR(10) Forwarding agent
+      DISTZ: QUAN(13,3) ref=MEDST Distance
+      MEDST: UNIT(3) Unit of measure for distance
+
+  TVROT:
+    description: Route texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, ROUTE]
+    fields_complete: false
+    text_of: TVRO
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      ROUTE: CHAR(6) Route
+      BEZEI: CHAR(40) Description of route
+
+  # ---------------------------------------------------------------- Sales offices, groups
+  TVBUR:
+    description: Sales offices
+    module: SD
+    release: both
+    key: [MANDT, VKBUR]
+    fields_complete: false
+    text_table: TVKBT
+    fields:
+      MANDT: CLNT(3) Client
+      VKBUR: CHAR(4) Sales office
+      ADRNR: CHAR(10) Address
+
+  TVKBT:
+    description: Sales office texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, VKBUR]
+    fields_complete: false
+    text_of: TVBUR
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      VKBUR: CHAR(4) Sales office
+      BEZEI: CHAR(20) Description
+
+  TVKGR:
+    description: Sales groups
+    module: SD
+    release: both
+    key: [MANDT, VKGRP]
+    fields_complete: false
+    text_table: TVGRT
+    fields:
+      MANDT: CLNT(3) Client
+      VKGRP: CHAR(3) Sales group
+
+  TVGRT:
+    description: Sales group texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, VKGRP]
+    fields_complete: false
+    text_of: TVKGR
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      VKGRP: CHAR(3) Sales group
+      BEZEI: CHAR(20) Description
+
+  TVKOV:
+    description: Distribution channels per sales organization
+    module: SD
+    release: both
+    key: [MANDT, VKORG, VTWEG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+
+  # ---------------------------------------------------------------- Customer / material classification
+  T151:
+    description: Customer groups
+    module: SD
+    release: both
+    key: [MANDT, KDGRP]
+    fields_complete: false
+    text_table: T151T
+    fields:
+      MANDT: CLNT(3) Client
+      KDGRP: CHAR(2) Customer group
+
+  T151T:
+    description: Customer group texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, KDGRP]
+    fields_complete: false
+    text_of: T151
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      KDGRP: CHAR(2) Customer group
+      KTEXT: CHAR(20) Name
+
+  T171:
+    description: Sales districts
+    module: SD
+    release: both
+    key: [MANDT, BZIRK]
+    fields_complete: false
+    text_table: T171T
+    fields:
+      MANDT: CLNT(3) Client
+      BZIRK: CHAR(6) Sales district
+
+  T171T:
+    description: Sales district texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, BZIRK]
+    fields_complete: false
+    text_of: T171
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      BZIRK: CHAR(6) Sales district
+      BZTXT: CHAR(20) Name of the district
+
+  TVV1:
+    description: Customer group 1
+    module: SD
+    release: both
+    key: [MANDT, KVGR1]
+    fields_complete: false
+    text_table: TVV1T
+    fields:
+      MANDT: CLNT(3) Client
+      KVGR1: CHAR(3) Customer group 1
+
+  TVV1T:
+    description: Customer group 1 texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, KVGR1]
+    fields_complete: false
+    text_of: TVV1
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      KVGR1: CHAR(3) Customer group 1
+      BEZEI: CHAR(20) Description
+
+  TVM1:
+    description: Material pricing group 1 (material group 1)
+    module: SD
+    release: both
+    key: [MANDT, MVGR1]
+    fields_complete: false
+    text_table: TVM1T
+    fields:
+      MANDT: CLNT(3) Client
+      MVGR1: CHAR(3) Material group 1
+
+  TVM1T:
+    description: Material group 1 texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, MVGR1]
+    fields_complete: false
+    text_of: TVM1
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      MVGR1: CHAR(3) Material group 1
+      BEZEI: CHAR(40) Description
+
+  T179:
+    description: Materials - product hierarchies
+    module: SD
+    release: both
+    key: [MANDT, PRODH]
+    fields_complete: false
+    text_table: T179T
+    fields:
+      MANDT: CLNT(3) Client
+      PRODH: CHAR(18) Product hierarchy
+      STUFE: CHAR(1) Level number
+
+  T179T:
+    description: Product hierarchy texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, PRODH]
+    fields_complete: false
+    text_of: T179
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      PRODH: CHAR(18) Product hierarchy
+      VTEXT: CHAR(40) Description
+
+  # ---------------------------------------------------------------- Incoterms, order reasons, condition types
+  TINC:
+    description: Incoterms
+    module: SD
+    release: both
+    key: [MANDT, INCO1]
+    fields_complete: false
+    text_table: TINCT
+    fields:
+      MANDT: CLNT(3) Client
+      INCO1: CHAR(3) Incoterms (part 1)
+      ORTOB: CHAR(1) Location is mandatory
+
+  TINCT:
+    description: Incoterms texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, INCO1]
+    fields_complete: false
+    text_of: TINC
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      INCO1: CHAR(3) Incoterms (part 1)
+      BEZEI: CHAR(30) Description
+
+  TVAU:
+    description: Order reasons
+    module: SD
+    release: both
+    key: [MANDT, AUGRU]
+    fields_complete: false
+    text_table: TVAUT
+    fields:
+      MANDT: CLNT(3) Client
+      AUGRU: CHAR(3) Order reason (reason for the business transaction)
+
+  TVAUT:
+    description: Order reason texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, AUGRU]
+    fields_complete: false
+    text_of: TVAU
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      AUGRU: CHAR(3) Order reason
+      BEZEI: CHAR(40) Description
+
+  T685:
+    description: Condition types
+    module: SD
+    release: both
+    key: [MANDT, KVEWE, KAPPL, KSCHL]
+    fields_complete: false
+    text_table: T685T
+    fields:
+      MANDT: CLNT(3) Client
+      KVEWE: CHAR(1) Usage of the condition table
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      KOZGF: CHAR(4) Access sequence
+
+  T685T:
+    description: Condition type texts
+    module: SD
+    release: both
+    key: [MANDT, SPRAS, KVEWE, KAPPL, KSCHL]
+    fields_complete: false
+    text_of: T685
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      KVEWE: CHAR(1) Usage of the condition table
+      KAPPL: CHAR(2) Application
+      KSCHL: CHAR(4) Condition type
+      VTEXT: CHAR(20) Name

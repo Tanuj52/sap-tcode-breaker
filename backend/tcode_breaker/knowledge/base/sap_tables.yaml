@@ -1,0 +1,1116 @@
+# Built-in SAP table knowledge for tcode-breaker.
+#
+# Field spec format:  TYPE(len[,dec]) [ref=FIELD] Description
+#   TYPE is the DDIC data type (CHAR, NUMC, DATS, TIMS, CURR, QUAN, DEC, INT1/2/4/8, CUKY, UNIT, LANG, CLNT, FLTP, STRG, RAW)
+#   ref= names the currency/unit reference field for CURR/QUAN fields.
+#
+# fields_complete: true  -> every DB field is listed; unknown columns are errors.
+# fields_complete: false -> only commonly used fields are listed; unknown columns are reported as "unverified".
+# release: ecc | s4 | both   (where the table physically exists)
+#
+# Client packs (knowledge-packs/<client>/ddic/DD03L.csv) override and extend this file.
+version: 1
+
+tables:
+
+  # ---------------------------------------------------------------- SFLIGHT demo model (BC)
+  SCARR:
+    description: Airline
+    module: BC
+    release: both
+    key: [MANDT, CARRID]
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      CARRID: CHAR(3) Airline code
+      CARRNAME: CHAR(20) Airline name
+      CURRCODE: CUKY(5) Local currency of airline
+      URL: CHAR(255) Airline URL
+
+  SPFLI:
+    description: Flight schedule (connections)
+    module: BC
+    release: both
+    key: [MANDT, CARRID, CONNID]
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      CARRID: CHAR(3) Airline code
+      CONNID: NUMC(4) Flight connection number
+      COUNTRYFR: CHAR(3) Country of departure
+      CITYFROM: CHAR(20) Departure city
+      AIRPFROM: CHAR(3) Departure airport
+      COUNTRYTO: CHAR(3) Arrival country
+      CITYTO: CHAR(20) Arrival city
+      AIRPTO: CHAR(3) Destination airport
+      FLTIME: INT4(10) Flight time (minutes)
+      DEPTIME: TIMS(6) Departure time
+      ARRTIME: TIMS(6) Arrival time
+      DISTANCE: QUAN(9,4) ref=DISTID Distance
+      DISTID: UNIT(3) Distance unit
+      FLTYPE: CHAR(1) Charter flag
+      PERIOD: INT1(3) Arrival n day(s) later
+
+  SFLIGHT:
+    description: Flights
+    module: BC
+    release: both
+    key: [MANDT, CARRID, CONNID, FLDATE]
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      CARRID: CHAR(3) Airline code
+      CONNID: NUMC(4) Flight connection number
+      FLDATE: DATS(8) Flight date
+      PRICE: CURR(15,2) ref=CURRENCY Airfare
+      CURRENCY: CUKY(5) Local currency of airline
+      PLANETYPE: CHAR(10) Aircraft type
+      SEATSMAX: INT4(10) Maximum capacity economy
+      SEATSOCC: INT4(10) Occupied seats economy
+      PAYMENTSUM: CURR(17,2) ref=CURRENCY Total of current bookings
+      SEATSMAX_B: INT4(10) Maximum capacity business
+      SEATSOCC_B: INT4(10) Occupied seats business
+      SEATSMAX_F: INT4(10) Maximum capacity first
+      SEATSOCC_F: INT4(10) Occupied seats first
+
+  SBOOK:
+    description: Single flight booking
+    module: BC
+    release: both
+    key: [MANDT, CARRID, CONNID, FLDATE, BOOKID]
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      CARRID: CHAR(3) Airline code
+      CONNID: NUMC(4) Flight connection number
+      FLDATE: DATS(8) Flight date
+      BOOKID: NUMC(8) Booking number
+      CUSTOMID: NUMC(8) Customer number
+      CUSTTYPE: CHAR(1) Customer type
+      SMOKER: CHAR(1) Smoker
+      LUGGWEIGHT: QUAN(8,4) ref=WUNIT Luggage weight
+      WUNIT: UNIT(3) Weight unit
+      INVOICE: CHAR(1) Invoice flag
+      CLASS: CHAR(1) Flight class (F/C/Y)
+      FORCURAM: CURR(15,2) ref=FORCURKEY Price in foreign currency
+      FORCURKEY: CUKY(5) Payment currency
+      LOCCURAM: CURR(15,2) ref=LOCCURKEY Price in local currency
+      LOCCURKEY: CUKY(5) Local currency of airline
+      ORDER_DATE: DATS(8) Booking date
+      COUNTER: NUMC(8) Sales office
+      AGENCYNUM: NUMC(8) Travel agency number
+      CANCELLED: CHAR(1) Cancellation flag
+      RESERVED: CHAR(1) Reservation flag
+      PASSNAME: CHAR(25) Passenger name
+      PASSFORM: CHAR(15) Form of address
+      PASSBIRTH: DATS(8) Date of birth of passenger
+
+  SCUSTOM:
+    description: Flight customers
+    module: BC
+    release: both
+    key: [MANDT, ID]
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      ID: NUMC(8) Customer number
+      NAME: CHAR(25) Customer name
+      FORM: CHAR(15) Form of address
+      STREET: CHAR(30) Street
+      POSTBOX: CHAR(10) PO box
+      POSTCODE: CHAR(10) Postal code
+      CITY: CHAR(25) City
+      COUNTRY: CHAR(3) Country
+      REGION: CHAR(3) Region
+      TELEPHONE: CHAR(30) Telephone
+      CUSTTYPE: CHAR(1) Customer type
+      DISCOUNT: NUMC(3) Discount rate (percent)
+      LANGU: LANG(1) Language
+      EMAIL: CHAR(40) E-mail address
+      WEBUSER: CHAR(25) Web user
+
+  # ---------------------------------------------------------------- Cross-application / config
+  T001:
+    description: Company codes
+    module: FI
+    release: both
+    key: [MANDT, BUKRS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      BUTXT: CHAR(25) Company name
+      ORT01: CHAR(25) City
+      LAND1: CHAR(3) Country
+      WAERS: CUKY(5) Currency
+      SPRAS: LANG(1) Language
+      KTOPL: CHAR(4) Chart of accounts
+      PERIV: CHAR(2) Fiscal year variant
+
+  T001W:
+    description: Plants / branches
+    module: MM
+    release: both
+    key: [MANDT, WERKS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WERKS: CHAR(4) Plant
+      NAME1: CHAR(30) Plant name
+      BWKEY: CHAR(4) Valuation area
+      KUNNR: CHAR(10) Customer number of plant
+      LIFNR: CHAR(10) Vendor number of plant
+      LAND1: CHAR(3) Country
+      ORT01: CHAR(25) City
+      VKORG: CHAR(4) Sales organization
+
+  T001L:
+    description: Storage locations
+    module: MM
+    release: both
+    key: [MANDT, WERKS, LGORT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      LGOBE: CHAR(16) Storage location description
+
+  TCURR:
+    description: Exchange rates
+    module: BC
+    release: both
+    key: [MANDT, KURST, FCURR, TCURR, GDATU]
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      KURST: CHAR(4) Exchange rate type
+      FCURR: CUKY(5) From currency
+      TCURR: CUKY(5) To currency
+      GDATU: CHAR(8) Valid from (inverted date 99999999 - YYYYMMDD)
+      UKURS: DEC(9,5) Exchange rate
+      FFACT: DEC(9,0) Ratio from-currency units
+      TFACT: DEC(9,0) Ratio to-currency units
+
+  TCURX:
+    description: Decimal places in currencies
+    module: BC
+    release: both
+    key: [CURRKEY]
+    fields_complete: true
+    fields:
+      CURRKEY: CUKY(5) Currency key
+      CURRDEC: INT1(3) Number of decimal places
+
+  TCURC:
+    description: Currency codes
+    module: BC
+    release: both
+    key: [MANDT, WAERS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      WAERS: CUKY(5) Currency key
+      ISOCD: CHAR(3) ISO currency code
+
+  T006A:
+    description: Units of measure texts
+    module: BC
+    release: both
+    key: [MANDT, SPRAS, MSEHI]
+    text_of: T006
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      MSEHI: UNIT(3) Internal unit of measure
+      MSEH3: CHAR(3) External unit (commercial)
+      MSEHT: CHAR(10) Unit text
+      MSEHL: CHAR(30) Unit long text
+
+  # ---------------------------------------------------------------- MM
+  MARA:
+    description: General material data
+    module: MM
+    release: both
+    key: [MANDT, MATNR]
+    text_table: MAKT
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number (18 in ECC)
+      ERSDA: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      LAEDA: DATS(8) Last change
+      MTART: CHAR(4) Material type
+      MBRSH: CHAR(1) Industry sector
+      MATKL: CHAR(9) Material group
+      MEINS: UNIT(3) Base unit of measure
+      BRGEW: QUAN(13,3) ref=GEWEI Gross weight
+      NTGEW: QUAN(13,3) ref=GEWEI Net weight
+      GEWEI: UNIT(3) Weight unit
+      LVORM: CHAR(1) Deletion flag (client level)
+      SPART: CHAR(2) Division
+      PRDHA: CHAR(18) Product hierarchy
+
+  MAKT:
+    description: Material descriptions
+    module: MM
+    release: both
+    key: [MANDT, MATNR, SPRAS]
+    text_of: MARA
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      SPRAS: LANG(1) Language
+      MAKTX: CHAR(40) Material description
+      MAKTG: CHAR(40) Material description (upper case)
+
+  MARC:
+    description: Plant data for material
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LVORM: CHAR(1) Deletion flag (plant level)
+      MMSTA: CHAR(2) Plant-specific material status
+      EKGRP: CHAR(3) Purchasing group
+      DISMM: CHAR(2) MRP type
+      DISPO: CHAR(3) MRP controller
+      BESKZ: CHAR(1) Procurement type
+      PLIFZ: DEC(3,0) Planned delivery time (days)
+      MINBE: QUAN(13,3) Reorder point
+      EISBE: QUAN(13,3) Safety stock
+      PRCTR: CHAR(10) Profit center
+
+  MARD:
+    description: Storage location data for material
+    module: MM
+    release: both
+    key: [MANDT, MATNR, WERKS, LGORT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      LABST: QUAN(13,3) Valuated unrestricted-use stock
+      INSME: QUAN(13,3) Stock in quality inspection
+      SPEME: QUAN(13,3) Blocked stock
+      LVORM: CHAR(1) Deletion flag
+
+  MBEW:
+    description: Material valuation
+    module: MM
+    release: both
+    key: [MANDT, MATNR, BWKEY, BWTAR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MATNR: CHAR(40) Material number
+      BWKEY: CHAR(4) Valuation area
+      BWTAR: CHAR(10) Valuation type
+      LBKUM: QUAN(13,3) Total valuated stock
+      SALK3: CURR(13,2) Value of total valuated stock
+      VPRSV: CHAR(1) Price control indicator
+      VERPR: CURR(11,2) Moving average price
+      STPRS: CURR(11,2) Standard price
+      PEINH: DEC(5,0) Price unit
+
+  MKPF:
+    description: Material document header (ECC; compatibility view over MATDOC in S/4HANA)
+    module: MM
+    release: ecc
+    key: [MANDT, MBLNR, MJAHR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MBLNR: CHAR(10) Material document number
+      MJAHR: NUMC(4) Material document year
+      VGART: CHAR(2) Transaction/event type
+      BLART: CHAR(2) Document type
+      BLDAT: DATS(8) Document date
+      BUDAT: DATS(8) Posting date
+      CPUDT: DATS(8) Entry date
+      USNAM: CHAR(12) User name
+      XBLNR: CHAR(16) Reference document
+      BKTXT: CHAR(25) Document header text
+
+  MSEG:
+    description: Material document item (ECC; compatibility view over MATDOC in S/4HANA)
+    module: MM
+    release: ecc
+    key: [MANDT, MBLNR, MJAHR, ZEILE]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MBLNR: CHAR(10) Material document number
+      MJAHR: NUMC(4) Material document year
+      ZEILE: NUMC(4) Item in material document
+      BWART: CHAR(3) Movement type
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      LIFNR: CHAR(10) Vendor
+      KUNNR: CHAR(10) Customer
+      SHKZG: CHAR(1) Debit/credit indicator (S/H)
+      WAERS: CUKY(5) Currency
+      DMBTR: CURR(13,2) ref=WAERS Amount in local currency
+      MENGE: QUAN(13,3) ref=MEINS Quantity
+      MEINS: UNIT(3) Base unit of measure
+      EBELN: CHAR(10) Purchase order
+      EBELP: NUMC(5) Purchase order item
+      KOSTL: CHAR(10) Cost center
+      AUFNR: CHAR(12) Order number
+
+  MATDOC:
+    description: Material documents (S/4HANA universal table for goods movements)
+    module: MM
+    release: s4
+    key: [MANDT, MBLNR, MJAHR, ZEILE]
+    key_note: Logical key shown; the technical primary key uses KEY1..KEY6.
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MBLNR: CHAR(10) Material document number
+      MJAHR: NUMC(4) Material document year
+      ZEILE: NUMC(4) Item in material document
+      RECORD_TYPE: CHAR(4) Record type (MDOC = material document)
+      VGART: CHAR(2) Transaction/event type
+      BLART: CHAR(2) Document type
+      BLDAT: DATS(8) Document date
+      BUDAT: DATS(8) Posting date
+      CPUDT: DATS(8) Entry date
+      USNAM: CHAR(12) User name
+      XBLNR: CHAR(16) Reference document
+      BKTXT: CHAR(25) Document header text
+      BWART: CHAR(3) Movement type
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      CHARG: CHAR(10) Batch
+      LIFNR: CHAR(10) Vendor
+      KUNNR: CHAR(10) Customer
+      SHKZG: CHAR(1) Debit/credit indicator (S/H)
+      WAERS: CUKY(5) Currency
+      DMBTR: CURR(13,2) ref=WAERS Amount in local currency
+      MENGE: QUAN(13,3) ref=MEINS Quantity
+      MEINS: UNIT(3) Base unit of measure
+      EBELN: CHAR(10) Purchase order
+      EBELP: NUMC(5) Purchase order item
+      KOSTL: CHAR(10) Cost center
+      AUFNR: CHAR(12) Order number
+
+  EKKO:
+    description: Purchasing document header
+    module: MM
+    release: both
+    key: [MANDT, EBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      BUKRS: CHAR(4) Company code
+      BSTYP: CHAR(1) Document category
+      BSART: CHAR(4) Document type
+      LOEKZ: CHAR(1) Deletion indicator
+      AEDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      LIFNR: CHAR(10) Vendor
+      ZTERM: CHAR(4) Payment terms
+      EKORG: CHAR(4) Purchasing organization
+      EKGRP: CHAR(3) Purchasing group
+      WAERS: CUKY(5) Currency
+      BEDAT: DATS(8) Document date
+      FRGKE: CHAR(1) Release indicator
+
+  EKPO:
+    description: Purchasing document item
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EBELP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      LOEKZ: CHAR(1) Deletion indicator
+      TXZ01: CHAR(40) Short text
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      MATKL: CHAR(9) Material group
+      MENGE: QUAN(13,3) ref=MEINS Order quantity
+      MEINS: UNIT(3) Order unit
+      NETPR: CURR(11,2) Net price
+      PEINH: DEC(5,0) Price unit
+      NETWR: CURR(13,2) Net order value
+      ELIKZ: CHAR(1) Delivery completed
+      KNTTP: CHAR(1) Account assignment category
+      PSTYP: CHAR(1) Item category
+
+  EKET:
+    description: Scheduling agreement / PO schedule lines
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EBELP, ETENR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      ETENR: NUMC(4) Schedule line
+      EINDT: DATS(8) Delivery date
+      MENGE: QUAN(13,3) Scheduled quantity
+      WEMNG: QUAN(13,3) Quantity of goods received
+
+  EKBE:
+    description: Purchasing document history
+    module: MM
+    release: both
+    key: [MANDT, EBELN, EBELP, ZEKKN, VGABE, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      EBELN: CHAR(10) Purchasing document
+      EBELP: NUMC(5) Item
+      ZEKKN: NUMC(2) Account assignment sequence
+      VGABE: CHAR(1) Transaction/event type (1 = GR, 2 = IR)
+      GJAHR: NUMC(4) Material document year
+      BELNR: CHAR(10) Material/invoice document
+      BUZEI: NUMC(4) Item
+      BWART: CHAR(3) Movement type
+      BUDAT: DATS(8) Posting date
+      MENGE: QUAN(13,3) Quantity
+      DMBTR: CURR(13,2) Amount in local currency
+      SHKZG: CHAR(1) Debit/credit indicator
+
+  EBAN:
+    description: Purchase requisition
+    module: MM
+    release: both
+    key: [MANDT, BANFN, BNFPO]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BANFN: CHAR(10) Purchase requisition
+      BNFPO: NUMC(5) Item
+      BSART: CHAR(4) Document type
+      LOEKZ: CHAR(1) Deletion indicator
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      MENGE: QUAN(13,3) Quantity
+      MEINS: UNIT(3) Unit
+      BADAT: DATS(8) Requisition date
+      EBELN: CHAR(10) Purchase order
+      EBELP: NUMC(5) PO item
+
+  LFA1:
+    description: Vendor master (general); synchronized with Business Partner in S/4HANA
+    module: MM
+    release: both
+    key: [MANDT, LIFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LIFNR: CHAR(10) Vendor
+      LAND1: CHAR(3) Country
+      NAME1: CHAR(35) Name
+      ORT01: CHAR(35) City
+      PSTLZ: CHAR(10) Postal code
+      STRAS: CHAR(35) Street
+      KTOKK: CHAR(4) Account group
+      LOEVM: CHAR(1) Deletion flag
+      SPERR: CHAR(1) Posting block
+      STCD1: CHAR(16) Tax number 1
+
+  LFB1:
+    description: Vendor master (company code)
+    module: FI
+    release: both
+    key: [MANDT, LIFNR, BUKRS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LIFNR: CHAR(10) Vendor
+      BUKRS: CHAR(4) Company code
+      AKONT: CHAR(10) Reconciliation account
+      ZTERM: CHAR(4) Payment terms
+      LOEVM: CHAR(1) Deletion flag
+
+  # ---------------------------------------------------------------- SD
+  KNA1:
+    description: Customer master (general); synchronized with Business Partner in S/4HANA
+    module: SD
+    release: both
+    key: [MANDT, KUNNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer
+      LAND1: CHAR(3) Country
+      NAME1: CHAR(35) Name
+      NAME2: CHAR(35) Name 2
+      ORT01: CHAR(35) City
+      PSTLZ: CHAR(10) Postal code
+      REGIO: CHAR(3) Region
+      STRAS: CHAR(35) Street
+      KTOKD: CHAR(4) Account group
+      LOEVM: CHAR(1) Deletion flag
+      STCD1: CHAR(16) Tax number 1
+
+  KNB1:
+    description: Customer master (company code)
+    module: FI
+    release: both
+    key: [MANDT, KUNNR, BUKRS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer
+      BUKRS: CHAR(4) Company code
+      AKONT: CHAR(10) Reconciliation account
+      ZTERM: CHAR(4) Payment terms
+      LOEVM: CHAR(1) Deletion flag
+
+  KNVV:
+    description: Customer master (sales area)
+    module: SD
+    release: both
+    key: [MANDT, KUNNR, VKORG, VTWEG, SPART]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+      KDGRP: CHAR(2) Customer group
+      BZIRK: CHAR(6) Sales district
+      WAERS: CUKY(5) Currency
+      LOEVM: CHAR(1) Deletion flag
+
+  VBAK:
+    description: Sales document header (S/4HANA also carries former VBUK status fields)
+    module: SD
+    release: both
+    key: [MANDT, VBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales document
+      ERDAT: DATS(8) Created on
+      ERZET: TIMS(6) Time created
+      ERNAM: CHAR(12) Created by
+      AUDAT: DATS(8) Document date
+      VBTYP: CHAR(4) SD document category (1 char in ECC)
+      AUART: CHAR(4) Sales document type
+      NETWR: CURR(15,2) ref=WAERK Net value
+      WAERK: CUKY(5) Document currency
+      VKORG: CHAR(4) Sales organization
+      VTWEG: CHAR(2) Distribution channel
+      SPART: CHAR(2) Division
+      VKBUR: CHAR(4) Sales office
+      KUNNR: CHAR(10) Sold-to party
+      BSTNK: CHAR(20) Customer reference
+      GBSTK: CHAR(1) Overall processing status (S/4HANA; VBUK in ECC)
+      ABSTK: CHAR(1) Rejection status (S/4HANA; VBUK in ECC)
+      LFSTK: CHAR(1) Delivery status (S/4HANA; VBUK in ECC)
+      FKSTK: CHAR(1) Billing status (S/4HANA; VBUK in ECC)
+
+  VBAP:
+    description: Sales document item (S/4HANA also carries former VBUP status fields)
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales document
+      POSNR: NUMC(6) Item
+      MATNR: CHAR(40) Material
+      ARKTX: CHAR(40) Item description
+      PSTYV: CHAR(4) Item category
+      ABGRU: CHAR(2) Reason for rejection
+      KWMENG: QUAN(15,3) ref=VRKME Order quantity
+      VRKME: UNIT(3) Sales unit
+      NETWR: CURR(15,2) ref=WAERK Net value
+      WAERK: CUKY(5) Document currency
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      ERDAT: DATS(8) Created on
+      GBSTA: CHAR(1) Overall processing status of item (S/4HANA; VBUP in ECC)
+      LFSTA: CHAR(1) Delivery status of item (S/4HANA; VBUP in ECC)
+
+  VBUK:
+    description: Sales document header status (ECC only; fields moved to VBAK/LIKP/VBRK in S/4HANA)
+    module: SD
+    release: ecc
+    key: [MANDT, VBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales and distribution document
+      GBSTK: CHAR(1) Overall processing status
+      ABSTK: CHAR(1) Rejection status
+      LFSTK: CHAR(1) Delivery status
+      FKSTK: CHAR(1) Billing status
+
+  VBUP:
+    description: Sales document item status (ECC only; fields moved to VBAP/LIPS in S/4HANA)
+    module: SD
+    release: ecc
+    key: [MANDT, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales and distribution document
+      POSNR: NUMC(6) Item
+      GBSTA: CHAR(1) Overall processing status of item
+      LFSTA: CHAR(1) Delivery status of item
+
+  VBEP:
+    description: Sales document schedule lines
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR, ETENR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales document
+      POSNR: NUMC(6) Item
+      ETENR: NUMC(4) Schedule line
+      EDATU: DATS(8) Schedule line date
+      WMENG: QUAN(13,3) Order quantity
+      BMENG: QUAN(13,3) Confirmed quantity
+
+  VBPA:
+    description: Sales document partners
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR, PARVW]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Sales document
+      POSNR: NUMC(6) Item (000000 = header)
+      PARVW: CHAR(2) Partner function (AG, WE, RE, RG)
+      KUNNR: CHAR(10) Customer
+      LIFNR: CHAR(10) Vendor
+      PERNR: NUMC(8) Personnel number
+      ADRNR: CHAR(10) Address
+
+  LIKP:
+    description: Delivery header
+    module: SD
+    release: both
+    key: [MANDT, VBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Delivery
+      ERDAT: DATS(8) Created on
+      LFART: CHAR(4) Delivery type
+      VSTEL: CHAR(4) Shipping point
+      KUNNR: CHAR(10) Ship-to party
+      WADAT_IST: DATS(8) Actual goods movement date
+      LFDAT: DATS(8) Delivery date
+      GBSTK: CHAR(1) Overall status (S/4HANA; VBUK in ECC)
+
+  LIPS:
+    description: Delivery item
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Delivery
+      POSNR: NUMC(6) Item
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      LGORT: CHAR(4) Storage location
+      LFIMG: QUAN(13,3) ref=VRKME Delivered quantity
+      VRKME: UNIT(3) Sales unit
+      VGBEL: CHAR(10) Reference document (sales order)
+      VGPOS: NUMC(6) Reference item
+
+  VBRK:
+    description: Billing document header
+    module: SD
+    release: both
+    key: [MANDT, VBELN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Billing document
+      FKART: CHAR(4) Billing type
+      FKDAT: DATS(8) Billing date
+      VKORG: CHAR(4) Sales organization
+      KUNAG: CHAR(10) Sold-to party
+      KUNRG: CHAR(10) Payer
+      NETWR: CURR(15,2) ref=WAERK Net value
+      WAERK: CUKY(5) Currency
+      BUKRS: CHAR(4) Company code
+      FKSTO: CHAR(1) Billing document is cancelled
+      RFBSK: CHAR(1) Status for transfer to accounting
+
+  VBRP:
+    description: Billing document item
+    module: SD
+    release: both
+    key: [MANDT, VBELN, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELN: CHAR(10) Billing document
+      POSNR: NUMC(6) Item
+      MATNR: CHAR(40) Material
+      FKIMG: QUAN(13,3) ref=VRKME Billed quantity
+      VRKME: UNIT(3) Sales unit
+      NETWR: CURR(15,2) Net value
+      AUBEL: CHAR(10) Sales document
+      AUPOS: NUMC(6) Sales document item
+      VGBEL: CHAR(10) Reference document
+      WERKS: CHAR(4) Plant
+      PRCTR: CHAR(10) Profit center
+
+  VBFA:
+    description: Sales document flow
+    module: SD
+    release: both
+    key: [MANDT, VBELV, POSNV, VBELN, POSNN, VBTYP_N]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      VBELV: CHAR(10) Preceding document
+      POSNV: NUMC(6) Preceding item
+      VBELN: CHAR(10) Subsequent document
+      POSNN: NUMC(6) Subsequent item
+      VBTYP_N: CHAR(4) Subsequent document category
+      VBTYP_V: CHAR(4) Preceding document category
+      RFMNG: QUAN(15,3) Referenced quantity
+      ERDAT: DATS(8) Created on
+
+  KONV:
+    description: Pricing conditions (ECC; replaced by PRCD_ELEMENTS in S/4HANA)
+    module: SD
+    release: ecc
+    key: [MANDT, KNUMV, KPOSN, STUNR, ZAEHK]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KNUMV: CHAR(10) Condition document number
+      KPOSN: NUMC(6) Condition item
+      STUNR: NUMC(3) Step number
+      ZAEHK: NUMC(3) Condition counter
+      KSCHL: CHAR(4) Condition type
+      KBETR: CURR(11,2) Condition amount or percentage
+      WAERS: CUKY(5) Currency
+      KWERT: CURR(13,2) Condition value
+      KINAK: CHAR(1) Condition is inactive
+
+  PRCD_ELEMENTS:
+    description: Pricing conditions (S/4HANA)
+    module: SD
+    release: s4
+    key: [CLIENT, KNUMV, KPOSN, STUNR, ZAEHK]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      KNUMV: CHAR(10) Condition document number
+      KPOSN: NUMC(6) Condition item
+      STUNR: NUMC(3) Step number
+      ZAEHK: NUMC(3) Condition counter
+      KSCHL: CHAR(4) Condition type
+      KBETR: CURR(24,9) Condition amount or percentage
+      WAERS: CUKY(5) Currency
+      KWERT: CURR(23,2) Condition value
+      KINAK: CHAR(1) Condition is inactive
+
+  # ---------------------------------------------------------------- FI / CO
+  BKPF:
+    description: Accounting document header
+    module: FI
+    release: both
+    key: [MANDT, BUKRS, BELNR, GJAHR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      BELNR: CHAR(10) Accounting document
+      GJAHR: NUMC(4) Fiscal year
+      BLART: CHAR(2) Document type
+      BLDAT: DATS(8) Document date
+      BUDAT: DATS(8) Posting date
+      MONAT: NUMC(2) Fiscal period
+      CPUDT: DATS(8) Entry date
+      USNAM: CHAR(12) User name
+      XBLNR: CHAR(16) Reference
+      WAERS: CUKY(5) Currency
+      BKTXT: CHAR(25) Header text
+      STBLG: CHAR(10) Reversal document
+
+  BSEG:
+    description: Accounting document segment (in S/4HANA line items are primarily in ACDOCA)
+    module: FI
+    release: both
+    key: [MANDT, BUKRS, BELNR, GJAHR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      BELNR: CHAR(10) Accounting document
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(3) Line item
+      BSCHL: CHAR(2) Posting key
+      KOART: CHAR(1) Account type (D/K/S/A/M)
+      SHKZG: CHAR(1) Debit/credit indicator
+      DMBTR: CURR(13,2) Amount in local currency
+      WRBTR: CURR(13,2) Amount in document currency
+      HKONT: CHAR(10) G/L account
+      KUNNR: CHAR(10) Customer
+      LIFNR: CHAR(10) Vendor
+      KOSTL: CHAR(10) Cost center
+      PRCTR: CHAR(10) Profit center
+      AUFNR: CHAR(12) Order
+      SGTXT: CHAR(50) Item text
+      ZUONR: CHAR(18) Assignment
+      AUGBL: CHAR(10) Clearing document
+      AUGDT: DATS(8) Clearing date
+
+  ACDOCA:
+    description: Universal Journal entry line items (S/4HANA)
+    module: FI
+    release: s4
+    key: [RCLNT, RLDNR, RBUKRS, GJAHR, BELNR, DOCLN]
+    fields_complete: false
+    fields:
+      RCLNT: CLNT(3) Client
+      RLDNR: CHAR(2) Ledger
+      RBUKRS: CHAR(4) Company code
+      GJAHR: NUMC(4) Fiscal year
+      BELNR: CHAR(10) Journal entry
+      DOCLN: CHAR(6) Line item
+      RACCT: CHAR(10) Account number
+      RCNTR: CHAR(10) Cost center
+      PRCTR: CHAR(10) Profit center
+      RHCUR: CUKY(5) Company code currency
+      HSL: CURR(23,2) ref=RHCUR Amount in company code currency
+      RTCUR: CUKY(5) Transaction currency
+      TSL: CURR(23,2) ref=RTCUR Amount in transaction currency
+      DRCRK: CHAR(1) Debit/credit indicator
+      POPER: NUMC(3) Posting period
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      BLART: CHAR(2) Document type
+      KOART: CHAR(1) Account type
+      KUNNR: CHAR(10) Customer
+      LIFNR: CHAR(10) Supplier
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      AUFNR: CHAR(12) Order
+
+  BSID:
+    description: Customer open items (ECC; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [MANDT, BUKRS, KUNNR, UMSKS, UMSKZ, AUGDT, AUGBL, ZUONR, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      KUNNR: CHAR(10) Customer
+      UMSKS: CHAR(1) Special G/L transaction type
+      UMSKZ: CHAR(1) Special G/L indicator
+      AUGDT: DATS(8) Clearing date
+      AUGBL: CHAR(10) Clearing document
+      ZUONR: CHAR(18) Assignment number
+      BELNR: CHAR(10) Accounting document
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      DMBTR: CURR(13,2) Amount in local currency
+      SHKZG: CHAR(1) Debit/credit indicator
+      ZFBDT: DATS(8) Baseline date for due date
+
+  BSIK:
+    description: Vendor open items (ECC; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [MANDT, BUKRS, LIFNR, UMSKS, UMSKZ, AUGDT, AUGBL, ZUONR, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      LIFNR: CHAR(10) Vendor
+      UMSKS: CHAR(1) Special G/L transaction type
+      UMSKZ: CHAR(1) Special G/L indicator
+      AUGDT: DATS(8) Clearing date
+      AUGBL: CHAR(10) Clearing document
+      ZUONR: CHAR(18) Assignment number
+      BELNR: CHAR(10) Accounting document
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      DMBTR: CURR(13,2) Amount in local currency
+      SHKZG: CHAR(1) Debit/credit indicator
+      ZFBDT: DATS(8) Baseline date for due date
+
+  SKA1:
+    description: G/L account master (chart of accounts)
+    module: FI
+    release: both
+    key: [MANDT, KTOPL, SAKNR]
+    text_table: SKAT
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KTOPL: CHAR(4) Chart of accounts
+      SAKNR: CHAR(10) G/L account
+      XBILK: CHAR(1) Balance sheet account
+      KTOKS: CHAR(4) Account group
+
+  SKAT:
+    description: G/L account texts
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, KTOPL, SAKNR]
+    text_of: SKA1
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      KTOPL: CHAR(4) Chart of accounts
+      SAKNR: CHAR(10) G/L account
+      TXT20: CHAR(20) Short text
+      TXT50: CHAR(50) Long text
+      MCOD1: CHAR(25) Search term
+
+  CSKS:
+    description: Cost center master
+    module: CO
+    release: both
+    key: [MANDT, KOKRS, KOSTL, DATBI]
+    text_table: CSKT
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KOKRS: CHAR(4) Controlling area
+      KOSTL: CHAR(10) Cost center
+      DATBI: DATS(8) Valid to
+      DATAB: DATS(8) Valid from
+      BUKRS: CHAR(4) Company code
+      PRCTR: CHAR(10) Profit center
+      KOSAR: CHAR(1) Cost center category
+      VERAK: CHAR(20) Person responsible
+
+  CSKT:
+    description: Cost center texts
+    module: CO
+    release: both
+    key: [MANDT, SPRAS, KOKRS, KOSTL, DATBI]
+    text_of: CSKS
+    fields_complete: true
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language
+      KOKRS: CHAR(4) Controlling area
+      KOSTL: CHAR(10) Cost center
+      DATBI: DATS(8) Valid to
+      KTEXT: CHAR(20) Name
+      LTEXT: CHAR(40) Description
+      MCTXT: CHAR(20) Search term
+
+  # ---------------------------------------------------------------- PP / PM
+  AUFK:
+    description: Order master data
+    module: CO
+    release: both
+    key: [MANDT, AUFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFNR: CHAR(12) Order number
+      AUART: CHAR(4) Order type
+      AUTYP: NUMC(2) Order category
+      KTEXT: CHAR(40) Description
+      BUKRS: CHAR(4) Company code
+      WERKS: CHAR(4) Plant
+      ERDAT: DATS(8) Created on
+      OBJNR: CHAR(22) Object number
+
+  AFKO:
+    description: Production order header (PP)
+    module: PP
+    release: both
+    key: [MANDT, AUFNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFNR: CHAR(12) Order number
+      GLTRP: DATS(8) Basic finish date
+      GSTRP: DATS(8) Basic start date
+      GAMNG: QUAN(13,3) Total order quantity
+      GMEIN: UNIT(3) Base unit
+      PLNBEZ: CHAR(40) Material
+      DISPO: CHAR(3) MRP controller
+
+  AFPO:
+    description: Production order item
+    module: PP
+    release: both
+    key: [MANDT, AUFNR, POSNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AUFNR: CHAR(12) Order number
+      POSNR: NUMC(4) Order item
+      MATNR: CHAR(40) Material
+      PSMNG: QUAN(13,3) Order item quantity
+      WEMNG: QUAN(13,3) Quantity of goods received
+      MEINS: UNIT(3) Base unit
+      DWERK: CHAR(4) Plant
+
+  RESB:
+    description: Reservation / dependent requirements
+    module: PP
+    release: both
+    key: [MANDT, RSNUM, RSPOS, RSART]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      RSNUM: NUMC(10) Reservation
+      RSPOS: NUMC(4) Item
+      RSART: CHAR(1) Record type
+      MATNR: CHAR(40) Material
+      WERKS: CHAR(4) Plant
+      BDMNG: QUAN(13,3) Requirement quantity
+      ENMNG: QUAN(13,3) Quantity withdrawn
+      MEINS: UNIT(3) Base unit
+      AUFNR: CHAR(12) Order
+      XLOEK: CHAR(1) Item deleted
+
+  # ---------------------------------------------------------------- Business Partner (S/4HANA)
+  BUT000:
+    description: Business partner general data
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      TYPE: CHAR(1) Partner category (1 person, 2 organization)
+      BU_GROUP: CHAR(4) Grouping
+      NAME_ORG1: CHAR(40) Organization name 1
+      NAME_FIRST: CHAR(40) First name
+      NAME_LAST: CHAR(40) Last name
+      PARTNER_GUID: RAW(16) Partner GUID
+      XDELE: CHAR(1) Archiving flag

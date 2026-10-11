@@ -1,0 +1,1017 @@
+# Built-in SAP table knowledge - cross-application master data (countries, units, addresses, business partner) and basis / dictionary / authorization tables.
+version: 1
+tables:
+
+  # ---------------------------------------------------------------- Clients, languages, countries, units
+  T000:
+    description: Clients
+    module: BC
+    release: both
+    key: [MANDT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      MTEXT: CHAR(25) Client name
+      ORT01: CHAR(25) City
+      MWAER: CUKY(5) Standard currency
+      ADRNR: CHAR(10) Address number
+      CCCATEGORY: CHAR(1) Client role
+      CCCORACTIV: CHAR(1) Changes and transports for client-dependent objects
+      CCNOCLIIND: CHAR(1) Maintenance of cross-client objects
+      CCCOPYLOCK: CHAR(1) Protection against client copy and comparison tools
+      LOGSYS: CHAR(10) Logical system
+      CHANGEUSER: CHAR(12) Last changed by
+      CHANGEDATE: DATS(8) Last changed on
+
+  T002:
+    description: Language keys
+    module: BC
+    release: both
+    key: [SPRAS]
+    fields_complete: false
+    text_table: T002T
+    fields:
+      SPRAS: LANG(1) Language key
+      LASPEZ: CHAR(1) Language specifications
+      LAHQ: CHAR(1) Degree of translation of language
+      LAISO: CHAR(2) Two-character SAP language code
+
+  T002T:
+    description: Language key texts
+    module: BC
+    release: both
+    key: [SPRAS, SPRSL]
+    fields_complete: false
+    text_of: T002
+    fields:
+      SPRAS: LANG(1) Language of the text
+      SPRSL: LANG(1) Language key described
+      SPTXT: CHAR(16) Language name
+
+  T005:
+    description: Countries
+    module: BC
+    release: both
+    key: [MANDT, LAND1]
+    fields_complete: false
+    text_table: T005T
+    fields:
+      MANDT: CLNT(3) Client
+      LAND1: CHAR(3) Country key
+      LANDK: CHAR(3) Vehicle country key
+      LNPLZ: NUMC(2) Postal code length
+      PRPLZ: CHAR(1) Rule for postal code field check
+      ADDRS: CHAR(3) Address layout key
+      XPLZS: CHAR(1) Postal code required entry
+      XEGLD: CHAR(1) EU member country
+      SPRAS: LANG(1) Language key
+      WAERS: CUKY(5) Country currency
+      KALSM: CHAR(6) Procedure (pricing, output control, account determination)
+      INTCA: CHAR(2) Country ISO code
+      INTCA3: CHAR(3) ISO country code 3 char
+      INTCN3: CHAR(3) ISO country code numeric 3-characters
+      LNBKN: NUMC(2) Bank account number length
+      LNBLZ: NUMC(2) Bank number length
+      NMFMT: CHAR(2) Standard name format
+      XADDR: CHAR(1) Address of country according to the international standard
+
+  T005T:
+    description: Country names
+    module: BC
+    release: both
+    key: [MANDT, SPRAS, LAND1]
+    fields_complete: false
+    text_of: T005
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      LAND1: CHAR(3) Country key
+      LANDX: CHAR(15) Country name
+      NATIO: CHAR(15) Nationality
+      LANDX50: CHAR(50) Country name (max. 50 characters)
+      NATIO50: CHAR(50) Nationality (max. 50 characters)
+
+  T005S:
+    description: Regions / states
+    module: BC
+    release: both
+    key: [MANDT, LAND1, BLAND]
+    fields_complete: false
+    text_table: T005U
+    fields:
+      MANDT: CLNT(3) Client
+      LAND1: CHAR(3) Country key
+      BLAND: CHAR(3) Region (state, province, county)
+      FPRCD: CHAR(3) Provincial tax code
+      HERBL: CHAR(2) State of manufacture
+
+  T005U:
+    description: Region texts
+    module: BC
+    release: both
+    key: [MANDT, SPRAS, LAND1, BLAND]
+    fields_complete: false
+    text_of: T005S
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      LAND1: CHAR(3) Country key
+      BLAND: CHAR(3) Region (state, province, county)
+      BEZEI: CHAR(20) Region description
+
+  T006:
+    description: Units of measurement
+    module: BC
+    release: both
+    key: [MANDT, MSEHI]
+    fields_complete: false
+    text_table: T006A
+    fields:
+      MANDT: CLNT(3) Client
+      MSEHI: UNIT(3) Unit of measurement
+      KZEX3: CHAR(1) Three-char indicator for external unit of measurement
+      KZEX6: CHAR(1) Six-char identifier for external unit of measurement
+      ANDEC: INT2(5) Number of decimal places for rounding
+      KZKEH: CHAR(1) Commercial measurement unit
+      DIMID: CHAR(6) Dimension key
+      ZAEHL: INT4(10) Numerator for conversion to SI unit
+      NENNR: INT4(10) Denominator for conversion into SI unit
+      EXP10: INT2(5) Base ten exponent for conversion to SI unit
+      ADDKO: DEC(9,6) Additive constant for conversion to SI unit
+      EXPON: INT2(5) Base ten exponent for floating-point display
+      DECAN: INT2(5) Number of decimal places for number display
+      ISOCODE: CHAR(3) ISO code for unit of measurement
+      PRIMARY: CHAR(1) Selection field for conversion from ISO code to internal code
+
+  T006T:
+    description: Dimension texts
+    module: BC
+    release: both
+    key: [MANDT, SPRAS, DIMID]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      DIMID: CHAR(6) Dimension key
+      TXDIM: CHAR(20) Dimension text
+
+  TFACS:
+    description: Factory calendar (display)
+    module: BC
+    release: both
+    key: [IDENT, JAHR]
+    fields_complete: false
+    fields:
+      IDENT: CHAR(2) Factory calendar
+      JAHR: NUMC(4) Factory calendar year
+      MON01: CHAR(31) Workdays in January (1 workday, 0 non-workday)
+      MON02: CHAR(31) Workdays in February
+      MON03: CHAR(31) Workdays in March
+      MON04: CHAR(31) Workdays in April
+      MON05: CHAR(31) Workdays in May
+      MON06: CHAR(31) Workdays in June
+      MON07: CHAR(31) Workdays in July
+      MON08: CHAR(31) Workdays in August
+      MON09: CHAR(31) Workdays in September
+      MON10: CHAR(31) Workdays in October
+      MON11: CHAR(31) Workdays in November
+      MON12: CHAR(31) Workdays in December
+
+  TVARVC:
+    description: Table of variant variables (selection variables)
+    module: BC
+    release: both
+    key: [MANDT, NAME, TYPE, NUMB]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      NAME: CHAR(30) Variable name
+      TYPE: CHAR(1) Selection type (P parameter, S select-option)
+      NUMB: NUMC(4) Current selection number
+      SIGN: CHAR(1) Inclusive/exclusive
+      OPTI: CHAR(2) Selection option
+      LOW: CHAR(45) Lower value
+      HIGH: CHAR(45) Upper value
+      CLIE_INDEP: CHAR(1) Client-independent
+
+  # ---------------------------------------------------------------- Business address services
+  ADRC:
+    description: Addresses (business address services)
+    module: BC
+    release: both
+    key: [CLIENT, ADDRNUMBER, DATE_FROM, NATION]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      ADDRNUMBER: CHAR(10) Address number
+      DATE_FROM: DATS(8) Valid from
+      NATION: CHAR(1) Version ID for international addresses
+      DATE_TO: DATS(8) Valid to
+      TITLE: CHAR(4) Form of address key
+      NAME1: CHAR(40) Name 1
+      NAME2: CHAR(40) Name 2
+      NAME3: CHAR(40) Name 3
+      NAME4: CHAR(40) Name 4
+      NAME_CO: CHAR(40) c/o name
+      CITY1: CHAR(40) City
+      CITY2: CHAR(40) District
+      POST_CODE1: CHAR(10) City postal code
+      POST_CODE2: CHAR(10) PO box postal code
+      PO_BOX: CHAR(10) PO box
+      STREET: CHAR(60) Street
+      HOUSE_NUM1: CHAR(10) House number
+      STR_SUPPL1: CHAR(40) Street 2
+      COUNTRY: CHAR(3) Country key
+      LANGU: LANG(1) Language key
+      REGION: CHAR(3) Region (state, province, county)
+      SORT1: CHAR(20) Search term 1
+      SORT2: CHAR(20) Search term 2
+      TIME_ZONE: CHAR(6) Address time zone
+      TEL_NUMBER: CHAR(30) First telephone number
+      FAX_NUMBER: CHAR(30) First fax number
+      ADDR_GROUP: CHAR(4) Address group
+
+  ADRP:
+    description: Persons (business address services)
+    module: BC
+    release: both
+    key: [CLIENT, PERSNUMBER, DATE_FROM, NATION]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PERSNUMBER: CHAR(10) Person number
+      DATE_FROM: DATS(8) Valid from
+      NATION: CHAR(1) Version ID for international addresses
+      DATE_TO: DATS(8) Valid to
+      TITLE: CHAR(4) Form of address key
+      NAME_FIRST: CHAR(40) First name
+      NAME_LAST: CHAR(40) Last name
+      NAME_TEXT: CHAR(80) Full name
+      SORT1: CHAR(20) Search term 1
+      LANGU: LANG(1) Language key
+      PERS_GROUP: CHAR(4) Person group
+
+  ADR2:
+    description: Telephone numbers (business address services)
+    module: BC
+    release: both
+    key: [CLIENT, ADDRNUMBER, PERSNUMBER, DATE_FROM, CONSNUMBER]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      ADDRNUMBER: CHAR(10) Address number
+      PERSNUMBER: CHAR(10) Person number
+      DATE_FROM: DATS(8) Valid from
+      CONSNUMBER: NUMC(3) Sequence number
+      COUNTRY: CHAR(3) Country for telephone/fax number
+      FLGDEFAULT: CHAR(1) Standard sender address in this communication type
+      TEL_NUMBER: CHAR(30) Telephone number
+      TEL_EXTENS: CHAR(10) Telephone extension
+      TELNR_LONG: CHAR(30) Complete number (dialing code + number + extension)
+      TELNR_CALL: CHAR(30) Telephone number for determining caller
+      R3_USER: CHAR(1) Indicator - telephone is a mobile telephone
+
+  ADR6:
+    description: E-mail addresses (business address services)
+    module: BC
+    release: both
+    key: [CLIENT, ADDRNUMBER, PERSNUMBER, DATE_FROM, CONSNUMBER]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      ADDRNUMBER: CHAR(10) Address number
+      PERSNUMBER: CHAR(10) Person number
+      DATE_FROM: DATS(8) Valid from
+      CONSNUMBER: NUMC(3) Sequence number
+      FLGDEFAULT: CHAR(1) Standard sender address in this communication type
+      FLG_NOUSE: CHAR(1) Do not use communication number
+      HOME_FLAG: CHAR(1) Recipient address in this communication type
+      SMTP_ADDR: CHAR(241) E-mail address
+      SMTP_SRCH: CHAR(20) E-mail address search field
+
+  # ---------------------------------------------------------------- Business partner (BP)
+  BUT020:
+    description: Business partner addresses
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER, ADDRNUMBER]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      ADDRNUMBER: CHAR(10) Address number
+      ADDRESS_GUID: RAW(16) Address GUID
+      XDFADR: CHAR(1) Standard address
+      ADDR_VALID_FROM: TIMESTAMP(15) Valid from (UTC timestamp)
+      ADDR_VALID_TO: TIMESTAMP(15) Valid to (UTC timestamp)
+
+  BUT021_FS:
+    description: Business partner address usages (time-dependent)
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER, ADR_KIND, VALID_TO]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      ADR_KIND: CHAR(10) Address type
+      VALID_TO: TIMESTAMP(15) Valid to (UTC timestamp)
+      VALID_FROM: TIMESTAMP(15) Valid from (UTC timestamp)
+      ADDRNUMBER: CHAR(10) Address number
+      ADDRESS_GUID: RAW(16) Address GUID
+      XDFADU: CHAR(1) Standard usage
+
+  BUT0BK:
+    description: Business partner bank details
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER, BKVID]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      BKVID: CHAR(4) Bank details ID
+      BANKS: CHAR(3) Bank country key
+      BANKL: CHAR(15) Bank key
+      BANKN: CHAR(18) Bank account number
+      BKONT: CHAR(2) Bank control key
+      BKREF: CHAR(20) Reference specifications for bank details
+      KOINH: CHAR(60) Account holder name
+
+  BUT100:
+    description: Business partner roles
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER, RLTYP, DFVAL]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      RLTYP: CHAR(6) BP role
+      DFVAL: CHAR(6) BP role differentiation
+      VALID_FROM: TIMESTAMP(15) Valid from (UTC timestamp)
+      VALID_TO: TIMESTAMP(15) Valid to (UTC timestamp)
+
+  BUT0ID:
+    description: Business partner identification numbers
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER, TYPE, IDNUMBER]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      TYPE: CHAR(6) Identification type
+      IDNUMBER: CHAR(60) Identification number
+      INSTITUTE: CHAR(40) Responsible institution
+      ENTRY_DATE: DATS(8) Entry date
+      VALID_DATE_FROM: DATS(8) Valid from
+      VALID_DATE_TO: DATS(8) Valid to
+      COUNTRY: CHAR(3) Country key
+      REGION: CHAR(3) Region (state, province, county)
+
+  BUT050:
+    description: Business partner relationships
+    module: BP
+    release: both
+    key: [CLIENT, RELNR, PARTNER1, PARTNER2, DATE_TO]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      RELNR: CHAR(12) Relationship number
+      PARTNER1: CHAR(10) Business partner 1
+      PARTNER2: CHAR(10) Business partner 2
+      DATE_TO: DATS(8) Valid to
+      DATE_FROM: DATS(8) Valid from
+      RELTYP: CHAR(6) Relationship category
+
+  DFKKBPTAXNUM:
+    description: Business partner tax numbers
+    module: BP
+    release: both
+    key: [CLIENT, PARTNER, TAXTYPE]
+    fields_complete: false
+    fields:
+      CLIENT: CLNT(3) Client
+      PARTNER: CHAR(10) Business partner
+      TAXTYPE: CHAR(4) Tax number category
+      TAXNUM: CHAR(20) Business partner tax number
+      TAXNUMXL: CHAR(60) Business partner tax number (long)
+
+  # ---------------------------------------------------------------- Change documents and texts
+  CDHDR:
+    description: Change document header
+    module: BC
+    release: both
+    key: [MANDANT, OBJECTCLAS, OBJECTID, CHANGENR]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      OBJECTCLAS: CHAR(15) Change document object class
+      OBJECTID: CHAR(90) Object value
+      CHANGENR: CHAR(10) Document change number
+      USERNAME: CHAR(12) Changed by
+      UDATE: DATS(8) Change date
+      UTIME: TIMS(6) Change time
+      TCODE: CHAR(20) Transaction code
+      PLANCHNGNR: CHAR(12) Planned change number
+      ACT_CHNGNO: CHAR(10) Change number of the document created by this change
+      WAS_PLANND: CHAR(1) Change created from planned changes
+      CHANGE_IND: CHAR(1) Application object change type (U, I, E, D)
+      LANGU: LANG(1) Language key
+
+  CDPOS:
+    description: Change document items
+    module: BC
+    release: both
+    key: [MANDANT, OBJECTCLAS, OBJECTID, CHANGENR, TABNAME, TABKEY, FNAME, CHNGIND]
+    fields_complete: false
+    fields:
+      MANDANT: CLNT(3) Client
+      OBJECTCLAS: CHAR(15) Change document object class
+      OBJECTID: CHAR(90) Object value
+      CHANGENR: CHAR(10) Document change number
+      TABNAME: CHAR(30) Table name
+      TABKEY: CHAR(70) Changed table record key
+      FNAME: CHAR(30) Field name
+      CHNGIND: CHAR(1) Change type (U, I, E, D)
+      TEXT_CASE: CHAR(1) Text change flag
+      UNIT_OLD: UNIT(3) Old unit of measure
+      UNIT_NEW: UNIT(3) New unit of measure
+      CUKY_OLD: CUKY(5) Old currency key
+      CUKY_NEW: CUKY(5) New currency key
+      VALUE_NEW: CHAR(254) New value
+      VALUE_OLD: CHAR(254) Old value
+
+  STXH:
+    description: SAPscript text file header
+    module: BC
+    release: both
+    key: [MANDT, TDOBJECT, TDNAME, TDID, TDSPRAS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      TDOBJECT: CHAR(10) Text object
+      TDNAME: CHAR(70) Text name
+      TDID: CHAR(4) Text ID
+      TDSPRAS: LANG(1) Language key
+      TDTITLE: CHAR(50) Title
+      TDFORM: CHAR(16) Layout set name
+      TDSTYLE: CHAR(8) Style
+      TDFUSER: CHAR(12) Created by
+      TDFDATE: DATS(8) Created on
+      TDFTIME: TIMS(6) Created at
+      TDLUSER: CHAR(12) Last changed by
+      TDLDATE: DATS(8) Last changed on
+      TDLTIME: TIMS(6) Last changed at
+
+  STXL:
+    description: SAPscript text file lines (compressed cluster; text lines in LRAW field CLUSTD, read with READ_TEXT)
+    module: BC
+    release: both
+    key: [MANDT, RELID, TDOBJECT, TDNAME, TDID, TDSPRAS, SRTF2]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      RELID: CHAR(2) Region in IMPORT/EXPORT data table
+      TDOBJECT: CHAR(10) Text object
+      TDNAME: CHAR(70) Text name
+      TDID: CHAR(4) Text ID
+      TDSPRAS: LANG(1) Language key
+      SRTF2: INT4(10) Next record counter in EXPORT/IMPORT data tables
+      CLUSTR: INT2(5) Length field for user data in EXPORT/IMPORT tables
+
+  # ---------------------------------------------------------------- Users and roles
+  USR01:
+    description: User master record (runtime data / defaults)
+    module: BC
+    release: both
+    key: [MANDT, BNAME]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BNAME: CHAR(12) User name
+      STCOD: CHAR(20) Start menu
+      SPLD: CHAR(4) Output device
+      LANGU: LANG(1) Logon language
+      DATFM: CHAR(1) Date format
+      DCPFM: CHAR(1) Decimal notation
+
+  USR02:
+    description: Logon data (user master)
+    module: BC
+    release: both
+    key: [MANDT, BNAME]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BNAME: CHAR(12) User name
+      GLTGV: DATS(8) User valid from
+      GLTGB: DATS(8) User valid to
+      USTYP: CHAR(1) User type
+      CLASS: CHAR(12) User group
+      LOCNT: INT1(3) Number of failed logon attempts
+      UFLAG: INT1(3) User lock status
+      ACCNT: CHAR(12) Account ID
+      ANAME: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      TRDAT: DATS(8) Last logon date
+      LTIME: TIMS(6) Last logon time
+      PWDCHGDATE: DATS(8) Date of last password change
+      CODVN: CHAR(1) Password hash code version
+      TZONE: CHAR(6) Time zone
+
+  USR21:
+    description: Assignment of user name to address (person) key
+    module: BC
+    release: both
+    key: [MANDT, BNAME]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BNAME: CHAR(12) User name
+      PERSNUMBER: CHAR(10) Person number
+      ADDRNUMBER: CHAR(10) Address number
+      IDADTYPE: CHAR(2) Address type of the user
+
+  AGR_DEFINE:
+    description: Role definition
+    module: BC
+    release: both
+    key: [MANDT, AGR_NAME]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AGR_NAME: CHAR(30) Role name
+      PARENT_AGR: CHAR(30) Parent (master) role
+      CREATE_USR: CHAR(12) Created by
+      CREATE_DAT: DATS(8) Created on
+      CREATE_TIM: TIMS(6) Created at
+      CHANGE_USR: CHAR(12) Last changed by
+      CHANGE_DAT: DATS(8) Last changed on
+      CHANGE_TIM: TIMS(6) Last changed at
+
+  AGR_TEXTS:
+    description: Role texts
+    module: BC
+    release: both
+    key: [MANDT, AGR_NAME, SPRAS, LINE]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AGR_NAME: CHAR(30) Role name
+      SPRAS: LANG(1) Language key
+      LINE: NUMC(5) Line number (0 is the short description)
+      TEXT: CHAR(80) Role description
+
+  AGR_USERS:
+    description: Assignment of roles to users
+    module: BC
+    release: both
+    key: [MANDT, AGR_NAME, UNAME, FROM_DAT, TO_DAT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AGR_NAME: CHAR(30) Role name
+      UNAME: CHAR(12) User name
+      FROM_DAT: DATS(8) Valid from
+      TO_DAT: DATS(8) Valid to
+      EXCLUDE: CHAR(1) Exclude assignment
+      CHANGE_DAT: DATS(8) Changed on
+      CHANGE_TIM: TIMS(6) Changed at
+      ORG_FLAG: CHAR(1) Assignment from organizational management
+      COL_FLAG: CHAR(1) Assignment via composite role
+
+  AGR_1251:
+    description: Authorization data for the role
+    module: BC
+    release: both
+    key: [MANDT, AGR_NAME, COUNTER]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      AGR_NAME: CHAR(30) Role name
+      COUNTER: NUMC(6) Line counter
+      OBJECT: CHAR(10) Authorization object
+      AUTH: CHAR(12) Authorization
+      FIELD: CHAR(10) Authorization field
+      LOW: CHAR(40) Authorization value (from)
+      HIGH: CHAR(40) Authorization value (to)
+      MODIFIED: CHAR(1) Status of the authorization
+      DELETED: CHAR(1) Authorization deleted
+
+  # ---------------------------------------------------------------- Repository: transactions, programs, function modules, messages
+  TSTC:
+    description: SAP transaction codes
+    module: BC
+    release: both
+    key: [TCODE]
+    fields_complete: false
+    text_table: TSTCT
+    fields:
+      TCODE: CHAR(20) Transaction code
+      PGMNA: CHAR(40) Program name
+      DYPNO: NUMC(4) Screen number
+      MENU: CHAR(1) Menu indicator
+      CINFO: RAW(1) Transaction type flags
+      ARBGB: CHAR(20) Message class
+
+  TSTCT:
+    description: Transaction code texts
+    module: BC
+    release: both
+    key: [SPRSL, TCODE]
+    fields_complete: false
+    text_of: TSTC
+    fields:
+      SPRSL: LANG(1) Language key
+      TCODE: CHAR(20) Transaction code
+      TTEXT: CHAR(36) Transaction text
+
+  TADIR:
+    description: Directory of repository objects
+    module: BC
+    release: both
+    key: [PGMID, OBJECT, OBJ_NAME]
+    fields_complete: false
+    fields:
+      PGMID: CHAR(4) Program ID in requests and tasks
+      OBJECT: CHAR(4) Object type
+      OBJ_NAME: CHAR(40) Object name in object directory
+      KORRNUM: CHAR(10) Request/task
+      SRCSYSTEM: CHAR(10) Original system of object
+      AUTHOR: CHAR(12) Person responsible
+      SRCDEP: CHAR(1) Repair flag
+      DEVCLASS: CHAR(30) Package
+      GENFLAG: CHAR(1) Generation flag
+      EDTFLAG: CHAR(1) Edit lock flag
+      MASTERLANG: LANG(1) Original language
+      DELFLAG: CHAR(1) Deletion flag
+      CREATED_ON: DATS(8) Created on
+
+  TRDIR:
+    description: System table TRDIR (program directory)
+    module: BC
+    release: both
+    key: [NAME]
+    fields_complete: false
+    text_table: TRDIRT
+    fields:
+      NAME: CHAR(40) Program name
+      EDTX: CHAR(1) Editor lock flag
+      SUBC: CHAR(1) Program type
+      SECU: CHAR(8) Authorization group
+      CNAM: CHAR(12) Created by
+      CDAT: DATS(8) Created on
+      UNAM: CHAR(12) Last changed by
+      UDAT: DATS(8) Changed on
+      VERN: CHAR(6) Version number
+      RMAND: CHAR(3) Client
+      RLOAD: LANG(1) Master language
+      FIXPT: CHAR(1) Fixed point arithmetic
+      SDATE: DATS(8) Date of last source change
+      STIME: TIMS(6) Time of last source change
+      IDATE: DATS(8) Date of last generation
+      ITIME: TIMS(6) Time of last generation
+      UCCHECK: CHAR(1) Unicode checks active
+
+  TRDIRT:
+    description: Program titles
+    module: BC
+    release: both
+    key: [NAME, SPRSL]
+    fields_complete: false
+    text_of: TRDIR
+    fields:
+      NAME: CHAR(40) Program name
+      SPRSL: LANG(1) Language key
+      TEXT: CHAR(70) Program title
+
+  TFDIR:
+    description: Function modules
+    module: BC
+    release: both
+    key: [FUNCNAME]
+    fields_complete: false
+    text_table: TFTIT
+    fields:
+      FUNCNAME: CHAR(30) Function module name
+      PNAME: CHAR(40) Function group main program
+      INCLUDE: CHAR(2) Function module include number
+      FMODE: CHAR(1) Processing type (R remote-enabled)
+      UTASK: CHAR(1) Update task mode
+      MAND: CHAR(3) Client
+
+  TFTIT:
+    description: Function module short texts
+    module: BC
+    release: both
+    key: [SPRAS, FUNCNAME]
+    fields_complete: false
+    text_of: TFDIR
+    fields:
+      SPRAS: LANG(1) Language key
+      FUNCNAME: CHAR(30) Function module name
+      STEXT: CHAR(74) Short text for function module
+
+  T100:
+    description: Messages
+    module: BC
+    release: both
+    key: [SPRSL, ARBGB, MSGNR]
+    fields_complete: false
+    fields:
+      SPRSL: LANG(1) Language key
+      ARBGB: CHAR(20) Message class
+      MSGNR: CHAR(3) Message number
+      TEXT: CHAR(73) Message text
+
+  # ---------------------------------------------------------------- Transport requests
+  E070:
+    description: Change and transport system - header of requests/tasks
+    module: BC
+    release: both
+    key: [TRKORR]
+    fields_complete: false
+    fields:
+      TRKORR: CHAR(20) Request/task
+      TRFUNCTION: CHAR(1) Type of request/task
+      TRSTATUS: CHAR(1) Status of request/task
+      TARSYSTEM: CHAR(10) Transport target
+      KORRDEV: CHAR(4) Request or task category
+      AS4USER: CHAR(12) Owner
+      AS4DATE: DATS(8) Date of last change
+      AS4TIME: TIMS(6) Time of last change
+      STRKORR: CHAR(20) Higher-level request
+
+  E07T:
+    description: Change and transport system - short texts for requests
+    module: BC
+    release: both
+    key: [TRKORR, LANGU]
+    fields_complete: false
+    fields:
+      TRKORR: CHAR(20) Request/task
+      LANGU: LANG(1) Language key
+      AS4TEXT: CHAR(60) Short description of request
+
+  E071:
+    description: Change and transport system - object entries of requests/tasks
+    module: BC
+    release: both
+    key: [TRKORR, AS4POS]
+    fields_complete: false
+    fields:
+      TRKORR: CHAR(20) Request/task
+      AS4POS: NUMC(6) Dictionary - line position
+      PGMID: CHAR(4) Program ID in requests and tasks
+      OBJECT: CHAR(4) Object type
+      OBJ_NAME: CHAR(120) Object name in object list
+      OBJFUNC: CHAR(1) Special function for request object
+      LOCKFLAG: CHAR(1) Lock status
+      LANG: LANG(1) Language key
+
+  # ---------------------------------------------------------------- Background jobs
+  TBTCO:
+    description: Job status overview table
+    module: BC
+    release: both
+    key: [JOBNAME, JOBCOUNT]
+    fields_complete: false
+    fields:
+      JOBNAME: CHAR(32) Background job name
+      JOBCOUNT: CHAR(8) Job ID
+      JOBGROUP: CHAR(32) Job group
+      JOBCLASS: CHAR(1) Job classification
+      STATUS: CHAR(1) Job status
+      SDLSTRTDT: DATS(8) Planned start date
+      SDLSTRTTM: TIMS(6) Planned start time
+      SDLDATE: DATS(8) Scheduled on
+      SDLTIME: TIMS(6) Scheduled at
+      SDLUNAME: CHAR(12) Scheduled by
+      STRTDATE: DATS(8) Job start date
+      STRTTIME: TIMS(6) Job start time
+      ENDDATE: DATS(8) Job end date
+      ENDTIME: TIMS(6) Job end time
+      PERIODIC: CHAR(1) Periodic job
+      PRDMINS: NUMC(2) Repeat interval (minutes)
+      PRDHOURS: NUMC(2) Repeat interval (hours)
+      PRDDAYS: NUMC(3) Repeat interval (days)
+      PRDWEEKS: NUMC(2) Repeat interval (weeks)
+      PRDMONTHS: NUMC(2) Repeat interval (months)
+      EVENTID: CHAR(32) Background processing event
+      EVENTPARM: CHAR(64) Background event parameter
+      AUTHCKMAN: CHAR(3) Client for authorization check
+      REAXSERVER: CHAR(20) Executing server
+
+  TBTCP:
+    description: Background job step overview
+    module: BC
+    release: both
+    key: [JOBNAME, JOBCOUNT, STEPCOUNT]
+    fields_complete: false
+    fields:
+      JOBNAME: CHAR(32) Background job name
+      JOBCOUNT: CHAR(8) Job ID
+      STEPCOUNT: INT4(10) Job step number
+      PROGNAME: CHAR(128) Program name
+      VARIANT: CHAR(14) Variant
+      TYP: CHAR(1) Step type
+      STATUS: CHAR(1) Step status
+      AUTHCKNAM: CHAR(12) Step user
+      LISTIDENT: CHAR(10) Spool request
+      PRIPDEST: CHAR(4) Printer
+      SDLDATE: DATS(8) Scheduled on
+      SDLTIME: TIMS(6) Scheduled at
+      SDLUNAME: CHAR(12) Scheduled by
+
+  # ---------------------------------------------------------------- ABAP Dictionary (active version: AS4LOCAL = 'A', AS4VERS = '0000')
+  DD01L:
+    description: Domains
+    module: BC
+    release: both
+    key: [DOMNAME, AS4LOCAL, AS4VERS]
+    fields_complete: false
+    text_table: DD01T
+    fields:
+      DOMNAME: CHAR(30) Domain name
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DATATYPE: CHAR(4) Data type in ABAP Dictionary
+      LENG: NUMC(6) Length (no. of characters)
+      OUTPUTLEN: NUMC(6) Output length
+      DECIMALS: NUMC(6) Number of decimal places
+      LOWERCASE: CHAR(1) Lowercase letters allowed
+      SIGNFLAG: CHAR(1) Sign flag
+      VALEXI: CHAR(1) Fixed values exist
+      ENTITYTAB: CHAR(30) Value table
+      CONVEXIT: CHAR(5) Conversion routine
+      AS4USER: CHAR(12) Last changed by
+      AS4DATE: DATS(8) Date of last change
+      AS4TIME: TIMS(6) Time of last change
+
+  DD01T:
+    description: Domain texts
+    module: BC
+    release: both
+    key: [DOMNAME, DDLANGUAGE, AS4LOCAL, AS4VERS]
+    fields_complete: false
+    text_of: DD01L
+    fields:
+      DOMNAME: CHAR(30) Domain name
+      DDLANGUAGE: LANG(1) Language key
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DDTEXT: CHAR(60) Short description of repository objects
+
+  DD02L:
+    description: SAP tables
+    module: BC
+    release: both
+    key: [TABNAME, AS4LOCAL, AS4VERS]
+    fields_complete: false
+    text_table: DD02T
+    fields:
+      TABNAME: CHAR(30) Table name
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      TABCLASS: CHAR(8) Table category
+      CLIDEP: CHAR(1) Client-specific
+      CONTFLAG: CHAR(1) Delivery class
+      MASTERLANG: LANG(1) Original language
+      MAINFLAG: CHAR(1) Table maintenance allowed
+      AS4USER: CHAR(12) Last changed by
+      AS4DATE: DATS(8) Date of last change
+      AS4TIME: TIMS(6) Time of last change
+
+  DD02T:
+    description: SAP table texts
+    module: BC
+    release: both
+    key: [TABNAME, DDLANGUAGE, AS4LOCAL, AS4VERS]
+    fields_complete: false
+    text_of: DD02L
+    fields:
+      TABNAME: CHAR(30) Table name
+      DDLANGUAGE: LANG(1) Language key
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DDTEXT: CHAR(60) Short description of repository objects
+
+  DD03L:
+    description: Table fields
+    module: BC
+    release: both
+    key: [TABNAME, FIELDNAME, AS4LOCAL, AS4VERS, POSITION]
+    fields_complete: false
+    fields:
+      TABNAME: CHAR(30) Table name
+      FIELDNAME: CHAR(30) Field name
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      POSITION: NUMC(4) Position of the field in the table
+      KEYFLAG: CHAR(1) Key field
+      MANDATORY: CHAR(1) Mandatory field
+      ROLLNAME: CHAR(30) Data element
+      CHECKTABLE: CHAR(30) Check table
+      ADMINFIELD: NUMC(1) Nesting depth for includes
+      INTTYPE: CHAR(1) ABAP data type
+      INTLEN: NUMC(6) Internal length in bytes
+      REFTABLE: CHAR(30) Table of the reference field
+      PRECFIELD: CHAR(30) Name of included table
+      REFFIELD: CHAR(30) Reference field for currency and quantity fields
+      CONROUT: CHAR(10) Routine for converting stored data
+      NOTNULL: CHAR(1) Initial values flag
+      DATATYPE: CHAR(4) Data type in ABAP Dictionary
+      LENG: NUMC(6) Length (no. of characters)
+      DECIMALS: NUMC(6) Number of decimal places
+      DOMNAME: CHAR(30) Domain name
+      SHLPORIGIN: CHAR(1) Origin of an input help
+      TABLETYPE: CHAR(1) Table type flag
+      DEPTH: NUMC(2) Depth for structured types
+      COMPTYPE: CHAR(1) Component type
+      REFTYPE: CHAR(1) Category of reference
+      LANGUFLAG: CHAR(1) Language field flag
+
+  DD04L:
+    description: Data elements
+    module: BC
+    release: both
+    key: [ROLLNAME, AS4LOCAL, AS4VERS]
+    fields_complete: false
+    text_table: DD04T
+    fields:
+      ROLLNAME: CHAR(30) Data element
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DOMNAME: CHAR(30) Domain name
+      MEMORYID: CHAR(20) Set/Get parameter ID
+      LOGFLAG: CHAR(1) Change document flag
+      HEADLEN: NUMC(2) Maximum length of heading
+      SCRLEN1: NUMC(2) Maximum length of short field label
+      SCRLEN2: NUMC(2) Maximum length of medium field label
+      SCRLEN3: NUMC(2) Maximum length of long field label
+      DATATYPE: CHAR(4) Data type in ABAP Dictionary
+      LENG: NUMC(6) Length (no. of characters)
+      DECIMALS: NUMC(6) Number of decimal places
+      OUTPUTLEN: NUMC(6) Output length
+      LOWERCASE: CHAR(1) Lowercase letters allowed
+      SIGNFLAG: CHAR(1) Sign flag
+      CONVEXIT: CHAR(5) Conversion routine
+      ENTITYTAB: CHAR(30) Value table
+      REFKIND: CHAR(1) Type of typing
+      SHLPNAME: CHAR(30) Search help
+      AS4USER: CHAR(12) Last changed by
+      AS4DATE: DATS(8) Date of last change
+      AS4TIME: TIMS(6) Time of last change
+
+  DD04T:
+    description: Data element texts
+    module: BC
+    release: both
+    key: [ROLLNAME, DDLANGUAGE, AS4LOCAL, AS4VERS]
+    fields_complete: false
+    text_of: DD04L
+    fields:
+      ROLLNAME: CHAR(30) Data element
+      DDLANGUAGE: LANG(1) Language key
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DDTEXT: CHAR(60) Short description of repository objects
+      REPTEXT: CHAR(55) Heading
+      SCRTEXT_S: CHAR(10) Short field label
+      SCRTEXT_M: CHAR(20) Medium field label
+      SCRTEXT_L: CHAR(40) Long field label
+
+  DD07L:
+    description: Domain fixed values
+    module: BC
+    release: both
+    key: [DOMNAME, AS4LOCAL, VALPOS, AS4VERS]
+    fields_complete: false
+    text_table: DD07T
+    fields:
+      DOMNAME: CHAR(30) Domain name
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      VALPOS: NUMC(4) Domain value key
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DOMVALUE_L: CHAR(10) Value range of domain - single value or lower limit
+      DOMVALUE_H: CHAR(10) Value range of domain - upper limit
+      APPVAL: CHAR(1) Value is an appendix value
+
+  DD07T:
+    description: Domain fixed value texts
+    module: BC
+    release: both
+    key: [DOMNAME, DDLANGUAGE, AS4LOCAL, VALPOS, AS4VERS]
+    fields_complete: false
+    text_of: DD07L
+    fields:
+      DOMNAME: CHAR(30) Domain name
+      DDLANGUAGE: LANG(1) Language key
+      AS4LOCAL: CHAR(1) Activation state of repository object
+      VALPOS: NUMC(4) Domain value key
+      AS4VERS: NUMC(4) Version of the entry (not used)
+      DDTEXT: CHAR(60) Short text for fixed values
+      DOMVAL_LD: CHAR(10) Language-dependent lower limit
+      DOMVAL_HD: CHAR(10) Language-dependent upper limit

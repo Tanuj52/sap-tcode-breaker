@@ -1,0 +1,1598 @@
+# Built-in SAP table knowledge - FI / CO / AA (general ledger, AR/AP, tax, payments, banks, assets, controlling).
+version: 1
+
+tables:
+
+  # ---------------------------------------------------------------- FI secondary indexes
+  BSAD:
+    description: Customer cleared items (ECC; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [MANDT, BUKRS, KUNNR, UMSKS, UMSKZ, AUGDT, AUGBL, ZUONR, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      KUNNR: CHAR(10) Customer number
+      UMSKS: CHAR(1) Special G/L transaction type
+      UMSKZ: CHAR(1) Special G/L indicator
+      AUGDT: DATS(8) Clearing date
+      AUGBL: CHAR(10) Clearing document
+      ZUONR: CHAR(18) Assignment
+      GJAHR: NUMC(4) Fiscal year
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      CPUDT: DATS(8) Entry date
+      WAERS: CUKY(5) Currency
+      XBLNR: CHAR(16) Reference document number
+      BLART: CHAR(2) Document type
+      MONAT: NUMC(2) Fiscal period
+      BSCHL: CHAR(2) Posting key
+      SHKZG: CHAR(1) Debit/credit indicator
+      GSBER: CHAR(4) Business area
+      MWSKZ: CHAR(2) Tax code
+      DMBTR: CURR(13,2) Amount in local currency
+      WRBTR: CURR(13,2) ref=WAERS Amount in document currency
+      SGTXT: CHAR(50) Item text
+
+  ANKA:
+    description: Asset classes (general data)
+    module: AA
+    release: both
+    key: [MANDT, ANLKL]
+    fields_complete: false
+    text_table: ANKT
+    fields:
+      MANDT: CLNT(3) Client
+      ANLKL: CHAR(8) Asset class
+      KTOGR: CHAR(8) Account determination
+
+  ANKT:
+    description: Asset class descriptions
+    module: AA
+    release: both
+    key: [MANDT, SPRAS, ANLKL]
+    fields_complete: false
+    text_of: ANKA
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      ANLKL: CHAR(8) Asset class
+      TXK20: CHAR(20) Short text of asset class
+      TXK50: CHAR(50) Asset class description
+
+  ANLH:
+    description: Main asset number
+    module: AA
+    release: both
+    key: [MANDT, BUKRS, ANLN1]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLHTXT: CHAR(50) Asset main number text
+
+  # ---------------------------------------------------------------- Controlling documents and totals
+  COEP:
+    description: CO object line items (by period) (ECC; compatibility view in S/4HANA)
+    module: CO
+    release: ecc
+    key: [MANDT, KOKRS, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KOKRS: CHAR(4) Controlling area
+      BELNR: CHAR(10) Document number
+      BUZEI: NUMC(3) Posting row
+      PERIO: NUMC(3) Period
+      GJAHR: NUMC(4) Fiscal year
+      OBJNR: CHAR(22) Object number
+      WRTTP: CHAR(2) Value type
+      VERSN: CHAR(3) Version
+      KSTAR: CHAR(10) Cost element
+      VRGNG: CHAR(4) CO business transaction
+      BEKNZ: CHAR(1) Debit/credit indicator
+      TWAER: CUKY(5) Transaction currency
+      OWAER: CUKY(5) Object currency
+      WTGBTR: CURR(15,2) ref=TWAER Total value in transaction currency
+      WOGBTR: CURR(15,2) ref=OWAER Total value in object currency
+      WKGBTR: CURR(15,2) Total value in controlling area currency
+      MEINH: UNIT(3) Unit of measure
+      MEGBTR: QUAN(15,3) ref=MEINH Total quantity entered
+      PAROB: CHAR(22) Partner object
+      USPOB: CHAR(22) Source object
+      SGTXT: CHAR(50) Segment text
+      BUKRS: CHAR(4) Company code
+      GSBER: CHAR(4) Business area
+      MATNR: CHAR(40) Material number
+      WERKS: CHAR(4) Plant
+      EBELN: CHAR(10) Purchasing document number
+      EBELP: NUMC(5) Item of purchasing document
+
+  COSP:
+    description: CO object cost totals for external postings (ECC; compatibility view in S/4HANA)
+    module: CO
+    release: ecc
+    key: [MANDT, LEDNR, OBJNR, GJAHR, WRTTP, VERSN, KSTAR, HRKFT, VRGNG, VBUND, PARGB, BEKNZ, TWAER, PERBL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LEDNR: CHAR(2) Ledger for controlling objects
+      OBJNR: CHAR(22) Object number
+      GJAHR: NUMC(4) Fiscal year
+      WRTTP: CHAR(2) Value type
+      VERSN: CHAR(3) Version
+      KSTAR: CHAR(10) Cost element
+      HRKFT: CHAR(14) Origin of costs (CO sub-key)
+      VRGNG: CHAR(4) CO business transaction
+      VBUND: CHAR(6) Trading partner
+      PARGB: CHAR(4) Trading partner business area
+      BEKNZ: CHAR(1) Debit/credit indicator
+      TWAER: CUKY(5) Transaction currency
+      PERBL: NUMC(3) Period block
+      MEINH: UNIT(3) Unit of measure
+      WKG001: CURR(15,2) Total value in controlling area currency period 01
+      WKG002: CURR(15,2) Total value in controlling area currency period 02
+      WKG003: CURR(15,2) Total value in controlling area currency period 03
+      WKG004: CURR(15,2) Total value in controlling area currency period 04
+      WKG005: CURR(15,2) Total value in controlling area currency period 05
+      WKG006: CURR(15,2) Total value in controlling area currency period 06
+      WKG007: CURR(15,2) Total value in controlling area currency period 07
+      WKG008: CURR(15,2) Total value in controlling area currency period 08
+      WKG009: CURR(15,2) Total value in controlling area currency period 09
+      WKG010: CURR(15,2) Total value in controlling area currency period 10
+      WKG011: CURR(15,2) Total value in controlling area currency period 11
+      WKG012: CURR(15,2) Total value in controlling area currency period 12
+      WKG013: CURR(15,2) Total value in controlling area currency period 13
+      WKG014: CURR(15,2) Total value in controlling area currency period 14
+      WKG015: CURR(15,2) Total value in controlling area currency period 15
+      WKG016: CURR(15,2) Total value in controlling area currency period 16
+
+  COSS:
+    description: CO object cost totals for internal postings (ECC; compatibility view in S/4HANA)
+    module: CO
+    release: ecc
+    key: [MANDT, LEDNR, OBJNR, GJAHR, WRTTP, VERSN, KSTAR, HRKFT, VRGNG, PAROB, USPOB, BEKNZ, TWAER, PERBL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LEDNR: CHAR(2) Ledger for controlling objects
+      OBJNR: CHAR(22) Object number
+      GJAHR: NUMC(4) Fiscal year
+      WRTTP: CHAR(2) Value type
+      VERSN: CHAR(3) Version
+      KSTAR: CHAR(10) Cost element
+      HRKFT: CHAR(14) Origin of costs (CO sub-key)
+      VRGNG: CHAR(4) CO business transaction
+      PAROB: CHAR(22) Partner object
+      USPOB: CHAR(22) Source object
+      BEKNZ: CHAR(1) Debit/credit indicator
+      TWAER: CUKY(5) Transaction currency
+      PERBL: NUMC(3) Period block
+      MEINH: UNIT(3) Unit of measure
+      WKG001: CURR(15,2) Total value in controlling area currency period 01
+      WKG002: CURR(15,2) Total value in controlling area currency period 02
+      WKG003: CURR(15,2) Total value in controlling area currency period 03
+      WKG004: CURR(15,2) Total value in controlling area currency period 04
+      WKG005: CURR(15,2) Total value in controlling area currency period 05
+      WKG006: CURR(15,2) Total value in controlling area currency period 06
+      WKG007: CURR(15,2) Total value in controlling area currency period 07
+      WKG008: CURR(15,2) Total value in controlling area currency period 08
+      WKG009: CURR(15,2) Total value in controlling area currency period 09
+      WKG010: CURR(15,2) Total value in controlling area currency period 10
+      WKG011: CURR(15,2) Total value in controlling area currency period 11
+      WKG012: CURR(15,2) Total value in controlling area currency period 12
+      WKG013: CURR(15,2) Total value in controlling area currency period 13
+      WKG014: CURR(15,2) Total value in controlling area currency period 14
+      WKG015: CURR(15,2) Total value in controlling area currency period 15
+      WKG016: CURR(15,2) Total value in controlling area currency period 16
+
+  COBK:
+    description: CO object document header
+    module: CO
+    release: both
+    key: [MANDT, KOKRS, BELNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KOKRS: CHAR(4) Controlling area
+      BELNR: CHAR(10) Document number
+      GJAHR: NUMC(4) Fiscal year
+      VERSN: CHAR(3) Version
+      VRGNG: CHAR(4) CO business transaction
+      PERAB: NUMC(3) From period
+      PERBI: NUMC(3) To period
+      BLDAT: DATS(8) Document date
+      BUDAT: DATS(8) Posting date
+      CPUDT: DATS(8) Entry date
+      USNAM: CHAR(12) User name
+      BLTXT: CHAR(50) Document header text
+      REFBN: CHAR(10) Reference document number
+      REFBK: CHAR(4) Company code of reference document
+      REFGJ: NUMC(4) Fiscal year of reference document
+      AWTYP: CHAR(5) Reference transaction
+      AWORG: CHAR(10) Reference organizational units
+      KWAER: CUKY(5) Controlling area currency
+
+  # ---------------------------------------------------------------- Cost elements, activity types, profit centers
+  CSKA:
+    description: Cost elements (data dependent on chart of accounts)
+    module: CO
+    release: both
+    key: [MANDT, KTOPL, KSTAR]
+    fields_complete: false
+    text_table: CSKU
+    fields:
+      MANDT: CLNT(3) Client
+      KTOPL: CHAR(4) Chart of accounts
+      KSTAR: CHAR(10) Cost element
+      ERSDA: DATS(8) Created on
+      USNAM: CHAR(12) Entered by
+
+  CSKB:
+    description: Cost elements (data dependent on controlling area)
+    module: CO
+    release: both
+    key: [MANDT, KOKRS, KSTAR, DATBI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KOKRS: CHAR(4) Controlling area
+      KSTAR: CHAR(10) Cost element
+      DATBI: DATS(8) Valid to date
+      DATAB: DATS(8) Valid-from date
+      KATYP: CHAR(2) Cost element category
+      ERSDA: DATS(8) Created on
+      USNAM: CHAR(12) Entered by
+      MGEFL: CHAR(1) Record quantity
+      MSEHI: UNIT(3) Unit of measurement
+      KOSTL: CHAR(10) Cost center (default account assignment)
+      AUFNR: CHAR(12) Order number (default account assignment)
+
+  CSKU:
+    description: Cost element texts
+    module: CO
+    release: both
+    key: [MANDT, SPRAS, KTOPL, KSTAR]
+    fields_complete: false
+    text_of: CSKA
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      KTOPL: CHAR(4) Chart of accounts
+      KSTAR: CHAR(10) Cost element
+      KTEXT: CHAR(20) General name
+      LTEXT: CHAR(40) Description
+
+  CSLA:
+    description: Activity master (activity types)
+    module: CO
+    release: both
+    key: [MANDT, KOKRS, LSTAR, DATBI]
+    fields_complete: false
+    text_table: CSLT
+    fields:
+      MANDT: CLNT(3) Client
+      KOKRS: CHAR(4) Controlling area
+      LSTAR: CHAR(6) Activity type
+      DATBI: DATS(8) Valid to date
+      DATAB: DATS(8) Valid-from date
+      ERSDA: DATS(8) Created on
+      USNAM: CHAR(12) Entered by
+      LEINH: UNIT(3) Activity unit
+      LATYP: CHAR(1) Activity type category
+      VKSTA: CHAR(10) Allocation cost element
+      TARKZ: CHAR(3) Price indicator
+
+  CSLT:
+    description: Activity type texts
+    module: CO
+    release: both
+    key: [MANDT, SPRAS, KOKRS, LSTAR, DATBI]
+    fields_complete: false
+    text_of: CSLA
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      KOKRS: CHAR(4) Controlling area
+      LSTAR: CHAR(6) Activity type
+      DATBI: DATS(8) Valid to date
+      KTEXT: CHAR(20) General name
+      LTEXT: CHAR(40) Description
+
+  CEPC:
+    description: Profit center master data
+    module: CO
+    release: both
+    key: [MANDT, PRCTR, DATBI, KOKRS]
+    fields_complete: false
+    text_table: CEPCT
+    fields:
+      MANDT: CLNT(3) Client
+      PRCTR: CHAR(10) Profit center
+      DATBI: DATS(8) Valid to date
+      KOKRS: CHAR(4) Controlling area
+      DATAB: DATS(8) Valid-from date
+      ERSDA: DATS(8) Created on
+      USNAM: CHAR(12) Entered by
+      VERAK: CHAR(20) Person responsible for profit center
+      VERAK_USER: CHAR(12) User responsible for the profit center
+      WAERS: CUKY(5) Currency key
+      ABTEI: CHAR(12) Department
+      KHINR: CHAR(12) Profit center area (standard hierarchy)
+      LOCK_IND: CHAR(1) Lock indicator
+      SEGMENT: CHAR(10) Segment for segmental reporting
+      NAME1: CHAR(35) Name 1
+      LAND1: CHAR(3) Country key
+      ORT01: CHAR(35) City
+      PSTLZ: CHAR(10) Postal code
+      REGIO: CHAR(3) Region
+
+  CEPCT:
+    description: Profit center texts
+    module: CO
+    release: both
+    key: [MANDT, SPRAS, PRCTR, DATBI, KOKRS]
+    fields_complete: false
+    text_of: CEPC
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      PRCTR: CHAR(10) Profit center
+      DATBI: DATS(8) Valid to date
+      KOKRS: CHAR(4) Controlling area
+      KTEXT: CHAR(20) General name
+      LTEXT: CHAR(40) Long text
+      MCTXT: CHAR(20) Search term for matchcode search
+
+  TKA01:
+    description: Controlling areas
+    module: CO
+    release: both
+    key: [MANDT, KOKRS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KOKRS: CHAR(4) Controlling area
+      BEZEI: CHAR(25) Name of the controlling area
+      WAERS: CUKY(5) Currency key
+      KTOPL: CHAR(4) Chart of accounts
+      LMONA: CHAR(2) Fiscal year variant
+      KHINR: CHAR(12) Standard hierarchy for cost centers
+      PHINR: CHAR(12) Standard hierarchy for profit centers
+      ERKRS: CHAR(4) Operating concern
+
+  TKA02:
+    description: Controlling area assignment (company code / business area)
+    module: CO
+    release: both
+    key: [MANDT, BUKRS, GSBER]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      GSBER: CHAR(4) Business area
+      KOKRS: CHAR(4) Controlling area
+
+  # ---------------------------------------------------------------- Sets (groups / hierarchies)
+  SETHEADER:
+    description: Set header and directory
+    module: CO
+    release: both
+    key: [MANDT, SETCLASS, SUBCLASS, SETNAME]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SETCLASS: CHAR(4) Set class
+      SUBCLASS: CHAR(12) Organizational unit as set subclass
+      SETNAME: CHAR(24) Set name
+      SETTYPE: CHAR(1) Set type
+      TABNAME: CHAR(30) Table name
+      FIELDNAME: CHAR(30) Field name
+      CREUSER: CHAR(12) Created by
+      CREDATE: DATS(8) Created on
+      UPDUSER: CHAR(12) Last changed by
+      UPDDATE: DATS(8) Last changed on
+
+  SETLEAF:
+    description: Values in sets
+    module: CO
+    release: both
+    key: [MANDT, SETCLASS, SUBCLASS, SETNAME, LINEID]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SETCLASS: CHAR(4) Set class
+      SUBCLASS: CHAR(12) Organizational unit as set subclass
+      SETNAME: CHAR(24) Set name
+      LINEID: CHAR(10) Identifies a line within a set
+      VALSIGN: CHAR(1) Sign (inclusive/exclusive)
+      VALOPTION: CHAR(2) Selection operator
+      VALFROM: CHAR(24) From value
+      VALTO: CHAR(24) To value
+
+  SETNODE:
+    description: Hierarchy structure (subsets of a set)
+    module: CO
+    release: both
+    key: [MANDT, SETCLASS, SUBCLASS, SETNAME, LINEID]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      SETCLASS: CHAR(4) Set class
+      SUBCLASS: CHAR(12) Organizational unit as set subclass
+      SETNAME: CHAR(24) Set name
+      LINEID: CHAR(10) Identifies a line within a set
+      SUBSETCLS: CHAR(4) Set class of the subset
+      SUBSETSCLS: CHAR(12) Subclass of the subset
+      SUBSETNAME: CHAR(24) Name of the subset
+
+  # ---------------------------------------------------------------- Electronic bank statement
+  FEBKO:
+    description: Electronic bank statement header records
+    module: FI
+    release: both
+    key: [MANDT, ANWND, ABSND, AZIDT, EMKEY]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      ANWND: CHAR(4) Application
+      ABSND: CHAR(35) Sender of statement
+      AZIDT: CHAR(20) Statement identification
+      EMKEY: CHAR(10) Statement recipient key
+      KUKEY: CHAR(8) Short key (surrogate)
+      BUKRS: CHAR(4) Company code
+      HBKID: CHAR(5) House bank
+      HKTID: CHAR(5) Account ID
+      AZNUM: NUMC(5) Statement number
+      AZDAT: DATS(8) Statement date
+      WAERS: CUKY(5) Currency
+
+  FEBEP:
+    description: Electronic bank statement line items
+    module: FI
+    release: both
+    key: [MANDT, KUKEY, ESNUM]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUKEY: CHAR(8) Short key (surrogate)
+      ESNUM: NUMC(5) Memo record number (line item number in bank statement)
+      VALUT: DATS(8) Value date
+      BUDAT: DATS(8) Posting date
+      VGEXT: CHAR(27) External business transaction
+      VGINT: CHAR(4) Posting rule
+      EPVOZ: CHAR(1) Debit/credit sign
+      KWBTR: CURR(13,2) Amount in account currency
+      BELNR: CHAR(10) Document number
+      CHECT: CHAR(13) Check number
+      ZUONR: CHAR(18) Assignment
+
+  # ---------------------------------------------------------------- Chart of accounts and currency configuration
+  T004:
+    description: Directory of charts of accounts
+    module: FI
+    release: both
+    key: [MANDT, KTOPL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KTOPL: CHAR(4) Chart of accounts
+      DSPRA: LANG(1) Maintenance language
+      MAXLS: NUMC(2) Length of G/L account number
+      XSPER: CHAR(1) Blocked for posting
+      KKTPL: CHAR(4) Group chart of accounts
+
+  TCURV:
+    description: Exchange rate types
+    module: FI
+    release: both
+    key: [MANDT, KURST]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KURST: CHAR(4) Exchange rate type
+      XINVR: CHAR(1) Inversion allowed
+      BKUZU: CHAR(1) Buying rate at
+      GKUZU: CHAR(1) Selling rate at
+      BWAER: CUKY(5) Base currency
+      XBWRL: CHAR(1) Variance using base currency allowed
+
+  TCURF:
+    description: Conversion factors for currency translation
+    module: FI
+    release: both
+    key: [MANDT, KURST, FCURR, TCURR, GDATU]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KURST: CHAR(4) Exchange rate type
+      FCURR: CUKY(5) From currency
+      TCURR: CUKY(5) To-currency
+      GDATU: CHAR(8) Date as of which the entry is valid (inverted)
+      FFACT: DEC(9,0) Ratio for the "from" currency units
+      TFACT: DEC(9,0) Ratio for the "to" currency units
+
+  TCURT:
+    description: Currency code names
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, WAERS]
+    fields_complete: false
+    text_of: TCURC
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      WAERS: CUKY(5) Currency key
+      LTEXT: CHAR(40) Long text
+      KTEXT: CHAR(15) Short text
+      HKONT: CHAR(10) G/L account
+      ZFBDT: DATS(8) Baseline date for due date calculation
+      ZTERM: CHAR(4) Terms of payment key
+      ZLSCH: CHAR(1) Payment method
+      VBELN: CHAR(10) Billing document
+
+  BSAK:
+    description: Vendor cleared items (ECC; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [MANDT, BUKRS, LIFNR, UMSKS, UMSKZ, AUGDT, AUGBL, ZUONR, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      LIFNR: CHAR(10) Vendor account number
+      UMSKS: CHAR(1) Special G/L transaction type
+      UMSKZ: CHAR(1) Special G/L indicator
+      AUGDT: DATS(8) Clearing date
+      AUGBL: CHAR(10) Clearing document
+      ZUONR: CHAR(18) Assignment
+      GJAHR: NUMC(4) Fiscal year
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      CPUDT: DATS(8) Entry date
+      WAERS: CUKY(5) Currency
+      XBLNR: CHAR(16) Reference document number
+      BLART: CHAR(2) Document type
+      MONAT: NUMC(2) Fiscal period
+      BSCHL: CHAR(2) Posting key
+      SHKZG: CHAR(1) Debit/credit indicator
+      GSBER: CHAR(4) Business area
+      MWSKZ: CHAR(2) Tax code
+      DMBTR: CURR(13,2) Amount in local currency
+      WRBTR: CURR(13,2) ref=WAERS Amount in document currency
+      SGTXT: CHAR(50) Item text
+      HKONT: CHAR(10) G/L account
+      ZFBDT: DATS(8) Baseline date for due date calculation
+      ZTERM: CHAR(4) Terms of payment key
+      ZLSCH: CHAR(1) Payment method
+      EBELN: CHAR(10) Purchasing document number
+      EBELP: NUMC(5) Item of purchasing document
+
+  BSIS:
+    description: G/L account open items / items of non-open-item accounts (ECC; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [MANDT, BUKRS, HKONT, AUGDT, AUGBL, ZUONR, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      HKONT: CHAR(10) G/L account
+      AUGDT: DATS(8) Clearing date
+      AUGBL: CHAR(10) Clearing document
+      ZUONR: CHAR(18) Assignment
+      GJAHR: NUMC(4) Fiscal year
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      CPUDT: DATS(8) Entry date
+      WAERS: CUKY(5) Currency
+      XBLNR: CHAR(16) Reference document number
+      BLART: CHAR(2) Document type
+      MONAT: NUMC(2) Fiscal period
+      BSCHL: CHAR(2) Posting key
+      SHKZG: CHAR(1) Debit/credit indicator
+      GSBER: CHAR(4) Business area
+      MWSKZ: CHAR(2) Tax code
+      DMBTR: CURR(13,2) Amount in local currency
+      WRBTR: CURR(13,2) ref=WAERS Amount in document currency
+      SGTXT: CHAR(50) Item text
+      KOSTL: CHAR(10) Cost center
+      AUFNR: CHAR(12) Order number
+      PRCTR: CHAR(10) Profit center
+
+  BSAS:
+    description: G/L account cleared items (ECC; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [MANDT, BUKRS, HKONT, AUGDT, AUGBL, ZUONR, GJAHR, BELNR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      HKONT: CHAR(10) G/L account
+      AUGDT: DATS(8) Clearing date
+      AUGBL: CHAR(10) Clearing document
+      ZUONR: CHAR(18) Assignment
+      GJAHR: NUMC(4) Fiscal year
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      CPUDT: DATS(8) Entry date
+      WAERS: CUKY(5) Currency
+      XBLNR: CHAR(16) Reference document number
+      BLART: CHAR(2) Document type
+      MONAT: NUMC(2) Fiscal period
+      BSCHL: CHAR(2) Posting key
+      SHKZG: CHAR(1) Debit/credit indicator
+      GSBER: CHAR(4) Business area
+      MWSKZ: CHAR(2) Tax code
+      DMBTR: CURR(13,2) Amount in local currency
+      WRBTR: CURR(13,2) ref=WAERS Amount in document currency
+      SGTXT: CHAR(50) Item text
+      KOSTL: CHAR(10) Cost center
+      AUFNR: CHAR(12) Order number
+      PRCTR: CHAR(10) Profit center
+
+  BSET:
+    description: Tax data document segment
+    module: FI
+    release: both
+    key: [MANDT, BUKRS, BELNR, GJAHR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      BELNR: CHAR(10) Accounting document number
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(3) Line item
+      MWSKZ: CHAR(2) Tax code
+      HKONT: CHAR(10) G/L account
+      TXGRP: NUMC(3) Group indicator for tax line items
+      SHKZG: CHAR(1) Debit/credit indicator
+      HWBAS: CURR(13,2) Tax base amount in local currency
+      FWBAS: CURR(13,2) Tax base amount in document currency
+      HWSTE: CURR(13,2) Tax amount in local currency
+      FWSTE: CURR(13,2) Tax amount in document currency
+      KTOSL: CHAR(3) Transaction key
+      KSCHL: CHAR(4) Condition type
+      TXJCD: CHAR(15) Tax jurisdiction
+
+  BSEC:
+    description: One-time account data document segment
+    module: FI
+    release: both
+    key: [MANDT, BUKRS, BELNR, GJAHR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      BELNR: CHAR(10) Accounting document number
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(3) Line item
+      EMPFG: CHAR(16) Payee code
+      NAME1: CHAR(35) Name 1
+      NAME2: CHAR(35) Name 2
+      NAME3: CHAR(35) Name 3
+      NAME4: CHAR(35) Name 4
+      PSTLZ: CHAR(10) Postal code
+      ORT01: CHAR(35) City
+      LAND1: CHAR(3) Country key
+      STRAS: CHAR(35) Street and house number
+      PFACH: CHAR(10) PO box
+      REGIO: CHAR(3) Region
+      BANKN: CHAR(18) Bank account number
+      BANKS: CHAR(3) Bank country key
+      BANKL: CHAR(15) Bank key
+      STCD1: CHAR(16) Tax number 1
+      STCD2: CHAR(11) Tax number 2
+      SPRAS: LANG(1) Language key
+
+  # ---------------------------------------------------------------- New G/L and classic G/L
+  FAGLFLEXA:
+    description: General Ledger actual line items (New G/L; replaced by ACDOCA in S/4HANA)
+    module: FI
+    release: ecc
+    key: [RCLNT, RYEAR, DOCNR, RLDNR, RBUKRS, DOCLN]
+    fields_complete: false
+    fields:
+      RCLNT: CLNT(3) Client
+      RYEAR: NUMC(4) Fiscal year
+      DOCNR: CHAR(10) Accounting document number
+      RLDNR: CHAR(2) Ledger
+      RBUKRS: CHAR(4) Company code
+      DOCLN: CHAR(6) Six-character posting item for ledger
+      ACTIV: CHAR(4) FI-SL business transaction
+      RMVCT: CHAR(3) Transaction type
+      RTCUR: CUKY(5) Currency key
+      RUNIT: UNIT(3) Base unit of measure
+      RRCTY: CHAR(1) Record type
+      RVERS: CHAR(3) Version
+      RACCT: CHAR(10) Account number
+      RCNTR: CHAR(10) Cost center
+      PRCTR: CHAR(10) Profit center
+      RFAREA: CHAR(16) Functional area
+      RBUSA: CHAR(4) Business area
+      KOKRS: CHAR(4) Controlling area
+      SEGMENT: CHAR(10) Segment for segmental reporting
+      TSL: CURR(23,2) ref=RTCUR Value in transaction currency
+      HSL: CURR(23,2) Value in local currency
+      KSL: CURR(23,2) Value in group currency
+      MSL: QUAN(23,3) ref=RUNIT Quantity
+      DRCRK: CHAR(1) Debit/credit indicator
+      POPER: NUMC(3) Posting period
+      BUDAT: DATS(8) Posting date
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BSCHL: CHAR(2) Posting key
+      GJAHR: NUMC(4) Fiscal year
+
+  FAGLFLEXT:
+    description: General Ledger totals (New G/L; compatibility view in S/4HANA)
+    module: FI
+    release: ecc
+    key: [RCLNT, RYEAR, OBJNR00, OBJNR01, OBJNR02, OBJNR03, OBJNR04, OBJNR05, OBJNR06, OBJNR07, OBJNR08, DRCRK, RPMAX]
+    fields_complete: false
+    fields:
+      RCLNT: CLNT(3) Client
+      RYEAR: NUMC(4) Fiscal year
+      OBJNR00: NUMC(18) Object number for table group
+      OBJNR01: NUMC(18) Object number for table group
+      OBJNR02: NUMC(18) Object number for table group
+      OBJNR03: NUMC(18) Object number for table group
+      OBJNR04: NUMC(18) Object number for table group
+      OBJNR05: NUMC(18) Object number for table group
+      OBJNR06: NUMC(18) Object number for table group
+      OBJNR07: NUMC(18) Object number for table group
+      OBJNR08: NUMC(18) Object number for table group
+      DRCRK: CHAR(1) Debit/credit indicator
+      RPMAX: NUMC(3) Period
+      ACTIV: CHAR(4) FI-SL business transaction
+      RMVCT: CHAR(3) Transaction type
+      RTCUR: CUKY(5) Currency key
+      RUNIT: UNIT(3) Base unit of measure
+      RLDNR: CHAR(2) Ledger
+      RRCTY: CHAR(1) Record type
+      RVERS: CHAR(3) Version
+      RACCT: CHAR(10) Account number
+      RBUKRS: CHAR(4) Company code
+      RCNTR: CHAR(10) Cost center
+      PRCTR: CHAR(10) Profit center
+      RFAREA: CHAR(16) Functional area
+      RBUSA: CHAR(4) Business area
+      KOKRS: CHAR(4) Controlling area
+      SEGMENT: CHAR(10) Segment for segmental reporting
+      TSLVT: CURR(23,2) ref=RTCUR Balance carryforward in transaction currency
+      HSLVT: CURR(23,2) Balance carryforward in local currency
+      KSLVT: CURR(23,2) Balance carryforward in group currency
+      MSLVT: QUAN(23,3) ref=RUNIT Balance carryforward quantity
+      HSL01: CURR(23,2) Local currency total period 01
+      HSL02: CURR(23,2) Local currency total period 02
+      HSL03: CURR(23,2) Local currency total period 03
+      HSL04: CURR(23,2) Local currency total period 04
+      HSL05: CURR(23,2) Local currency total period 05
+      HSL06: CURR(23,2) Local currency total period 06
+      HSL07: CURR(23,2) Local currency total period 07
+      HSL08: CURR(23,2) Local currency total period 08
+      HSL09: CURR(23,2) Local currency total period 09
+      HSL10: CURR(23,2) Local currency total period 10
+      HSL11: CURR(23,2) Local currency total period 11
+      HSL12: CURR(23,2) Local currency total period 12
+      HSL13: CURR(23,2) Local currency total period 13
+      HSL14: CURR(23,2) Local currency total period 14
+      HSL15: CURR(23,2) Local currency total period 15
+      HSL16: CURR(23,2) Local currency total period 16
+
+  GLT0:
+    description: G/L account master record transaction figures (classic G/L)
+    module: FI
+    release: ecc
+    key: [RCLNT, RLDNR, RRCTY, RVERS, BUKRS, RYEAR, RACCT, RBUSA, RTCUR, DRCRK, RPMAX]
+    fields_complete: false
+    fields:
+      RCLNT: CLNT(3) Client
+      RLDNR: CHAR(2) Ledger
+      RRCTY: CHAR(1) Record type
+      RVERS: CHAR(3) Version
+      BUKRS: CHAR(4) Company code
+      RYEAR: NUMC(4) Fiscal year
+      RACCT: CHAR(10) Account number
+      RBUSA: CHAR(4) Business area
+      RTCUR: CUKY(5) Currency key
+      DRCRK: CHAR(1) Debit/credit indicator
+      RPMAX: NUMC(3) Period
+      TSLVT: CURR(15,2) ref=RTCUR Balance carryforward in transaction currency
+      HSLVT: CURR(15,2) Balance carryforward in local currency
+      HSL01: CURR(15,2) Local currency total period 01
+      HSL02: CURR(15,2) Local currency total period 02
+      HSL03: CURR(15,2) Local currency total period 03
+      HSL04: CURR(15,2) Local currency total period 04
+      HSL05: CURR(15,2) Local currency total period 05
+      HSL06: CURR(15,2) Local currency total period 06
+      HSL07: CURR(15,2) Local currency total period 07
+      HSL08: CURR(15,2) Local currency total period 08
+      HSL09: CURR(15,2) Local currency total period 09
+      HSL10: CURR(15,2) Local currency total period 10
+      HSL11: CURR(15,2) Local currency total period 11
+      HSL12: CURR(15,2) Local currency total period 12
+      HSL13: CURR(15,2) Local currency total period 13
+      HSL14: CURR(15,2) Local currency total period 14
+      HSL15: CURR(15,2) Local currency total period 15
+      HSL16: CURR(15,2) Local currency total period 16
+
+  SKB1:
+    description: G/L account master (company code)
+    module: FI
+    release: both
+    key: [MANDT, BUKRS, SAKNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      SAKNR: CHAR(10) G/L account number
+      WAERS: CUKY(5) Account currency
+      MWSKZ: CHAR(2) Tax category in account master record
+      XMWNO: CHAR(1) Posting without tax allowed
+      MITKZ: CHAR(1) Account is reconciliation account
+      XOPVW: CHAR(1) Open item management
+      XKRES: CHAR(1) Line item display
+      XSALH: CHAR(1) Balances in local currency only
+      ZUAWA: CHAR(3) Sort key
+      FSTAG: CHAR(4) Field status group
+      XINTB: CHAR(1) Post automatically only
+      XSPEB: CHAR(1) Blocked for posting
+      XLOEB: CHAR(1) Marked for deletion
+      ALTKT: CHAR(10) Alternative account number
+      FDLEV: CHAR(2) Planning level
+      HBKID: CHAR(5) House bank
+      HKTID: CHAR(5) Account ID
+      BEGRU: CHAR(4) Authorization group
+      BUSAB: CHAR(2) Accounting clerk
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+
+  # ---------------------------------------------------------------- FI configuration
+  T003:
+    description: Document types
+    module: FI
+    release: both
+    key: [MANDT, BLART]
+    fields_complete: false
+    text_table: T003T
+    fields:
+      MANDT: CLNT(3) Client
+      BLART: CHAR(2) Document type
+      NUMKR: CHAR(2) Number range
+      KOARS: CHAR(5) Account types allowed
+      STBLA: CHAR(2) Reverse document type
+      XNETB: CHAR(1) Net document type
+      BRGRU: CHAR(4) Authorization group
+
+  T003T:
+    description: Document type texts
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, BLART]
+    fields_complete: false
+    text_of: T003
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      BLART: CHAR(2) Document type
+      LTEXT: CHAR(20) Description
+
+  T030:
+    description: Standard accounts table (automatic account determination)
+    module: FI
+    release: both
+    key: [MANDT, KTOPL, KTOSL, BWMOD, KOMOK, BKLAS]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KTOPL: CHAR(4) Chart of accounts
+      KTOSL: CHAR(3) Transaction key
+      BWMOD: CHAR(4) Valuation grouping code
+      KOMOK: CHAR(3) Account modifier
+      BKLAS: CHAR(4) Valuation class
+      KONTS: CHAR(10) G/L account (debit)
+      KONTH: CHAR(10) G/L account (credit)
+
+  TBSL:
+    description: Posting keys
+    module: FI
+    release: both
+    key: [MANDT, BSCHL]
+    fields_complete: false
+    text_table: TBSLT
+    fields:
+      MANDT: CLNT(3) Client
+      BSCHL: CHAR(2) Posting key
+      SHKZG: CHAR(1) Debit/credit indicator
+      KOART: CHAR(1) Account type
+      XUMSW: CHAR(1) Sales-related item
+      STBSL: CHAR(2) Posting key for reversal
+      XZAHL: CHAR(1) Payment transaction
+      XSONU: CHAR(1) Special G/L posting key
+
+  TBSLT:
+    description: Posting key names
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, BSCHL, UMSKZ]
+    fields_complete: false
+    text_of: TBSL
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      BSCHL: CHAR(2) Posting key
+      UMSKZ: CHAR(1) Special G/L indicator
+      LTEXT: CHAR(20) Name of posting key
+
+  # ---------------------------------------------------------------- AR/AP transaction figures and bank details
+  KNC1:
+    description: Customer master transaction figures
+    module: FI
+    release: both
+    key: [MANDT, KUNNR, BUKRS, GJAHR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer number
+      BUKRS: CHAR(4) Company code
+      GJAHR: NUMC(4) Fiscal year
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      UMSAV: CURR(15,2) Balance carried forward
+      UM01S: CURR(15,2) Total of debit postings period 01
+      UM02S: CURR(15,2) Total of debit postings period 02
+      UM03S: CURR(15,2) Total of debit postings period 03
+      UM04S: CURR(15,2) Total of debit postings period 04
+      UM05S: CURR(15,2) Total of debit postings period 05
+      UM06S: CURR(15,2) Total of debit postings period 06
+      UM07S: CURR(15,2) Total of debit postings period 07
+      UM08S: CURR(15,2) Total of debit postings period 08
+      UM09S: CURR(15,2) Total of debit postings period 09
+      UM10S: CURR(15,2) Total of debit postings period 10
+      UM11S: CURR(15,2) Total of debit postings period 11
+      UM12S: CURR(15,2) Total of debit postings period 12
+      UM13S: CURR(15,2) Total of debit postings period 13
+      UM14S: CURR(15,2) Total of debit postings period 14
+      UM15S: CURR(15,2) Total of debit postings period 15
+      UM16S: CURR(15,2) Total of debit postings period 16
+      UM01H: CURR(15,2) Total of credit postings period 01
+      UM02H: CURR(15,2) Total of credit postings period 02
+      UM03H: CURR(15,2) Total of credit postings period 03
+      UM04H: CURR(15,2) Total of credit postings period 04
+      UM05H: CURR(15,2) Total of credit postings period 05
+      UM06H: CURR(15,2) Total of credit postings period 06
+      UM07H: CURR(15,2) Total of credit postings period 07
+      UM08H: CURR(15,2) Total of credit postings period 08
+      UM09H: CURR(15,2) Total of credit postings period 09
+      UM10H: CURR(15,2) Total of credit postings period 10
+      UM11H: CURR(15,2) Total of credit postings period 11
+      UM12H: CURR(15,2) Total of credit postings period 12
+      UM13H: CURR(15,2) Total of credit postings period 13
+      UM14H: CURR(15,2) Total of credit postings period 14
+      UM15H: CURR(15,2) Total of credit postings period 15
+      UM16H: CURR(15,2) Total of credit postings period 16
+
+  LFC1:
+    description: Vendor master transaction figures
+    module: FI
+    release: both
+    key: [MANDT, LIFNR, BUKRS, GJAHR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LIFNR: CHAR(10) Vendor account number
+      BUKRS: CHAR(4) Company code
+      GJAHR: NUMC(4) Fiscal year
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      UMSAV: CURR(15,2) Balance carried forward
+      UM01S: CURR(15,2) Total of debit postings period 01
+      UM02S: CURR(15,2) Total of debit postings period 02
+      UM03S: CURR(15,2) Total of debit postings period 03
+      UM04S: CURR(15,2) Total of debit postings period 04
+      UM05S: CURR(15,2) Total of debit postings period 05
+      UM06S: CURR(15,2) Total of debit postings period 06
+      UM07S: CURR(15,2) Total of debit postings period 07
+      UM08S: CURR(15,2) Total of debit postings period 08
+      UM09S: CURR(15,2) Total of debit postings period 09
+      UM10S: CURR(15,2) Total of debit postings period 10
+      UM11S: CURR(15,2) Total of debit postings period 11
+      UM12S: CURR(15,2) Total of debit postings period 12
+      UM13S: CURR(15,2) Total of debit postings period 13
+      UM14S: CURR(15,2) Total of debit postings period 14
+      UM15S: CURR(15,2) Total of debit postings period 15
+      UM16S: CURR(15,2) Total of debit postings period 16
+      UM01H: CURR(15,2) Total of credit postings period 01
+      UM02H: CURR(15,2) Total of credit postings period 02
+      UM03H: CURR(15,2) Total of credit postings period 03
+      UM04H: CURR(15,2) Total of credit postings period 04
+      UM05H: CURR(15,2) Total of credit postings period 05
+      UM06H: CURR(15,2) Total of credit postings period 06
+      UM07H: CURR(15,2) Total of credit postings period 07
+      UM08H: CURR(15,2) Total of credit postings period 08
+      UM09H: CURR(15,2) Total of credit postings period 09
+      UM10H: CURR(15,2) Total of credit postings period 10
+      UM11H: CURR(15,2) Total of credit postings period 11
+      UM12H: CURR(15,2) Total of credit postings period 12
+      UM13H: CURR(15,2) Total of credit postings period 13
+      UM14H: CURR(15,2) Total of credit postings period 14
+      UM15H: CURR(15,2) Total of credit postings period 15
+      UM16H: CURR(15,2) Total of credit postings period 16
+
+  KNBK:
+    description: Customer master (bank details)
+    module: FI
+    release: both
+    key: [MANDT, KUNNR, BANKS, BANKL, BANKN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KUNNR: CHAR(10) Customer number
+      BANKS: CHAR(3) Bank country key
+      BANKL: CHAR(15) Bank key
+      BANKN: CHAR(18) Bank account number
+      BKONT: CHAR(2) Bank control key
+      BVTYP: CHAR(4) Partner bank type
+      XEZER: CHAR(1) Collection authorization
+      BKREF: CHAR(20) Reference specifications for bank details
+      KOINH: CHAR(60) Account holder name
+
+  LFBK:
+    description: Vendor master (bank details)
+    module: FI
+    release: both
+    key: [MANDT, LIFNR, BANKS, BANKL, BANKN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LIFNR: CHAR(10) Vendor account number
+      BANKS: CHAR(3) Bank country key
+      BANKL: CHAR(15) Bank key
+      BANKN: CHAR(18) Bank account number
+      BKONT: CHAR(2) Bank control key
+      BVTYP: CHAR(4) Partner bank type
+      XEZER: CHAR(1) Collection authorization
+      BKREF: CHAR(20) Reference specifications for bank details
+      KOINH: CHAR(60) Account holder name
+
+  LFM1:
+    description: Vendor master record purchasing organization data
+    module: MM
+    release: both
+    key: [MANDT, LIFNR, EKORG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LIFNR: CHAR(10) Vendor account number
+      EKORG: CHAR(4) Purchasing organization
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      SPERM: CHAR(1) Purchasing block at purchasing organization level
+      LOEVM: CHAR(1) Deletion flag for purchasing organization
+      WAERS: CUKY(5) Purchase order currency
+      MINBW: CURR(13,2) ref=WAERS Minimum order value
+      ZTERM: CHAR(4) Terms of payment key
+      INCO1: CHAR(3) Incoterms (part 1)
+      INCO2: CHAR(28) Incoterms (part 2)
+      VERKF: CHAR(30) Responsible salesperson at vendor
+      TELF1: CHAR(16) Vendor telephone number
+      KALSK: CHAR(2) Schema group, vendor
+      WEBRE: CHAR(1) GR-based invoice verification
+      LEBRE: CHAR(1) Service-based invoice verification
+      EKGRP: CHAR(3) Purchasing group
+      KZAUT: CHAR(1) Automatic generation of PO allowed
+      KZABS: CHAR(1) Order acknowledgment requirement
+      PLIFZ: DEC(3,0) Planned delivery time in days
+
+  # ---------------------------------------------------------------- Posting periods, fiscal year variants, companies, ledgers
+  T001B:
+    description: Permitted posting periods
+    module: FI
+    release: both
+    key: [MANDT, RRCTY, BUKRS, MKOAR, BKONT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      RRCTY: CHAR(1) Record type
+      BUKRS: CHAR(4) Posting period variant
+      MKOAR: CHAR(1) Account type
+      BKONT: CHAR(10) To account
+      VKONT: CHAR(10) From account
+      FRPE1: NUMC(3) From period 1
+      FRYE1: NUMC(4) From fiscal year 1
+      TOPE1: NUMC(3) To period 1
+      TOYE1: NUMC(4) To fiscal year 1
+      FRPE2: NUMC(3) From period 2
+      FRYE2: NUMC(4) From fiscal year 2
+      TOPE2: NUMC(3) To period 2
+      TOYE2: NUMC(4) To fiscal year 2
+      BRGRU: CHAR(4) Authorization group
+
+  T009:
+    description: Fiscal year variants
+    module: FI
+    release: both
+    key: [MANDT, PERIV]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERIV: CHAR(2) Fiscal year variant
+      XKALE: CHAR(1) Calendar year
+      XJABH: CHAR(1) Year-dependent fiscal year variant
+      ANZBP: NUMC(3) Number of posting periods
+      ANZSP: NUMC(2) Number of special periods
+
+  T009B:
+    description: Fiscal year variant periods
+    module: FI
+    release: both
+    key: [MANDT, PERIV, BDATJ, BUMON, BUTAG]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      PERIV: CHAR(2) Fiscal year variant
+      BDATJ: CHAR(4) Calendar year
+      BUMON: CHAR(2) Month
+      BUTAG: CHAR(2) Day
+      POPER: NUMC(3) Posting period
+
+  T880:
+    description: Global company data (consolidation companies)
+    module: FI
+    release: both
+    key: [MANDT, RCOMP]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      RCOMP: CHAR(6) Company
+      NAME1: CHAR(30) Company name
+      NAME2: CHAR(30) Name 2
+      CNTRY: CHAR(3) Country key
+      LANGU: LANG(1) Language key
+      STRET: CHAR(30) Street
+      POBOX: CHAR(10) PO box
+      PSTLC: CHAR(10) Postal code
+      CITY: CHAR(30) City
+      CURR: CUKY(5) Currency key
+
+  T881:
+    description: FI-SL ledger
+    module: FI
+    release: both
+    key: [MANDT, RLDNR]
+    fields_complete: false
+    text_table: T881T
+    fields:
+      MANDT: CLNT(3) Client
+      RLDNR: CHAR(2) Ledger
+
+  T881T:
+    description: FI-SL ledger texts
+    module: FI
+    release: both
+    key: [MANDT, LANGU, RLDNR]
+    fields_complete: false
+    text_of: T881
+    fields:
+      MANDT: CLNT(3) Client
+      LANGU: LANG(1) Language key
+      RLDNR: CHAR(2) Ledger
+      NAME: CHAR(30) Ledger name
+
+  # ---------------------------------------------------------------- Banks and payments
+  BNKA:
+    description: Bank master record
+    module: FI
+    release: both
+    key: [MANDT, BANKS, BANKL]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BANKS: CHAR(3) Bank country key
+      BANKL: CHAR(15) Bank key
+      ERDAT: DATS(8) Created on
+      ERNAM: CHAR(12) Created by
+      BANKA: CHAR(60) Name of bank
+      PROVZ: CHAR(3) Region
+      STRAS: CHAR(35) Street and house number
+      ORT01: CHAR(35) City
+      SWIFT: CHAR(11) SWIFT/BIC
+      BGRUP: CHAR(2) Bank group
+      XPGRO: CHAR(1) Post office bank current account
+      LOEVM: CHAR(1) Deletion indicator
+      BNKLZ: CHAR(15) Bank number
+      BRNCH: CHAR(40) Bank branch
+      ADRNR: CHAR(10) Address number
+
+  REGUH:
+    description: Settlement data from payment program (payment header)
+    module: FI
+    release: both
+    key: [MANDT, LAUFD, LAUFI, XVORL, ZBUKR, LIFNR, KUNNR, EMPFG, VBLNR]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LAUFD: DATS(8) Date on which the program is to be run
+      LAUFI: CHAR(6) Additional identification
+      XVORL: CHAR(1) Indicator - only proposal run
+      ZBUKR: CHAR(4) Paying company code
+      LIFNR: CHAR(10) Vendor account number
+      KUNNR: CHAR(10) Customer number
+      EMPFG: CHAR(16) Payee code
+      VBLNR: CHAR(10) Payment document number
+      ZALDT: DATS(8) Payment date
+      WAERS: CUKY(5) Currency
+      RBETR: CURR(13,2) Amount in local currency
+      RWBTR: CURR(13,2) ref=WAERS Amount paid in payment currency
+      RZAWE: CHAR(1) Payment method
+      HBKID: CHAR(5) House bank
+      HKTID: CHAR(5) Account ID
+      UBNKS: CHAR(3) Country of house bank
+      UBNKL: CHAR(15) Bank number of house bank
+      UBKNT: CHAR(18) Account number at house bank
+      ZBNKS: CHAR(3) Country of payee bank
+      ZBNKL: CHAR(15) Bank number of payee bank
+      ZBNKN: CHAR(18) Bank account number of payee
+      NAME1: CHAR(35) Name 1
+      ZNME1: CHAR(35) Name of the payee
+      ZPSTL: CHAR(10) Postal code of payee
+      ZORT1: CHAR(35) City of payee
+      ZLAND: CHAR(3) Country of payee
+
+  REGUP:
+    description: Processed items from payment program
+    module: FI
+    release: both
+    key: [MANDT, LAUFD, LAUFI, XVORL, ZBUKR, LIFNR, KUNNR, EMPFG, VBLNR, BUKRS, BELNR, GJAHR, BUZEI]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LAUFD: DATS(8) Date on which the program is to be run
+      LAUFI: CHAR(6) Additional identification
+      XVORL: CHAR(1) Indicator - only proposal run
+      ZBUKR: CHAR(4) Paying company code
+      LIFNR: CHAR(10) Vendor account number
+      KUNNR: CHAR(10) Customer number
+      EMPFG: CHAR(16) Payee code
+      VBLNR: CHAR(10) Payment document number
+      BUKRS: CHAR(4) Company code
+      BELNR: CHAR(10) Accounting document number
+      GJAHR: NUMC(4) Fiscal year
+      BUZEI: NUMC(3) Line item
+      BLART: CHAR(2) Document type
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      WAERS: CUKY(5) Currency
+      XBLNR: CHAR(16) Reference document number
+      SHKZG: CHAR(1) Debit/credit indicator
+      HKONT: CHAR(10) G/L account
+      DMBTR: CURR(13,2) Amount in local currency
+      WRBTR: CURR(13,2) ref=WAERS Amount in document currency
+      WSKTO: CURR(13,2) ref=WAERS Cash discount amount in document currency
+      ZTERM: CHAR(4) Terms of payment key
+      ZFBDT: DATS(8) Baseline date for due date calculation
+      ZLSCH: CHAR(1) Payment method
+
+  PAYR:
+    description: Payment medium file (check register)
+    module: FI
+    release: both
+    key: [MANDT, ZBUKR, HBKID, HKTID, RZAWE, CHECT]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      ZBUKR: CHAR(4) Paying company code
+      HBKID: CHAR(5) House bank
+      HKTID: CHAR(5) Account ID
+      RZAWE: CHAR(1) Payment method
+      CHECT: CHAR(13) Check number
+      CHECF: CHAR(13) Check number from
+      LAUFD: DATS(8) Date on which the program is to be run
+      LAUFI: CHAR(6) Additional identification
+      VBLNR: CHAR(10) Payment document number
+      GJAHR: NUMC(4) Fiscal year
+      LIFNR: CHAR(10) Vendor account number
+      KUNNR: CHAR(10) Customer number
+      ZALDT: DATS(8) Payment date
+      WAERS: CUKY(5) Currency
+      RWBTR: CURR(13,2) ref=WAERS Amount paid in payment currency
+      ZNME1: CHAR(35) Name of the payee
+      ZORT1: CHAR(35) City of payee
+      PRIDT: DATS(8) Print date
+      PRIUS: CHAR(12) Printed by
+      VOIDR: NUMC(2) Void reason code
+      VOIDD: DATS(8) Void date
+      VOIDU: CHAR(12) Voided by
+      BANCD: DATS(8) Check encashment date
+
+  # ---------------------------------------------------------------- Payment terms, payment methods, tax, account groups
+  T052:
+    description: Terms of payment
+    module: FI
+    release: both
+    key: [MANDT, ZTERM, ZTAGG]
+    fields_complete: false
+    text_table: T052U
+    fields:
+      MANDT: CLNT(3) Client
+      ZTERM: CHAR(4) Terms of payment key
+      ZTAGG: NUMC(2) Day limit
+      ZDART: CHAR(1) Default for baseline date
+      ZFAEL: NUMC(2) Fixed day for baseline date
+      ZMONA: NUMC(2) Additional months
+      ZTAG1: NUMC(3) Days from baseline date (term 1)
+      ZPRZ1: DEC(5,3) Cash discount percentage 1
+      ZTAG2: NUMC(3) Days from baseline date (term 2)
+      ZPRZ2: DEC(5,3) Cash discount percentage 2
+      ZTAG3: NUMC(3) Days from baseline date (term 3)
+      KOART: CHAR(1) Account type
+      ZLSCH: CHAR(10) Payment methods
+      ZSCHF: CHAR(1) Payment block key
+      TEXT1: CHAR(50) Own explanation of term of payment
+
+  T052U:
+    description: Own explanations for terms of payment
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, ZTERM, ZTAGG]
+    fields_complete: false
+    text_of: T052
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      ZTERM: CHAR(4) Terms of payment key
+      ZTAGG: NUMC(2) Day limit
+      TEXT1: CHAR(50) Own explanation of term of payment
+
+  T042Z:
+    description: Payment methods per country
+    module: FI
+    release: both
+    key: [MANDT, LAND1, ZLSCH]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      LAND1: CHAR(3) Country key
+      ZLSCH: CHAR(1) Payment method
+      TEXT1: CHAR(30) Name of payment method
+
+  TGSB:
+    description: Business areas
+    module: FI
+    release: both
+    key: [MANDT, GSBER]
+    fields_complete: false
+    text_table: TGSBT
+    fields:
+      MANDT: CLNT(3) Client
+      GSBER: CHAR(4) Business area
+
+  TGSBT:
+    description: Business area names
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, GSBER]
+    fields_complete: false
+    text_of: TGSB
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      GSBER: CHAR(4) Business area
+      GTEXT: CHAR(30) Business area description
+
+  T007A:
+    description: Tax keys (tax codes per procedure)
+    module: FI
+    release: both
+    key: [MANDT, KALSM, MWSKZ]
+    fields_complete: false
+    text_table: T007S
+    fields:
+      MANDT: CLNT(3) Client
+      KALSM: CHAR(6) Procedure (pricing, output control, account determination)
+      MWSKZ: CHAR(2) Tax code
+      MWART: CHAR(1) Tax type
+      ZMWSK: CHAR(2) Target tax code
+      EGRKZ: CHAR(1) EU code
+
+  T007S:
+    description: Tax code names
+    module: FI
+    release: both
+    key: [MANDT, SPRAS, KALSM, MWSKZ]
+    fields_complete: false
+    text_of: T007A
+    fields:
+      MANDT: CLNT(3) Client
+      SPRAS: LANG(1) Language key
+      KALSM: CHAR(6) Procedure (pricing, output control, account determination)
+      MWSKZ: CHAR(2) Tax code
+      TEXT1: CHAR(50) Name for value-added tax
+
+  T077D:
+    description: Customer account groups
+    module: FI
+    release: both
+    key: [MANDT, KTOKD]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KTOKD: CHAR(4) Customer account group
+      NUMKR: CHAR(2) Number range
+      XCPDS: CHAR(1) One-time account
+
+  T014:
+    description: Credit control areas
+    module: FI
+    release: both
+    key: [MANDT, KKBER]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      KKBER: CHAR(4) Credit control area
+      KKBTX: CHAR(35) Description of credit control area
+      WAERS: CUKY(5) Currency
+      KLIMK: CURR(15,2) ref=WAERS Default credit limit
+      CTLPC: CHAR(3) Risk category
+      PERIV: CHAR(2) Fiscal year variant
+
+  # ---------------------------------------------------------------- Asset accounting
+  ANLA:
+    description: Asset master record segment
+    module: AA
+    release: both
+    key: [MANDT, BUKRS, ANLN1, ANLN2]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLN2: CHAR(4) Asset subnumber
+      ANLKL: CHAR(8) Asset class
+      ERNAM: CHAR(12) Created by
+      ERDAT: DATS(8) Created on
+      AKTIV: DATS(8) Asset capitalization date
+      DEAKT: DATS(8) Deactivation date
+      ZUGDT: DATS(8) Asset value date of the first posting
+      ZUJHR: NUMC(4) Acquisition year
+      TXT50: CHAR(50) Asset description
+      TXA50: CHAR(50) Additional asset description
+      ANLHTXT: CHAR(50) Asset main number text
+      SERNR: CHAR(18) Serial number
+      INVNR: CHAR(25) Inventory number
+      MENGE: QUAN(13,3) ref=MEINS Quantity
+      MEINS: UNIT(3) Base unit of measure
+      LIFNR: CHAR(10) Vendor account number
+      HERST: CHAR(30) Manufacturer of asset
+      LAND1: CHAR(3) Asset's country of origin
+      KTOGR: CHAR(8) Account determination
+      ORD41: CHAR(4) Evaluation group 1
+      ORD42: CHAR(4) Evaluation group 2
+
+  ANLB:
+    description: Depreciation terms
+    module: AA
+    release: both
+    key: [MANDT, BUKRS, ANLN1, ANLN2, AFABE, BDATU]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLN2: CHAR(4) Asset subnumber
+      AFABE: NUMC(2) Real depreciation area
+      BDATU: DATS(8) Date validity ends
+      ADATU: DATS(8) Date for beginning of validity
+      AFASL: CHAR(4) Depreciation key
+      NDJAR: NUMC(3) Planned useful life in years
+      NDPER: NUMC(3) Planned useful life in periods
+      AFABG: DATS(8) Depreciation calculation start date
+      SCHRW: CURR(13,2) Asset scrap value
+
+  ANLC:
+    description: Asset value fields (ECC; compatibility view in S/4HANA)
+    module: AA
+    release: ecc
+    key: [MANDT, BUKRS, ANLN1, ANLN2, GJAHR, AFABE, ZUJHR, ZUCOD]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLN2: CHAR(4) Asset subnumber
+      GJAHR: NUMC(4) Fiscal year
+      AFABE: NUMC(2) Real depreciation area
+      ZUJHR: NUMC(4) Acquisition year
+      ZUCOD: CHAR(4) Sub-classification of an acquisition
+      KANSW: CURR(13,2) Cumulative acquisition and production costs
+      KNAFA: CURR(13,2) Accumulated ordinary depreciation
+      KSAFA: CURR(13,2) Cumulative special depreciation
+      KAAFA: CURR(13,2) Cumulative unplanned depreciation
+      ANSWL: CURR(13,2) Transactions for the year affecting asset values
+      NAFAG: CURR(13,2) Ordinary depreciation posted
+      NAFAP: CURR(13,2) Planned ordinary depreciation
+      AAFAG: CURR(13,2) Unplanned depreciation for the year
+      NDABJ: NUMC(3) Expired useful life in years at start of fiscal year
+
+  ANLZ:
+    description: Time-dependent asset allocations
+    module: AA
+    release: both
+    key: [MANDT, BUKRS, ANLN1, ANLN2, BDATU]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLN2: CHAR(4) Asset subnumber
+      BDATU: DATS(8) Date validity ends
+      ADATU: DATS(8) Date for beginning of validity
+      GSBER: CHAR(4) Business area
+      KOSTL: CHAR(10) Cost center
+      KOSTLV: CHAR(10) Cost center responsible for asset
+      WERKS: CHAR(4) Plant
+      STORT: CHAR(10) Asset location
+      RAUMN: CHAR(8) Room
+      KFZKZ: CHAR(15) License plate number
+      PERNR: NUMC(8) Personnel number
+      CAUFN: CHAR(12) Internal order
+      PRCTR: CHAR(10) Profit center
+
+  ANEP:
+    description: Asset line items (ECC; compatibility view in S/4HANA)
+    module: AA
+    release: ecc
+    key: [MANDT, BUKRS, ANLN1, ANLN2, GJAHR, LNRAN, AFABE, ZUJHR, ZUCOD]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLN2: CHAR(4) Asset subnumber
+      GJAHR: NUMC(4) Fiscal year
+      LNRAN: NUMC(5) Sequence number of asset line items in fiscal year
+      AFABE: NUMC(2) Real depreciation area
+      ZUJHR: NUMC(4) Acquisition year
+      ZUCOD: CHAR(4) Sub-classification of an acquisition
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BWASL: CHAR(3) Asset transaction type
+      BZDAT: DATS(8) Asset value date
+      ANBTR: CURR(13,2) Amount posted
+
+  ANEK:
+    description: Document header asset posting (ECC; compatibility view in S/4HANA)
+    module: AA
+    release: ecc
+    key: [MANDT, BUKRS, ANLN1, ANLN2, GJAHR, LNRAN]
+    fields_complete: false
+    fields:
+      MANDT: CLNT(3) Client
+      BUKRS: CHAR(4) Company code
+      ANLN1: CHAR(12) Main asset number
+      ANLN2: CHAR(4) Asset subnumber
+      GJAHR: NUMC(4) Fiscal year
+      LNRAN: NUMC(5) Sequence number of asset line items in fiscal year
+      BELNR: CHAR(10) Accounting document number
+      BUZEI: NUMC(3) Line item
+      BUDAT: DATS(8) Posting date
+      BLDAT: DATS(8) Document date
+      BLART: CHAR(2) Document type
+      MONAT: NUMC(2) Fiscal period
+      CPUDT: DATS(8) Entry date
+      USNAM: CHAR(12) User name
+      BZDAT: DATS(8) Asset value date
+      XBLNR: CHAR(16) Reference document number
+      SGTXT: CHAR(50) Item text
